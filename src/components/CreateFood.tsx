@@ -1,13 +1,8 @@
 import { Typography } from "@mui/material";
 import { useEffect } from "react";
 import { usePageTitleContext } from "../context/PageTitleContext";
-import { User } from "../data/mockData";
 
-interface CreateFoodProps {
-  friend?: User;
-}
-
-export function CreateFood({ friend }: CreateFoodProps) {
+export function CreateFood() {
   const { setPageTitle } = usePageTitleContext();
   useEffect(() => {
     setPageTitle("Create new food");

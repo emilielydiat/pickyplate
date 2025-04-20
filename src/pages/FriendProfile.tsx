@@ -3,7 +3,6 @@ import { Mood, Restaurant, Delete } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { useFriendData } from "../hooks/useFriendData";
-import { removeFriend } from "../api/api";
 import { usePageTitleContext } from "../context/PageTitleContext";
 
 export function FriendProfile() {

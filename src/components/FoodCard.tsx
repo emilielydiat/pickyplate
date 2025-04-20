@@ -7,7 +7,6 @@ import {
   Box,
   Stack,
   Button,
-  Rating,
 } from "@mui/material";
 import {
   DiningOutlined,
