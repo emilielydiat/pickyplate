@@ -1,0 +1,99 @@
+import { Fab, Box, Stack, Typography } from "@mui/material";
+import { Add } from "@mui/icons-material";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { usePageTitleContext } from "../context/PageTitleContext";
+import { useUserFoodListContext } from "../context/UserFoodListContext";
+import { useSharedFoodListContext } from "../context/SharedFoodListContext";
+import { FoodEntry, User } from "../data/mockData";
+import { FoodCard } from "./FoodCard";
+
+interface AddFromExistingFoodProps {
+  friend: User;
+}
+
+export function AddFromExistingFood({ friend }: AddFromExistingFoodProps) {
+  const { setPageTitle } = usePageTitleContext();
+  useEffect(() => {
+    setPageTitle("Add from existing food");
+    return () => setPageTitle(null);
+  }, [setPageTitle]);
+
+  const { userFoodEntries, sortedUserFoodEntries } = useUserFoodListContext();
+  const { sharedFoodEntries, setSharedFoodEntries } =
+    useSharedFoodListContext();
+
+  const handleToggleAdd = (foodEntry: FoodEntry) => {
+    const isAdded = sharedFoodEntries.some(
+      (entry) => entry.id === foodEntry.id
+    );
+
+    if (isAdded) {
+      setSharedFoodEntries((prev) =>
+        prev.filter((entry) => entry.id !== foodEntry.id)
+      );
+    } else {
+      setSharedFoodEntries((prev) => [...prev, foodEntry]);
+    }
+  };
+
+  const AddFoodFab = (
+    <Fab
+      component={Link}
+      to={`/friend/${friend.id}/shared-food-list/create-food`}
+      variant="extended"
+      size="medium"
+      color="primary"
+      aria-label="Add food"
+      sx={{
+        position: "fixed",
+        bottom: { xs: 16, md: 24 },
+        right: { xs: 16, md: "calc(50% - 450px + 24px)" },
+        zIndex: 1050,
+        cursor: "pointer",
+      }}
+    >
+      <Add sx={{ mr: 1 }} />
+      Create new food
+    </Fab>
+  );
+
+  // TO DO: loading
+  if (userFoodEntries.length === 0 && sharedFoodEntries.length === 0) {
+    return (
+      <Box>
+        <Typography>Loading...</Typography>
+        {AddFoodFab}
+      </Box>
+    );
+  }
+
+  if (userFoodEntries.length === 0) {
+    return (
+      <Box>
+        <Typography>No food entries available to add.</Typography>
+        {AddFoodFab}
+      </Box>
+    );
+  }
+
+
+  return (
+    <Box>
+      <Stack spacing={5} sx={{ alignItems: "center", pb: { xs: 10, sm: 12 } }}>
+        {sortedUserFoodEntries.map((foodEntry) => (
+          <FoodCard
+            key={foodEntry.id}
+            foodEntry={foodEntry}
+            variant="toAdd"
+            isAlreadyAdded={sharedFoodEntries.some(
+              (entry) => entry.id === foodEntry.id
+            )}
+            onToggleAdd={handleToggleAdd}
+          />
+        ))}
+      </Stack>
+      {AddFoodFab}
+    </Box>
+  );
+}
