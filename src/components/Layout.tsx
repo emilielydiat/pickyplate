@@ -15,8 +15,14 @@ export function Layout() {
         flexDirection: "column",
       }}
     >
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
       <PageHeader pageTitle={pageTitle} />
       <Container
+        id="main-content"
+        role="region"
+        aria-label="Main content"
         sx={{ maxWidth: "md", mt: pageTitle ? "176px" : "96px", mx: "auto" }}
       >
         <Outlet />

@@ -8,6 +8,8 @@ type PageHeaderProps = {
 export function PageHeader({ pageTitle }: PageHeaderProps) {
   return (
     <AppBar
+      component="header"
+      aria-label="Site header"
       sx={{
         color: "inherit",
         bgcolor: "#ffffff",
@@ -36,7 +38,9 @@ export function PageHeader({ pageTitle }: PageHeaderProps) {
                 alignItems: "center",
               }}
             >
-              <Typography variant="h6">{pageTitle}</Typography>
+              <Typography component="h1" variant="h6" aria-label={pageTitle}>
+                {pageTitle}
+              </Typography>
             </Box>
           )}
         </Toolbar>

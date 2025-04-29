@@ -9,7 +9,8 @@ export function EditAvatar() {
   const { setPageTitle } = usePageTitleContext();
   useEffect(() => {
     setPageTitle("Choose your avatar");
-  });
+    return () => setPageTitle(null);
+  }, [setPageTitle]);
 
   const user = useUserContext();
   const [selectedAvatar, setSelectedAvatar] = useState<string>(user.avatar);
@@ -28,6 +29,7 @@ export function EditAvatar() {
 
   return (
     <Box
+      component="section"
       sx={{
         position: "relative",
         minHeight: "100vh",
@@ -37,10 +39,14 @@ export function EditAvatar() {
       <Grid2 container justifyContent="center" spacing={2}>
         {avatarOptions.map((avatarOption, index) => (
           <Avatar
+            component="button"
+            type="button"
             key={index}
             src={avatarOption}
-            alt={"avatar image ${index}"}
+            aria-label={`Avatar image option ${index + 1}`}
+            onClick={() => handleAvatarSelection(avatarOption)}
             sx={{
+              all: "unset",
               height: 80,
               width: 80,
               color: "primary.main",
@@ -51,10 +57,14 @@ export function EditAvatar() {
                 : user.avatar === avatarOption
                   ? "4px solid"
                   : "none",
+              borderRadius: "50%",
               cursor: "pointer",
               "&:hover": { opacity: 0.8 },
+              "&:focus": {
+                outline: "3px solid",
+                outlineColor: "#3139FBFF",
+              },
             }}
-            onClick={() => handleAvatarSelection(avatarOption)}
           />
         ))}
       </Grid2>
@@ -62,6 +72,7 @@ export function EditAvatar() {
         <Button
           component={Link}
           to="/profile"
+          aria-label="Confirm avatar selection"
           variant="contained"
           onClick={handleAvatarConfirm}
         >

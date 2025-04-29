@@ -25,6 +25,8 @@ export function NavbarMenu(props: NavbarMenuProps) {
   return (
     <>
       <Menu
+        id="user-menu"
+        aria-label="User menu"
         open={props.open}
         anchorEl={props.anchorEl}
         onClose={handleMenuClose}
@@ -67,7 +69,7 @@ export function NavbarMenu(props: NavbarMenuProps) {
           </ListItemIcon>
           Settings
         </MenuItem>
-        <MenuItem>
+        <MenuItem onClick={handleMenuClose}>
           <ListItemIcon>
             <Logout />
           </ListItemIcon>

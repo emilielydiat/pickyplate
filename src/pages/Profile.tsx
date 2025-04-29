@@ -6,15 +6,17 @@ import { useUserContext } from "../context/UserContext";
 import { usePageTitleContext } from "../context/PageTitleContext";
 
 export function Profile() {
-  const { avatar, username, email } = useUserContext();
   const { setPageTitle } = usePageTitleContext();
-
   useEffect(() => {
     setPageTitle(null);
   }, [setPageTitle]);
 
+  const { avatar, username, email } = useUserContext();
+
   return (
     <Box
+      component="section"
+      aria-label="Your profile"
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -25,7 +27,7 @@ export function Profile() {
       <Box sx={{ position: "relative", mb: 3 }}>
         <Avatar
           src={avatar}
-          alt="John Doe"
+          alt="Your avatar"
           sx={{
             height: 112,
             width: 112,
@@ -34,6 +36,7 @@ export function Profile() {
         <IconButton
           component={Link}
           to="/edit-avatar"
+          aria-label="Edit your avatar"
           sx={{
             position: "absolute",
             bgcolor: "grey.300",
@@ -51,8 +54,10 @@ export function Profile() {
           <Edit sx={{ width: 16, height: 16 }} />
         </IconButton>
       </Box>
-      <Typography variant="h6Branded">{username}</Typography>
-      <Typography variant="body2" color="grey.700">
+      <Typography component="h2" variant="h6Branded">
+        {username}
+      </Typography>
+      <Typography component="h3" variant="body2" color="grey.700">
         {email}
       </Typography>
     </Box>

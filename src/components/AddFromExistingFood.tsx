@@ -41,10 +41,10 @@ export function AddFromExistingFood({ friend }: AddFromExistingFoodProps) {
     <Fab
       component={Link}
       to={`/friend/${friend.id}/shared-food-list/create-food`}
+      aria-label="Create new food"
       variant="extended"
       size="medium"
       color="primary"
-      aria-label="Add food"
       sx={{
         position: "fixed",
         bottom: { xs: 16, md: 24 },
@@ -61,8 +61,10 @@ export function AddFromExistingFood({ friend }: AddFromExistingFoodProps) {
   // TO DO: loading
   if (userFoodEntries.length === 0 && sharedFoodEntries.length === 0) {
     return (
-      <Box>
-        <Typography>Loading...</Typography>
+      <Box component="section">
+        <Typography component="h2" variant="body1">
+          Loading...
+        </Typography>
         {AddFoodFab}
       </Box>
     );
@@ -70,16 +72,17 @@ export function AddFromExistingFood({ friend }: AddFromExistingFoodProps) {
 
   if (userFoodEntries.length === 0) {
     return (
-      <Box>
-        <Typography>No food entries available to add.</Typography>
+      <Box component="section">
+        <Typography component="h2" variant="body1">
+          No food entries available to add.
+        </Typography>
         {AddFoodFab}
       </Box>
     );
   }
 
-
   return (
-    <Box>
+    <Box component="section">
       <Stack spacing={5} sx={{ alignItems: "center", pb: { xs: 10, sm: 12 } }}>
         {sortedUserFoodEntries.map((foodEntry) => (
           <FoodCard

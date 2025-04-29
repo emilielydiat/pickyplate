@@ -51,3 +51,24 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
+
+.skip-link {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.skip-link:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  background: #fff;
+  color: #212121;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  display: inline-block;
+}

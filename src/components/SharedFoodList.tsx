@@ -24,10 +24,10 @@ export function SharedFoodList({ friend }: SharedFoodListProps) {
     <Fab
       component={Link}
       to={`/friend/${friend.id}/shared-food-list/add-existing-food`}
+      aria-label="Add food"
       variant="extended"
       size="medium"
       color="primary"
-      aria-label="Add food"
       sx={{
         position: "fixed",
         bottom: { xs: 16, md: 24 },
@@ -45,8 +45,8 @@ export function SharedFoodList({ friend }: SharedFoodListProps) {
 
   if (sharedFoodEntries.length === 0) {
     return (
-      <Box>
-        <Typography>
+      <Box component="section">
+        <Typography component="h2" variant="body1">
           You haven't added any food entries yet. <br /> Click the button below
           to add one!
         </Typography>

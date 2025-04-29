@@ -19,10 +19,10 @@ export function MyFoodList() {
     <Fab
       component={Link}
       to="/my-food-list/create-food"
+      aria-label="Create new food"
       variant="extended"
       size="medium"
       color="primary"
-      aria-label="Add food"
       sx={{
         position: "fixed",
         bottom: { xs: 16, md: 24 },
@@ -40,8 +40,8 @@ export function MyFoodList() {
 
   if (userFoodEntries.length === 0) {
     return (
-      <Box>
-        <Typography>
+      <Box component="section">
+        <Typography component="h2" variant="body1">
           You haven't added any food entries yet. <br /> Click the button below
           to add one!
         </Typography>
@@ -51,7 +51,7 @@ export function MyFoodList() {
   }
 
   return (
-    <Box>
+    <Box component="section">
       <Stack spacing={5} sx={{ alignItems: "center", pb: { xs: 10, sm: 12 } }}>
         {sortedUserFoodEntries.map((foodEntry) => (
           <FoodCard key={foodEntry.id} foodEntry={foodEntry} />

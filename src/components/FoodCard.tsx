@@ -47,10 +47,12 @@ function renderActionSection(
       if (!isAlreadyAdded) {
         return (
           <Button
-            sx={{ width: "100%" }}
-            variant="outlined"
+            aria-label={`Add ${foodEntry.name} to shared list`}
+            aria-pressed={false}
             startIcon={<Add />}
+            variant="outlined"
             onClick={() => onToggleAdd?.(foodEntry)}
+            sx={{ width: "100%" }}
           >
             Add
           </Button>
@@ -58,15 +60,17 @@ function renderActionSection(
       } else {
         return (
           <Button
+            aria-label={`Remove ${foodEntry.name} from shared list`}
+            aria-pressed={true}
+            startIcon={<Check />}
+            variant="outlined"
+            onClick={() => onToggleAdd?.(foodEntry)}
             sx={{
               width: "100%",
               color: "grey.600",
               borderColor: "grey.400",
               "&hover": { color: "grey.700", borderColor: "grey.500" },
             }}
-            variant="outlined"
-            startIcon={<Check />}
-            onClick={() => onToggleAdd?.(foodEntry)}
           >
             Added
           </Button>
@@ -83,11 +87,21 @@ function renderActionSection(
       return null;
     default:
       return (
-        <Box sx={{ display: "flex", direction: "row", width: "100%", gap: 1 }}>
-          <Button sx={{ flex: 1 }} variant="outlined" startIcon={<Delete />}>
+        <Box sx={{ display: "flex", flexDirection: "row", width: "100%", gap: 1 }}>
+          <Button
+            aria-label={`Delete ${foodEntry.name} from shared list`}
+            startIcon={<Delete />}
+            variant="outlined"
+            sx={{ flex: 1 }}
+          >
             Delete
           </Button>
-          <Button sx={{ flex: 1 }} variant="contained" startIcon={<Edit />}>
+          <Button
+            aria-label={`Edit ${foodEntry.name} in shared list`}
+            startIcon={<Edit />}
+            variant="contained"
+            sx={{ flex: 1 }}
+          >
             Edit
           </Button>
         </Box>
@@ -112,7 +126,7 @@ export function FoodCard({
         }}
       >
         <Stack sx={{ flexDirection: "column", alignItems: "flex-start" }}>
-          <Typography variant="h6Branded">
+          <Typography component="h3" variant="h6Branded">
             {capitaliseWord(foodEntry.name)}
           </Typography>
           <Box sx={{ display: "flex", alignItems: "center", mt: 1, mb: 1 }}>

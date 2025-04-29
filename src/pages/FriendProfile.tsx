@@ -13,8 +13,13 @@ export function FriendProfile() {
     setPageTitle(null);
   }, [setPageTitle]);
 
+  // TO DO: loading
   if (!friend) {
-    return <Typography>Loading friend profile...</Typography>;
+    return (
+      <Typography component="h2" variant="body1">
+        Loading friend profile...
+      </Typography>
+    );
   }
 
   function handleRemoveFriend() {
@@ -23,6 +28,8 @@ export function FriendProfile() {
 
   return (
     <Box
+      component="section"
+      aria-label={`Profile of ${friend.username}`}
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -32,10 +39,12 @@ export function FriendProfile() {
     >
       <Avatar
         src={friend.avatar}
-        alt={friend.username}
+        alt={`Avatar of ${friend.username}`}
         sx={{ width: "112px", height: "112px", mb: 3 }}
       />
-      <Typography variant="h6Branded">{friend.username}</Typography>
+      <Typography component="h2" variant="h6Branded">
+        {friend.username}
+      </Typography>
       <Box
         sx={{
           width: "100%",
@@ -50,8 +59,9 @@ export function FriendProfile() {
           <Button
             component={Link}
             to={`/friend/${friend.id}/meal-preferences`}
-            variant="outlined"
+            aria-label={`Eat together with ${friend.username}`}
             startIcon={<Mood />}
+            variant="outlined"
             sx={{ width: "100%" }}
           >
             Eat together
@@ -59,17 +69,19 @@ export function FriendProfile() {
           <Button
             component={Link}
             to={`/friend/${friend.id}/shared-food-list`}
-            variant="outlined"
+            aria-label={`Edit shared food list with ${friend.username}`}
             startIcon={<Restaurant />}
+            variant="outlined"
             sx={{ width: "100%" }}
           >
             Edit shared food list
           </Button>
         </Stack>
         <Button
-          onClick={handleRemoveFriend}
-          variant="outlined"
+          aria-label="Remove friend"
           startIcon={<Delete />}
+          variant="outlined"
+          onClick={handleRemoveFriend}
           sx={{
             width: "100%",
             mt: 5,

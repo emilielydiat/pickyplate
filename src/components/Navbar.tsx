@@ -27,7 +27,7 @@ export function Navbar() {
   }
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box component="nav" aria-label="Main navigation" sx={{ width: "100%" }}>
       <Box
         sx={{
           height: "64px",
@@ -39,16 +39,21 @@ export function Navbar() {
         <MuiLink
           component={Link}
           to="/"
+          aria-label="Homepage"
           sx={{ display: "flex", alignItems: "center", height: 48 }}
         >
-          <img src={logoSmall} />
+          <img src={logoSmall} alt="PickyPlate logo" />
         </MuiLink>
         <Button
-          variant="text"
-          startIcon={<Avatar src={avatar} alt="John Doe" />}
+          aria-controls={open ? "user-menu" : undefined}
+          aria-label="Open user menu"
+          aria-haspopup="menu"
+          aria-expanded={open}
+          startIcon={<Avatar src={avatar} alt={`${username}'s avatar`} />}
           endIcon={
             <KeyboardArrowDown sx={{ display: { xs: "none", sm: "inline" } }} />
           }
+          variant="text"
           onClick={handleMenuToggle}
           sx={{
             color: "text.primary",

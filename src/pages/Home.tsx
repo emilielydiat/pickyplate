@@ -13,6 +13,8 @@ export function Home() {
 
   return (
     <Box
+      component="section"
+      aria-labelledby="welcome-section"
       sx={{
         minHeight: "calc(100vh - 128px)",
         display: "flex",
@@ -21,7 +23,9 @@ export function Home() {
         justifyContent: "center",
       }}
     >
-      <Typography variant="h6">Welcome, {username}</Typography>
+      <Typography id="welcome-section" component="h1" variant="h6">
+        Welcome, {username}
+      </Typography>
       <Typography variant="body2" sx={{ color: "grey.700", mb: 2 }}>
         Hungry for a decision?
       </Typography>
