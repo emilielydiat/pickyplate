@@ -47,7 +47,7 @@ export const mockUsers: Record<string, User> = {
     avatar: avatar8,
   },
   user_3: {
-    id: "user_10",
+    id: "user_3",
     username: "WendyNg",
     email: "wenweng@abc.def",
     avatar: avatar11,
@@ -71,13 +71,13 @@ export const mockUsers: Record<string, User> = {
     avatar: avatar10,
   },
   user_7: {
-    id: "user_8",
+    id: "user_7",
     username: "Merry321",
     email: "merry321@abc.def",
     avatar: avatar6,
   },
   user_8: {
-    id: "user_7",
+    id: "user_8",
     username: "Milly",
     email: "1mills@abc.def",
     avatar: avatar5,
@@ -89,7 +89,7 @@ export const mockUsers: Record<string, User> = {
     avatar: avatar1,
   },
   user_10: {
-    id: "user_3",
+    id: "user_10",
     username: "PaulK",
     email: "kpaul@abc.def",
     avatar: avatar12,
