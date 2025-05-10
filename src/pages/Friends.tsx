@@ -1,12 +1,14 @@
 import {
   Avatar,
   Box,
+  Fab,
   List,
   ListItem,
   ListItemAvatar,
   ListItemText,
   Typography,
 } from "@mui/material";
+import { Add } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { useFriendsContext } from "../context/FriendsContext";
@@ -52,7 +54,24 @@ export function Friends() {
           ))}
         </List>
       )}
-      {/* TO DO: Add friend FAB */}
+      <Fab
+        component={Link}
+        to={`/friends/add-friend`}
+        aria-label="Add friend"
+        variant="extended"
+        size="medium"
+        color="primary"
+        sx={{
+          position: "fixed",
+          bottom: { xs: 16, md: 24 },
+          right: { xs: 16, md: "calc(50% - 450px + 24px)" },
+          zIndex: 1050,
+          cursor: "pointer",
+        }}
+      >
+        <Add sx={{ mr: 1 }} />
+        Add friend
+      </Fab>
     </Box>
   );
 }

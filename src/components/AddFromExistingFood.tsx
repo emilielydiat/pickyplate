@@ -3,9 +3,11 @@ import { Add } from "@mui/icons-material";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { usePageTitleContext } from "../context/PageTitleContext";
+import { useUserContext } from "../context/UserContext";
 import { useUserFoodListContext } from "../context/UserFoodListContext";
 import { useSharedFoodListContext } from "../context/SharedFoodListContext";
 import { FoodEntry, User } from "../data/mockData";
+import { updateSharedFoodList } from "../api/api";
 import { FoodCard } from "./FoodCard";
 
 interface AddFromExistingFoodProps {
@@ -14,6 +16,8 @@ interface AddFromExistingFoodProps {
 
 export function AddFromExistingFood({ friend }: AddFromExistingFoodProps) {
   const { setPageTitle } = usePageTitleContext();
+  const { id } = useUserContext();
+
   useEffect(() => {
     setPageTitle("Add from existing food");
     return () => setPageTitle(null);
@@ -23,18 +27,27 @@ export function AddFromExistingFood({ friend }: AddFromExistingFoodProps) {
   const { sharedFoodEntries, setSharedFoodEntries } =
     useSharedFoodListContext();
 
-  const handleToggleAdd = (foodEntry: FoodEntry) => {
+  const handleToggleAdd = async (foodEntry: FoodEntry) => {
     const isAdded = sharedFoodEntries.some(
       (entry) => entry.id === foodEntry.id
     );
 
+    let updatedSharedList: FoodEntry[] = [];
+
     if (isAdded) {
-      setSharedFoodEntries((prev) =>
-        prev.filter((entry) => entry.id !== foodEntry.id)
+      updatedSharedList = sharedFoodEntries.filter(
+        (entry) => entry.id !== foodEntry.id
       );
     } else {
-      setSharedFoodEntries((prev) => [...prev, foodEntry]);
+      updatedSharedList = [...sharedFoodEntries, foodEntry];
     }
+
+    setSharedFoodEntries(updatedSharedList);
+    await updateSharedFoodList(
+      id,
+      friend.id,
+      updatedSharedList.map((entry) => entry.id)
+    );
   };
 
   const AddFoodFab = (

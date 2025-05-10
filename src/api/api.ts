@@ -22,7 +22,7 @@ export const getCurrentUser = async (): Promise<User | null> => {
     const userId = "user_1";
     return await getUserDataById(userId);
   } catch (error) {
-    console.error("Error fetching curent user: ", error);
+    console.error("Error fetching current user: ", error);
     return null;
   }
 };
@@ -99,5 +99,22 @@ export const getSharedFoodList = async (
       error
     );
     return [];
+  }
+};
+
+export const updateSharedFoodList = async (
+  userId: string,
+  friendId: string,
+  updatedSharedList: string[]
+) => {
+  try {
+    await delay(500);
+    const key = `${userId}_${friendId}`;
+    mockSharedFoodLists[key] = updatedSharedList;
+  } catch (error) {
+    console.error(
+      `Error updating shared food list between users ${userId} and ${friendId}: `,
+      error
+    );
   }
 };

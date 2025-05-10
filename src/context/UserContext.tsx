@@ -8,6 +8,7 @@ type UserContextType = {
   setUsername: (username: string) => void;
   email: string;
   setEmail: (email: string) => void;
+  id: string;
 };
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -25,10 +26,19 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [avatar, setAvatar] = useState(mockUsers.user_1.avatar);
   const [username, setUsername] = useState(mockUsers.user_1.username);
   const [email, setEmail] = useState(mockUsers.user_1.email);
+  const id = mockUsers.user_1.id;
 
   return (
     <UserContext.Provider
-      value={{ avatar, setAvatar, username, setUsername, email, setEmail }}
+      value={{
+        avatar,
+        setAvatar,
+        username,
+        setUsername,
+        email,
+        setEmail,
+        id,
+      }}
     >
       {children}
     </UserContext.Provider>

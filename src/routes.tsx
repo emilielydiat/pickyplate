@@ -4,6 +4,7 @@ import {
   Profile,
   Friends,
   FriendProfile,
+  AddFriend,
   PickFriend,
   MyFoodListPage,
   SharedFoodListPage,
@@ -29,6 +30,7 @@ export const routes: AppRoute[] = [
   { path: "/profile", element: <Profile /> },
   { path: "/friends", element: <Friends /> },
   { path: "/friend/:friendId", element: <FriendProfile /> },
+  { path: "/friends/add-friend", element: <AddFriend /> },
   { path: "/pick-friend", element: <PickFriend /> },
   { path: "/my-food-list", element: <MyFoodListPage /> },
   {
