@@ -3,8 +3,10 @@ import { Add } from "@mui/icons-material";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { usePageTitleContext } from "../context/PageTitleContext";
+import { useUserContext } from "../context/UserContext";
 import { useSharedFoodListContext } from "../context/SharedFoodListContext";
-import { User } from "../data/mockData";
+import { FoodEntry, User } from "../data/mockData";
+import { updateSharedFoodList } from "../api/api";
 import { FoodCard } from "./FoodCard";
 
 interface SharedFoodListProps {
@@ -12,13 +14,28 @@ interface SharedFoodListProps {
 }
 
 export function SharedFoodList({ friend }: SharedFoodListProps) {
-  const { sharedFoodEntries, sortedSharedFoodEntries } =
-    useSharedFoodListContext();
   const { setPageTitle } = usePageTitleContext();
   useEffect(() => {
     setPageTitle(`Shared food list with ${friend.username}`);
     return () => setPageTitle(null);
   }, [friend, setPageTitle]);
+
+  const { id } = useUserContext();
+  const { sharedFoodEntries, setSharedFoodEntries, sortedSharedFoodEntries } =
+    useSharedFoodListContext();
+
+  const handleDelete = async (foodEntry: FoodEntry) => {
+    const updatedSharedList: FoodEntry[] = sharedFoodEntries.filter(
+      (entry) => entry.id !== foodEntry.id
+    );
+
+    setSharedFoodEntries(updatedSharedList);
+    await updateSharedFoodList(
+      id,
+      friend.id,
+      updatedSharedList.map((entry) => entry.id)
+    );
+  };
 
   const AddFoodFab = (
     <Fab
@@ -59,7 +76,11 @@ export function SharedFoodList({ friend }: SharedFoodListProps) {
     <Box>
       <Stack spacing={5} sx={{ alignItems: "center", pb: { xs: 10, sm: 12 } }}>
         {sortedSharedFoodEntries.map((foodEntry) => (
-          <FoodCard key={foodEntry.id} foodEntry={foodEntry} />
+          <FoodCard
+            key={foodEntry.id}
+            foodEntry={foodEntry}
+            onDelete={handleDelete}
+          />
         ))}
       </Stack>
       {AddFoodFab}

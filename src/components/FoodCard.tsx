@@ -34,13 +34,15 @@ interface FoodCardProps {
   variant?: Variant;
   isAlreadyAdded?: boolean;
   onToggleAdd?: (foodEntry: FoodEntry) => void;
+  onDelete?: (foodEntry: FoodEntry) => void;
 }
 
 function renderActionSection(
   foodEntry: FoodEntry,
   variant: Variant,
   isAlreadyAdded?: boolean,
-  onToggleAdd?: (foodEntry: FoodEntry) => void
+  onToggleAdd?: (foodEntry: FoodEntry) => void,
+  onDelete?: (foodEntry: FoodEntry) => void
 ) {
   switch (variant) {
     case "toAdd": {
@@ -83,15 +85,16 @@ function renderActionSection(
       return <></>;
     case "ratedWon":
       return <></>;
-    case "short":
-      return null;
-    default:
+    case "base":
       return (
-        <Box sx={{ display: "flex", flexDirection: "row", width: "100%", gap: 1 }}>
+        <Box
+          sx={{ display: "flex", flexDirection: "row", width: "100%", gap: 1 }}
+        >
           <Button
             aria-label={`Delete ${foodEntry.name} from shared list`}
             startIcon={<Delete />}
             variant="outlined"
+            onClick={() => onDelete?.(foodEntry)}
             sx={{ flex: 1 }}
           >
             Delete
@@ -106,6 +109,10 @@ function renderActionSection(
           </Button>
         </Box>
       );
+    case "short":
+      return null;
+    default:
+      return null;
   }
 }
 
@@ -114,6 +121,7 @@ export function FoodCard({
   foodEntry,
   isAlreadyAdded,
   onToggleAdd,
+  onDelete,
 }: FoodCardProps) {
   return (
     <Card sx={{ width: { xs: "100%", sm: 360 } }}>
@@ -166,7 +174,13 @@ export function FoodCard({
               <Chip key={cuisine} label={capitaliseWord(cuisine)} />
             ))}
           </Box>
-          {renderActionSection(foodEntry, variant, isAlreadyAdded, onToggleAdd)}
+          {renderActionSection(
+            foodEntry,
+            variant,
+            isAlreadyAdded,
+            onToggleAdd,
+            onDelete
+          )}
         </Stack>
       </CardContent>
     </Card>
