@@ -83,6 +83,7 @@ export function PickFriend() {
                   to={`/eat-together/${id}/${friend.id}/meal-preferences`}
                   aria-label={`Eat together with ${friend.username}`}
                   variant="contained"
+                  sx={{ cursor: "pointer" }}
                 >
                   Eat together
                 </Button>
