@@ -1,11 +1,11 @@
 import {
   Home,
-  MealPreferences,
   Profile,
   Friends,
   FriendProfile,
   AddFriend,
   PickFriend,
+  MealPreferences,
   MyFoodListPage,
   SharedFoodListPage,
   CreateFoodPage,
@@ -32,6 +32,10 @@ export const routes: AppRoute[] = [
   { path: "/friend/:friendId", element: <FriendProfile /> },
   { path: "/friends/add-friend", element: <AddFriend /> },
   { path: "/pick-friend", element: <PickFriend /> },
+  {
+    path: "/eat-together/:initiatorId/:receiverId/meal-preferences",
+    element: <MealPreferences />,
+  },
   { path: "/my-food-list", element: <MyFoodListPage /> },
   {
     path: "/friend/:friendId/shared-food-list",
