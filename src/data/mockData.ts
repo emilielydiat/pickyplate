@@ -432,3 +432,71 @@ export const mockSharedFoodLists: Record<string, string[]> = {
   user_1_user_11: [],
   user_1_user_12: [],
 };
+
+export type SessionStatus =
+  | "invited"
+  | "accepted"
+  | "preferences_set"
+  | "initiator_rated"
+  | "receiver_rated"
+  | "rated"
+  | "cancelled";
+
+export type Rating = {
+  initiatorPick: number;
+  receiverPick: number;
+};
+
+export interface MealPreferenceData {
+  type: "lunch" | "dinner";
+  location: ("dine in" | "delivery/take out" | "home cooked" | "any")[];
+  price:
+    | {
+        min: number;
+        max: number;
+      }
+    | "any";
+  maxTime: "up to 1h" | "up to 2h" | "up to 3h" | "3h +" | "any";
+  cuisine: string[];
+}
+
+export interface MealPreferenceSession {
+  sessionId: string;
+  initiatorId: string;
+  receiverId: string;
+  status: SessionStatus;
+  initiatorPreferences?: MealPreferenceData;
+  receiverPreferences?: MealPreferenceData;
+  initiatorRating?: Rating;
+  receiverRating?: Rating;
+}
+
+export const mockMealPreferenceSessions: Record<string, MealPreferenceSession> =
+  {
+    user_1_user_2: {
+      sessionId: "user_1_user_2",
+      initiatorId: "user_1",
+      receiverId: "user_2",
+      status: "invited",
+      initiatorPreferences: {
+        type: "dinner",
+        location: ["dine in"],
+        price: { min: 20, max: 30 },
+        maxTime: "up to 2h",
+        cuisine: ["japanese", "french"],
+      },
+    },
+    user_1_user_3: {
+      sessionId: "user_1_user_3",
+      initiatorId: "user_1",
+      receiverId: "user_3",
+      status: "invited",
+      initiatorPreferences: {
+        type: "lunch",
+        location: ["dine in"],
+        price: { min: 10, max: 20 },
+        maxTime: "up to 2h",
+        cuisine: ["italian", "french"],
+      },
+    },
+  };
