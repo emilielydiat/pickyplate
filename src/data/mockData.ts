@@ -460,7 +460,7 @@ export interface MealPreferenceData {
   cuisine: string[];
 }
 
-export interface MealPreferenceSession {
+export interface MealSession {
   sessionId: string;
   initiatorId: string;
   receiverId: string;
@@ -471,32 +471,31 @@ export interface MealPreferenceSession {
   receiverRating?: Rating;
 }
 
-export const mockMealPreferenceSessions: Record<string, MealPreferenceSession> =
-  {
-    user_1_user_2: {
-      sessionId: "user_1_user_2",
-      initiatorId: "user_1",
-      receiverId: "user_2",
-      status: "invited",
-      initiatorPreferences: {
-        type: "dinner",
-        location: ["dine in"],
-        price: { min: 20, max: 30 },
-        maxTime: "up to 2h",
-        cuisine: ["japanese", "french"],
-      },
+export const mockMealSessions: Record<string, MealSession> = {
+  user_1_user_2: {
+    sessionId: "user_1_user_2",
+    initiatorId: "user_1",
+    receiverId: "user_2",
+    status: "invited",
+    initiatorPreferences: {
+      type: "dinner",
+      location: ["dine in"],
+      price: { min: 20, max: 30 },
+      maxTime: "up to 2h",
+      cuisine: ["japanese", "french"],
     },
-    user_1_user_3: {
-      sessionId: "user_1_user_3",
-      initiatorId: "user_1",
-      receiverId: "user_3",
-      status: "invited",
-      initiatorPreferences: {
-        type: "lunch",
-        location: ["dine in"],
-        price: { min: 10, max: 20 },
-        maxTime: "up to 2h",
-        cuisine: ["italian", "french"],
-      },
+  },
+  user_1_user_3: {
+    sessionId: "user_1_user_3",
+    initiatorId: "user_1",
+    receiverId: "user_3",
+    status: "invited",
+    initiatorPreferences: {
+      type: "lunch",
+      location: ["dine in"],
+      price: { min: 10, max: 20 },
+      maxTime: "up to 2h",
+      cuisine: ["italian", "french"],
     },
-  };
+  },
+};

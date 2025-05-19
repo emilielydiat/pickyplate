@@ -4,10 +4,12 @@ import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { useFriendData } from "../hooks/useFriendData";
 import { usePageTitleContext } from "../context/PageTitleContext";
+import { useUserContext } from "../context/UserContext";
 
 export function FriendProfile() {
   const { friend } = useFriendData();
   const { setPageTitle } = usePageTitleContext();
+  const { id } = useUserContext();
 
   useEffect(() => {
     setPageTitle(null);
@@ -58,7 +60,7 @@ export function FriendProfile() {
         <Stack spacing={2} sx={{ width: "100%" }}>
           <Button
             component={Link}
-            to={`/friend/${friend.id}/meal-preferences`}
+            to={`/eat-together/${friend.id}/meal-preferences`}
             aria-label={`Eat together with ${friend.username}`}
             startIcon={<Mood />}
             variant="outlined"

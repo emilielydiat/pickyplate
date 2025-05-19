@@ -80,7 +80,7 @@ export function PickFriend() {
                 <ListItemText primary={friend.username} />
                 <Button
                   component={Link}
-                  to={`/eat-together/${id}/${friend.id}/meal-preferences`}
+                  to={`/eat-together/${friend.id}/meal-preferences`}
                   aria-label={`Eat together with ${friend.username}`}
                   variant="contained"
                   sx={{ cursor: "pointer" }}

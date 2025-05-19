@@ -6,7 +6,10 @@ import {
   mockUserFoodLists,
   mockSharedFoodLists,
   FoodEntry,
+  MealSession,
+  mockMealSessions,
 } from "../data/mockData";
+import { getSessionId } from "../utils/sessionUtils";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -106,7 +109,7 @@ export const updateSharedFoodList = async (
   userId: string,
   friendId: string,
   updatedSharedList: string[]
-) => {
+): Promise<void> => {
   try {
     await delay(500);
     const key = `${userId}_${friendId}`;
@@ -114,6 +117,62 @@ export const updateSharedFoodList = async (
   } catch (error) {
     console.error(
       `Error updating shared food list between users ${userId} and ${friendId}: `,
+      error
+    );
+  }
+};
+
+export const getMealSession = async (
+  userId1: string,
+  userId2: string
+): Promise<MealSession | null> => {
+  try {
+    await delay(500);
+    const key = getSessionId(userId1, userId2);
+    const session = mockMealSessions[key];
+    if (!session) {
+      console.log(`No session found for ${key}`);
+      return null;
+    }
+    return session;
+  } catch (error) {
+    console.error(
+      `Error fetching session between users ${userId1} and ${userId2}: `,
+      error
+    );
+    return null;
+  }
+};
+
+export const updateMealSession = async (
+  initiatorId: string,
+  receiverId: string,
+  updates: Partial<MealSession>
+): Promise<void> => {
+  try {
+    await delay(500);
+    const key = getSessionId(initiatorId, receiverId);
+    const session = mockMealSessions[key];
+    if (session) {
+      mockMealSessions[key] = {
+        ...session,
+        ...updates,
+      };
+      console.log(`Session updated for ${key}`);
+    } else {
+      mockMealSessions[key] = {
+        sessionId: key,
+        initiatorId: initiatorId,
+        receiverId: receiverId,
+        status: "invited",
+        ...updates,
+      };
+      console.log(`Session created for ${key}`);
+      return;
+    }
+  } catch (error) {
+    console.error(
+      `Error creating/updating session between users ${initiatorId} and ${receiverId}: `,
       error
     );
   }
