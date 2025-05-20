@@ -4,12 +4,10 @@ import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { useFriendData } from "../hooks/useFriendData";
 import { usePageTitleContext } from "../context/PageTitleContext";
-import { useUserContext } from "../context/UserContext";
 
 export function FriendProfile() {
   const { friend } = useFriendData();
   const { setPageTitle } = usePageTitleContext();
-  const { id } = useUserContext();
 
   useEffect(() => {
     setPageTitle(null);

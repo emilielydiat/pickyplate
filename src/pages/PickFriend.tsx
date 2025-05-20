@@ -14,7 +14,6 @@ import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { User } from "../data/mockData";
 import { usePageTitleContext } from "../context/PageTitleContext";
-import { useUserContext } from "../context/UserContext";
 import { useFriendsContext } from "../context/FriendsContext";
 
 export function PickFriend() {
@@ -24,7 +23,6 @@ export function PickFriend() {
     return () => setPageTitle(null);
   }, [setPageTitle]);
 
-  const { id } = useUserContext();
   const { friends } = useFriendsContext();
   const [searchInput, setSearchInput] = useState<string>("");
 
