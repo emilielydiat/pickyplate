@@ -5,6 +5,7 @@ export { FriendProfile } from "./FriendProfile";
 export { AddFriend } from "./AddFriend";
 export { PickFriend } from "./PickFriend";
 export { MealPreferencesPage } from "./MealPreferencesPage";
+export { MealPreferencesConfirm } from "./MealPreferencesConfirm";
 export { MyFoodListPage } from "./MyFoodListPage";
 export { SharedFoodListPage } from "./SharedFoodListPage";
 export { CreateFoodPage } from "./CreateFoodPage";

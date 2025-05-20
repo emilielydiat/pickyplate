@@ -6,6 +6,7 @@ import {
   AddFriend,
   PickFriend,
   MealPreferencesPage,
+  MealPreferencesConfirm,
   MyFoodListPage,
   SharedFoodListPage,
   CreateFoodPage,
@@ -31,6 +32,10 @@ export const routes: AppRoute[] = [
   {
     path: "/eat-together/:friendId/meal-preferences",
     element: <MealPreferencesPage />,
+  },
+  {
+    path: "/eat-together/:friendId/meal-preferences/confirm",
+    element: <MealPreferencesConfirm />,
   },
   { path: "/my-food-list", element: <MyFoodListPage /> },
   {
