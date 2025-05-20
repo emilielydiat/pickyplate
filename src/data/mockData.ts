@@ -447,7 +447,7 @@ export type Rating = {
   receiverPick: number;
 };
 
-export interface MealPreferenceData {
+export interface MealPreferencesData {
   type: "lunch" | "dinner";
   location: ("dine in" | "delivery/take out" | "home cooked" | "any")[];
   price:
@@ -465,8 +465,8 @@ export interface MealSession {
   initiatorId: string;
   receiverId: string;
   status: SessionStatus;
-  initiatorPreferences?: MealPreferenceData;
-  receiverPreferences?: MealPreferenceData;
+  initiatorPreferences?: MealPreferencesData;
+  receiverPreferences?: MealPreferencesData;
   initiatorRating?: Rating;
   receiverRating?: Rating;
 }
