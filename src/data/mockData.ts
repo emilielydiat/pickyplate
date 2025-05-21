@@ -137,16 +137,67 @@ export const mockFriends: Friends = {
   user_12: ["user_9", "user_10", "user_11"],
 };
 
+// Meal Preferences Option Values
+export const mealTypeOptions = ["lunch", "dinner"] as const;
+export type MealType = "lunch" | "dinner";
+
+export const mealLocationOptions = [
+  "dine in",
+  "delivery/take out",
+  "home cooked",
+] as const;
+export const mealLocationOptionsWithAny = [
+  ...mealLocationOptions,
+  "any",
+] as const;
+export type MealLocation = (typeof mealLocationOptions)[number];
+export type MealLocationWithAny = MealLocation | "any";
+
+export const mealPriceOptions = [
+  { min: 1, max: 10 },
+  { min: 10, max: 20 },
+  { min: 20, max: 30 },
+  { min: 30, max: 40 },
+  { min: 40, max: 50 },
+  { min: 50, max: 60 },
+  { min: 60, max: 70 },
+  { min: 70, max: Infinity },
+] as const;
+export const mealPriceOptionsWithAny = [...mealPriceOptions, "any"] as const;
+export type MealPrice = {
+  min: number;
+  max: number;
+};
+export type MealPriceWithAny = MealPrice | "any";
+
+export const mealMaxTimeOptions = [
+  "up to 1h",
+  "up to 2h",
+  "up to 3h",
+  "3h +",
+] as const;
+export const mealMaxTimeOptionsWithAny = [
+  ...mealMaxTimeOptions,
+  "any",
+] as const;
+export type MealMaxTime = (typeof mealMaxTimeOptions)[number];
+export type MealMaxTimeWithAny = MealMaxTime | "any";
+
+export interface MealPreferencesData {
+  type: MealType;
+  location: MealLocationWithAny[];
+  price: MealPriceWithAny;
+  maxTime: MealMaxTimeWithAny;
+  cuisine: string[];
+}
+
 export interface FoodEntry {
   id: string;
   name: string;
-  type: ("lunch" | "dinner")[];
-  location: ("dine in" | "delivery/take out" | "home cooked")[];
-  price: {
-    min: number;
-    max: number;
-  };
-  maxTime: "up to 1h" | "up to 2h" | "up to 3h" | "3h +";
+  type: MealType[];
+  location: MealLocation[];
+  price: MealPrice;
+  maxTime: MealMaxTime;
   cuisine: string[];
   createdBy: string; // user id
 }
@@ -446,19 +497,6 @@ export type Rating = {
   initiatorPick: number;
   receiverPick: number;
 };
-
-export interface MealPreferencesData {
-  type: "lunch" | "dinner";
-  location: ("dine in" | "delivery/take out" | "home cooked" | "any")[];
-  price:
-    | {
-        min: number;
-        max: number;
-      }
-    | "any";
-  maxTime: "up to 1h" | "up to 2h" | "up to 3h" | "3h +" | "any";
-  cuisine: string[];
-}
 
 export interface MealSession {
   sessionId: string;
