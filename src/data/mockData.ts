@@ -154,14 +154,14 @@ export type MealLocation = (typeof mealLocationOptions)[number];
 export type MealLocationWithAny = MealLocation | "any";
 
 export const mealPriceOptions = [
-  { min: 1, max: 10 },
-  { min: 10, max: 20 },
-  { min: 20, max: 30 },
-  { min: 30, max: 40 },
-  { min: 40, max: 50 },
-  { min: 50, max: 60 },
-  { min: 60, max: 70 },
-  { min: 70, max: Infinity },
+  { key: "1-10", label: "£1-10", min: 1, max: 10 },
+  { key: "10-20", label: "£10-20", min: 10, max: 20 },
+  { key: "20-30", label: "£20-30", min: 20, max: 30 },
+  { key: "30-40", label: "£30-40", min: 30, max: 40 },
+  { key: "40-50", label: "£40-50", min: 40, max: 50 },
+  { key: "50-60", label: "£50-60", min: 50, max: 60 },
+  { key: "60-70", label: "£60-70", min: 60, max: 70 },
+  { key: "70+", label: "£70+", min: 70, max: Infinity },
 ] as const;
 export const mealPriceOptionsWithAny = [...mealPriceOptions, "any"] as const;
 export type MealPrice = {

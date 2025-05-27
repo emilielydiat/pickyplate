@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import { MealSessionProvider } from "../context/MealPreferencesContext";
+import { MealPreferencesDraftProvider } from "../context/MealPreferencesDraftContext";
 import { useFriendData } from "../hooks/useFriendData";
 import { MealPreferences } from "../components/MealPreferences";
 
@@ -9,8 +9,8 @@ export function MealPreferencesPage() {
   if (!friend) return <Typography>Loading...</Typography>;
 
   return (
-    <MealSessionProvider friendId={friend.id}>
+    <MealPreferencesDraftProvider>
       <MealPreferences friend={friend} />
-    </MealSessionProvider>
+    </MealPreferencesDraftProvider>
   );
 }

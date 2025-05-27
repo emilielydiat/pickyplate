@@ -2,8 +2,8 @@ import { createContext, useContext, useState, ReactNode } from "react";
 import { MealPreferencesData } from "../data/mockData";
 
 type MealPreferencesDraftContextType = {
-  draft: MealPreferencesData | null;
-  setDraft: React.Dispatch<React.SetStateAction<MealPreferencesData | null>>;
+  draft: Partial<MealPreferencesData>;
+  setDraft: React.Dispatch<React.SetStateAction<Partial<MealPreferencesData>>>;
 };
 
 const MealPreferencesDraftContext =
@@ -25,7 +25,7 @@ export function MealPreferencesDraftProvider({
 }: {
   children: ReactNode;
 }) {
-  const [draft, setDraft] = useState<MealPreferencesData | null>(null);
+  const [draft, setDraft] = useState<Partial<MealPreferencesData>>({});
 
   return (
     <MealPreferencesDraftContext.Provider value={{ draft, setDraft }}>
