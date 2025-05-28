@@ -23,7 +23,7 @@ export function Home() {
         justifyContent: "center",
       }}
     >
-      <Typography id="welcome-section" component="h1" variant="h6">
+      <Typography id="welcome-section" component="h1" variant="h6Branded">
         Welcome, {username}
       </Typography>
       <Typography variant="body2" sx={{ color: "grey.700", mb: 2 }}>
