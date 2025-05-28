@@ -73,8 +73,6 @@ export function MealPreferences({ friend }: MealPreferencesProps) {
     !!draft?.price &&
     !!draft?.maxTime;
 
-  console.log("draft: ", draft);
-
   return (
     <Box>
       <Stack sx={{ width: "100%", flexDirection: "column" }}>
@@ -84,20 +82,20 @@ export function MealPreferences({ friend }: MealPreferencesProps) {
             display: "flex",
             flexDirection: "column",
             alignItems: "flex-start",
-            mt: 4,
           }}
         >
           {/* Meal type */}
           <Typography variant="body1">When are you eating?</Typography>
-          <Stack direction="row" spacing={1} mt={1}>
+          <Stack direction="row" mt={1} flexWrap="wrap">
             {mealTypeOptions.map((option) => (
               <Chip
                 key={option}
                 label={option}
+                aria-pressed={isSelected("type", option)}
                 clickable
                 color={isSelected("type", option) ? "primary" : "default"}
                 onClick={() => updateDraft("type", option)}
-                aria-pressed={isSelected("type", option)}
+                sx={{ m: 0.5 }}
               />
             ))}
           </Stack>
@@ -113,15 +111,16 @@ export function MealPreferences({ friend }: MealPreferencesProps) {
           }}
         >
           <Typography variant="body1">Where are you eating?</Typography>
-          <Stack direction="row" spacing={1} mt={1}>
+          <Stack direction="row" mt={1} flexWrap="wrap">
             {mealLocationOptionsWithAny.map((option) => (
               <Chip
                 key={option}
                 label={option}
+                aria-pressed={isSelected("location", option)}
                 clickable
                 color={isSelected("location", option) ? "primary" : "default"}
                 onClick={() => toggleMultiSelect("location", option)}
-                aria-pressed={isSelected("location", option)}
+                sx={{ m: 0.5 }}
               />
             ))}
           </Stack>
@@ -137,16 +136,17 @@ export function MealPreferences({ friend }: MealPreferencesProps) {
           }}
         >
           <Typography variant="body1">How much per person?</Typography>
-          <Stack direction="row" spacing={1} mt={1}>
+          <Stack direction="row" mt={1} flexWrap="wrap">
             {mealPriceOptionsWithAny.map((option) => {
               return (
                 <Chip
                   key={option === "any" ? "any" : option.key}
                   label={option === "any" ? "any" : option.label}
+                  aria-pressed={isSelected("price", option)}
                   clickable
                   color={isSelected("price", option) ? "primary" : "default"}
                   onClick={() => updateDraft("price", option)}
-                  aria-pressed={isSelected("price", option)}
+                  sx={{ m: 0.5 }}
                 />
               );
             })}
@@ -163,15 +163,16 @@ export function MealPreferences({ friend }: MealPreferencesProps) {
           }}
         >
           <Typography variant="body1">How much time can you afford?</Typography>
-          <Stack direction="row" spacing={1} mt={1}>
+          <Stack direction="row" mt={1} flexWrap="wrap">
             {mealMaxTimeOptionsWithAny.map((option) => (
               <Chip
                 key={option}
                 label={option}
+                aria-pressed={isSelected("maxTime", option)}
                 clickable
                 color={isSelected("maxTime", option) ? "primary" : "default"}
                 onClick={() => updateDraft("maxTime", option)}
-                aria-pressed={isSelected("maxTime", option)}
+                sx={{ m: 0.5 }}
               />
             ))}
           </Stack>
