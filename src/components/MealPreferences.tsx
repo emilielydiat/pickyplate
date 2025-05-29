@@ -99,7 +99,7 @@ export function MealPreferences({ friend }: MealPreferencesProps) {
           }}
         >
           {/* Meal type */}
-          <Typography variant="body1">When are you eating?</Typography>
+          <Typography variant="body1">What meal are you eating?</Typography>
           <Stack direction="row" mt={1} flexWrap="wrap">
             {mealTypeOptions.map((option) => (
               <Chip
@@ -125,6 +125,7 @@ export function MealPreferences({ friend }: MealPreferencesProps) {
           }}
         >
           <Typography variant="body1">Where are you eating?</Typography>
+          <Typography variant="subtitle2">(Select all that apply)</Typography>
           <Stack direction="row" mt={1} flexWrap="wrap">
             {mealLocationOptionsWithAny.map((option) => (
               <Chip
@@ -150,6 +151,9 @@ export function MealPreferences({ friend }: MealPreferencesProps) {
           }}
         >
           <Typography variant="body1">How much per person?</Typography>
+          <Typography variant="subtitle2">
+            Including beverage, dessert, etc.
+          </Typography>
           <Stack direction="row" mt={1} flexWrap="wrap">
             {mealPriceOptionsWithAny.map((option) => {
               return (
@@ -177,6 +181,9 @@ export function MealPreferences({ friend }: MealPreferencesProps) {
           }}
         >
           <Typography variant="body1">How much time can you afford?</Typography>
+          <Typography variant="subtitle2">
+            Including travel, preparation and dining time
+          </Typography>
           <Stack direction="row" mt={1} flexWrap="wrap">
             {mealMaxTimeOptionsWithAny.map((option) => (
               <Chip
@@ -202,6 +209,7 @@ export function MealPreferences({ friend }: MealPreferencesProps) {
           }}
         >
           <Typography variant="body1">What cuisine?</Typography>
+          <Typography variant="subtitle2">(Select all that apply)</Typography>
           <Stack direction="row" mt={1} flexWrap="wrap">
             {availableCuisinesWithAny.map((option) => (
               <Chip

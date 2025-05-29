@@ -27,6 +27,10 @@ const theme = createTheme({
       lineHeight: 1.4,
       letterSpacing: 0.5,
     },
+    subtitle2: {
+      fontSize: "12px",
+      color: "#616161",
+    },
   },
   palette: {
     mode: "light",
