@@ -7,9 +7,10 @@ import {
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { usePageTitleContext } from "../context/PageTitleContext";
 import { useMealPreferencesDraftContext } from "../context/MealPreferencesDraftContext";
+import { useSharedFoodListContext } from "../context/SharedFoodListContext";
 import {
   mealTypeOptions,
   mealLocationOptionsWithAny,
@@ -31,6 +32,7 @@ export function MealPreferences({ friend }: MealPreferencesProps) {
   }, [friend, setPageTitle]);
 
   const { draft, setDraft } = useMealPreferencesDraftContext();
+  const { sharedFoodEntries } = useSharedFoodListContext();
 
   const updateDraft = (field: keyof MealPreferencesData, value: any) => {
     setDraft((prev) => ({
@@ -40,7 +42,7 @@ export function MealPreferences({ friend }: MealPreferencesProps) {
   };
 
   const toggleMultiSelect = (
-    field: keyof Pick<MealPreferencesData, "location">,
+    field: keyof Pick<MealPreferencesData, "location" | "cuisine">,
     value: string
   ) => {
     if (!draft) return;
@@ -66,12 +68,24 @@ export function MealPreferences({ friend }: MealPreferencesProps) {
       : selected === value;
   };
 
+  const availableCuisines = useMemo(() => {
+    return Array.from(
+      new Set(sharedFoodEntries.flatMap((entry) => entry.cuisine))
+    ).sort((a, b) => a.localeCompare(b));
+  }, [sharedFoodEntries]);
+
+  const availableCuisinesWithAny = [...availableCuisines, "any"];
+
   const isFormComplete =
     !!draft?.type &&
     Array.isArray(draft.location) &&
     draft.location.length > 0 &&
     !!draft?.price &&
-    !!draft?.maxTime;
+    !!draft?.maxTime &&
+    Array.isArray(draft.cuisine) &&
+    draft.cuisine.length > 0;
+
+  console.log("draft: ", draft);
 
   return (
     <Box>
@@ -172,6 +186,31 @@ export function MealPreferences({ friend }: MealPreferencesProps) {
                 clickable
                 color={isSelected("maxTime", option) ? "primary" : "default"}
                 onClick={() => updateDraft("maxTime", option)}
+                sx={{ m: 0.5 }}
+              />
+            ))}
+          </Stack>
+        </FormControl>
+        {/* Cuisines */}
+        <FormControl
+          component="fieldset"
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+            mt: 4,
+          }}
+        >
+          <Typography variant="body1">What cuisine?</Typography>
+          <Stack direction="row" mt={1} flexWrap="wrap">
+            {availableCuisinesWithAny.map((option) => (
+              <Chip
+                key={option}
+                label={option}
+                aria-pressed={isSelected("cuisine", option)}
+                clickable
+                color={isSelected("cuisine", option) ? "primary" : "default"}
+                onClick={() => toggleMultiSelect("cuisine", option)}
                 sx={{ m: 0.5 }}
               />
             ))}
