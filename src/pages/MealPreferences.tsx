@@ -17,15 +17,13 @@ import {
   mealPriceOptionsWithAny,
   mealMaxTimeOptionsWithAny,
   MealPreferencesData,
-  User,
 } from "../data/mockData";
+import { useFriend } from "./MealPreferencesFlowWrapper";
 
-interface MealPreferencesProps {
-  friend: User;
-}
-
-export function MealPreferences({ friend }: MealPreferencesProps) {
+export function MealPreferences() {
+  const { friend } = useFriend();
   const { setPageTitle } = usePageTitleContext();
+
   useEffect(() => {
     setPageTitle(`Meal preferences with ${friend.username}`);
     return () => setPageTitle(null);
@@ -88,7 +86,7 @@ export function MealPreferences({ friend }: MealPreferencesProps) {
   console.log("draft: ", draft);
 
   return (
-    <Box>
+    <Box component="section">
       <Stack sx={{ width: "100%", flexDirection: "column" }}>
         <FormControl
           component="fieldset"
@@ -233,6 +231,7 @@ export function MealPreferences({ friend }: MealPreferencesProps) {
           variant="contained"
           color="primary"
           disabled={!isFormComplete}
+          sx={{ mb: 2 }}
         >
           Next
         </Button>

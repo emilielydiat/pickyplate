@@ -1,10 +1,15 @@
 import { Typography } from "@mui/material";
+import { Outlet, useOutletContext } from "react-router-dom";
 import { MealPreferencesDraftProvider } from "../context/MealPreferencesDraftContext";
 import { SharedFoodListProvider } from "../context/SharedFoodListContext";
 import { useFriendData } from "../hooks/useFriendData";
-import { MealPreferences } from "../components/MealPreferences";
+import { User } from "../data/mockData";
 
-export function MealPreferencesPage() {
+type ContextType = {
+  friend: User;
+};
+
+export function MealPreferencesFlowWrapper() {
   const { friend } = useFriendData();
 
   if (!friend) return <Typography>Loading...</Typography>;
@@ -12,8 +17,12 @@ export function MealPreferencesPage() {
   return (
     <SharedFoodListProvider friendId={friend.id}>
       <MealPreferencesDraftProvider>
-        <MealPreferences friend={friend} />
+        <Outlet context={{ friend }} />
       </MealPreferencesDraftProvider>
     </SharedFoodListProvider>
   );
+}
+
+export function useFriend() {
+  return useOutletContext<ContextType>();
 }
