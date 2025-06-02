@@ -77,7 +77,7 @@ export function MealPreferencesConfirm() {
               <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
                 <AccountBalanceWalletOutlined sx={{ mr: 1 }} />
                 <Typography variant="body2" color="grey.700">
-                  £{draft.price} per person
+                  {draft.price.label} per person
                 </Typography>
               </Box>
             )}

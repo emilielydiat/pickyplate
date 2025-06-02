@@ -163,12 +163,17 @@ export const mealPriceOptions = [
   { key: "60-70", label: "£60-70", min: 60, max: 70 },
   { key: "70+", label: "£70+", min: 70, max: Infinity },
 ] as const;
-export const mealPriceOptionsWithAny = [...mealPriceOptions, "any"] as const;
+export const mealPriceOptionsWithAny = [
+  ...mealPriceOptions,
+  { key: "any", label: "Any", min: 0, max: Infinity },
+] as const;
 export type MealPrice = {
+  key: string;
+  label: string;
   min: number;
   max: number;
 };
-export type MealPriceWithAny = MealPrice | "any";
+export type MealPriceWithAny = MealPrice;
 
 export const mealMaxTimeOptions = [
   "up to 1h",
