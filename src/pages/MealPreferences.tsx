@@ -19,6 +19,7 @@ import {
   MealPreferencesData,
 } from "../data/mockData";
 import { useFriend } from "./MealPreferencesFlowWrapper";
+import { capitaliseWord } from "../utils/stringUtils";
 
 export function MealPreferences() {
   const { friend } = useFriend();
@@ -83,8 +84,6 @@ export function MealPreferences() {
     Array.isArray(draft.cuisine) &&
     draft.cuisine.length > 0;
 
-  console.log("draft: ", draft);
-
   return (
     <Box component="section">
       <Stack sx={{ width: "100%", flexDirection: "column" }}>
@@ -102,7 +101,7 @@ export function MealPreferences() {
             {mealTypeOptions.map((option) => (
               <Chip
                 key={option}
-                label={option}
+                label={capitaliseWord(option)}
                 aria-pressed={isSelected("type", option)}
                 clickable
                 color={isSelected("type", option) ? "primary" : "default"}
@@ -128,7 +127,7 @@ export function MealPreferences() {
             {mealLocationOptionsWithAny.map((option) => (
               <Chip
                 key={option}
-                label={option}
+                label={capitaliseWord(option)}
                 aria-pressed={isSelected("location", option)}
                 clickable
                 color={isSelected("location", option) ? "primary" : "default"}
@@ -186,7 +185,7 @@ export function MealPreferences() {
             {mealMaxTimeOptionsWithAny.map((option) => (
               <Chip
                 key={option}
-                label={option}
+                label={capitaliseWord(option)}
                 aria-pressed={isSelected("maxTime", option)}
                 clickable
                 color={isSelected("maxTime", option) ? "primary" : "default"}
@@ -212,7 +211,7 @@ export function MealPreferences() {
             {availableCuisinesWithAny.map((option) => (
               <Chip
                 key={option}
-                label={option}
+                label={capitaliseWord(option)}
                 aria-pressed={isSelected("cuisine", option)}
                 clickable
                 color={isSelected("cuisine", option) ? "primary" : "default"}
