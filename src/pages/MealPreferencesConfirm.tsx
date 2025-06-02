@@ -57,7 +57,11 @@ export function MealPreferencesConfirm() {
             </Typography>
             {draft.type && (
               <Box sx={{ display: "flex", alignItems: "center", mt: 1, mb: 1 }}>
-                <DiningOutlined sx={{ mr: 1 }} />
+                <DiningOutlined
+                  aria-hidden="true"
+                  focusable="false"
+                  sx={{ mr: 1 }}
+                />
                 <Typography variant="body2" color="grey.700">
                   {capitaliseWord(draft.type)}
                 </Typography>
@@ -66,7 +70,11 @@ export function MealPreferencesConfirm() {
 
             {draft.location && (
               <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                <PlaceOutlined sx={{ mr: 1 }} />
+                <PlaceOutlined
+                  aria-hidden="true"
+                  focusable="false"
+                  sx={{ mr: 1 }}
+                />
                 <Typography variant="body2" color="grey.700">
                   {draft.location.map(capitaliseWord).join(" | ")}
                 </Typography>
@@ -75,7 +83,11 @@ export function MealPreferencesConfirm() {
 
             {draft.price && (
               <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                <AccountBalanceWalletOutlined sx={{ mr: 1 }} />
+                <AccountBalanceWalletOutlined
+                  aria-hidden="true"
+                  focusable="false"
+                  sx={{ mr: 1 }}
+                />
                 <Typography variant="body2" color="grey.700">
                   {draft.price.label} per person
                 </Typography>
@@ -84,7 +96,11 @@ export function MealPreferencesConfirm() {
 
             {draft.maxTime && (
               <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                <AccessTime sx={{ mr: 1 }} />
+                <AccessTime
+                  aria-hidden="true"
+                  focusable="false"
+                  sx={{ mr: 1 }}
+                />
                 <Typography variant="body2" color="grey.700">
                   {capitaliseWord(draft.maxTime)}
                 </Typography>

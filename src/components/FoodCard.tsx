@@ -138,25 +138,37 @@ export function FoodCard({
             {capitaliseWord(foodEntry.name)}
           </Typography>
           <Box sx={{ display: "flex", alignItems: "center", mt: 1, mb: 1 }}>
-            <DiningOutlined sx={{ mr: 1 }} />
+            <DiningOutlined
+              aria-hidden="true"
+              focusable="false"
+              sx={{ mr: 1 }}
+            />
             <Typography variant="body2" color="grey.700">
               {foodEntry.type.map(capitaliseWord).join(" | ")}
             </Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-            <PlaceOutlined sx={{ mr: 1 }} />
+            <PlaceOutlined
+              aria-hidden="true"
+              focusable="false"
+              sx={{ mr: 1 }}
+            />
             <Typography variant="body2" color="grey.700">
               {foodEntry.location.map(capitaliseWord).join(" | ")}
             </Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-            <AccountBalanceWalletOutlined sx={{ mr: 1 }} />
+            <AccountBalanceWalletOutlined
+              aria-hidden="true"
+              focusable="false"
+              sx={{ mr: 1 }}
+            />
             <Typography variant="body2" color="grey.700">
               £{foodEntry.price.min}-{foodEntry.price.max} per person
             </Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-            <AccessTime sx={{ mr: 1 }} />
+            <AccessTime aria-hidden="true" focusable="false" sx={{ mr: 1 }} />
             <Typography variant="body2" color="grey.700">
               {capitaliseWord(foodEntry.maxTime)}
             </Typography>

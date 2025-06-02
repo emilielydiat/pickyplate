@@ -96,8 +96,16 @@ export function MealPreferences() {
           }}
         >
           {/* Meal type */}
-          <Typography variant="body1">What meal are you eating?</Typography>
-          <Stack direction="row" mt={1} flexWrap="wrap">
+          <Typography component="legend" variant="body1">
+            What meal are you eating?
+          </Typography>
+          <Stack
+            role="group"
+            aria-label="Meal type"
+            direction="row"
+            mt={1}
+            flexWrap="wrap"
+          >
             {mealTypeOptions.map((option) => (
               <Chip
                 key={option}
@@ -121,9 +129,17 @@ export function MealPreferences() {
             mt: 4,
           }}
         >
-          <Typography variant="body1">Where are you eating?</Typography>
+          <Typography component="legend" variant="body1">
+            Where are you eating?
+          </Typography>
           <Typography variant="subtitle2">(Select all that apply)</Typography>
-          <Stack direction="row" mt={1} flexWrap="wrap">
+          <Stack
+            role="group"
+            aria-label="Meal location"
+            direction="row"
+            mt={1}
+            flexWrap="wrap"
+          >
             {mealLocationOptionsWithAny.map((option) => (
               <Chip
                 key={option}
@@ -147,11 +163,19 @@ export function MealPreferences() {
             mt: 4,
           }}
         >
-          <Typography variant="body1">How much per person?</Typography>
+          <Typography component="legend" variant="body1">
+            How much per person?
+          </Typography>
           <Typography variant="subtitle2">
             Including beverage, dessert, etc.
           </Typography>
-          <Stack direction="row" mt={1} flexWrap="wrap">
+          <Stack
+            role="group"
+            aria-label="Meal price per person"
+            direction="row"
+            mt={1}
+            flexWrap="wrap"
+          >
             {mealPriceOptionsWithAny.map((option) => {
               return (
                 <Chip
@@ -177,11 +201,19 @@ export function MealPreferences() {
             mt: 4,
           }}
         >
-          <Typography variant="body1">How much time can you afford?</Typography>
+          <Typography component="legend" variant="body1">
+            How much time can you afford?
+          </Typography>
           <Typography variant="subtitle2">
             Including travel, preparation and dining time
           </Typography>
-          <Stack direction="row" mt={1} flexWrap="wrap">
+          <Stack
+            role="group"
+            aria-label="Max amount of time you can afford for your meal"
+            direction="row"
+            mt={1}
+            flexWrap="wrap"
+          >
             {mealMaxTimeOptionsWithAny.map((option) => (
               <Chip
                 key={option}
@@ -205,9 +237,17 @@ export function MealPreferences() {
             mt: 4,
           }}
         >
-          <Typography variant="body1">What cuisine?</Typography>
+          <Typography component="legend" variant="body1">
+            What cuisine?
+          </Typography>
           <Typography variant="subtitle2">(Select all that apply)</Typography>
-          <Stack direction="row" mt={1} flexWrap="wrap">
+          <Stack
+            role="group"
+            aria-label="Cuisines you're interested in for your meal"
+            direction="row"
+            mt={1}
+            flexWrap="wrap"
+          >
             {availableCuisinesWithAny.map((option) => (
               <Chip
                 key={option}
