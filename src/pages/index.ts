@@ -16,3 +16,4 @@ export { AddFromExistingFoodPage } from "./AddFromExistingFoodPage";
 export { Requests } from "./Requests";
 export { Settings } from "./Settings";
 export { EditAvatar } from "./EditAvatar";
+export { Signup } from "./Signup";

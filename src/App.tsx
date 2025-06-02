@@ -26,6 +26,7 @@ import {
   Requests,
   Settings,
   SharedFoodListPage,
+  Signup,
 } from "./pages";
 import { SupabaseProvider } from "./context/SupabaseContext.tsx";
 
@@ -41,6 +42,7 @@ function App() {
                 <Routes>
                   <Route element={<Layout />}>
                     <Route index element={<Home />} />
+                    <Route path="signup" element={<Signup />} />
                     <Route path="profile" element={<Profile />} />
                     <Route path="friends" element={<Friends />} />
                     <Route
