@@ -156,8 +156,8 @@ export function MealPreferences() {
             {mealPriceOptionsWithAny.map((option) => {
               return (
                 <Chip
-                  key={option === "any" ? "any" : option.key}
-                  label={option === "any" ? "any" : option.label}
+                  key={option.key}
+                  label={option.label}
                   aria-pressed={isSelected("price", option)}
                   clickable
                   color={isSelected("price", option) ? "primary" : "default"}
