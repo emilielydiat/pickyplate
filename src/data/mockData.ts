@@ -168,12 +168,15 @@ export const mealPriceOptionsWithAny = [
   { key: "any", label: "Any", min: 0, max: Infinity },
 ] as const;
 export type MealPrice = {
-  key: string;
-  label: string;
   min: number;
   max: number;
+  key: string;
+  label: string;
 };
 export type MealPriceWithAny = MealPrice;
+export const mealPriceLookup: Record<string, MealPrice> = Object.fromEntries(
+  mealPriceOptions.map((option) => [option.key, option])
+);
 
 export const mealMaxTimeOptions = [
   "up to 1h",
@@ -191,7 +194,7 @@ export type MealMaxTimeWithAny = MealMaxTime | "any";
 export interface MealPreferencesData {
   type: MealType;
   location: MealLocationWithAny[];
-  price: MealPriceWithAny;
+  price: MealPrice;
   maxTime: MealMaxTimeWithAny;
   cuisine: string[];
 }
@@ -213,7 +216,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     name: "Akiko Sushis",
     type: ["dinner"],
     location: ["dine in", "delivery/take out"],
-    price: { min: 30, max: 40 },
+    price: mealPriceLookup["30-40"],
     maxTime: "up to 2h",
     cuisine: ["japanese"],
     createdBy: "user_1",
@@ -223,7 +226,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     name: "El's Buffet",
     type: ["lunch", "dinner"],
     location: ["delivery/take out"],
-    price: { min: 1, max: 10 },
+    price: mealPriceLookup["1-10"],
     maxTime: "3h +",
     cuisine: [
       "british",
@@ -240,7 +243,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     name: "Pasta Mama",
     type: ["lunch", "dinner"],
     location: ["dine in", "delivery/take out"],
-    price: { min: 1, max: 10 },
+    price: mealPriceLookup["1-10"],
     maxTime: "up to 1h",
     cuisine: ["italian"],
     createdBy: "user_1",
@@ -250,7 +253,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     name: "Cafe Brunchz",
     type: ["lunch"],
     location: ["dine in"],
-    price: { min: 10, max: 20 },
+    price: mealPriceLookup["10-20"],
     maxTime: "up to 2h",
     cuisine: ["british", "french", "coffee shop"],
     createdBy: "user_1",
@@ -260,7 +263,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     name: "Fried Rice",
     type: ["lunch", "dinner"],
     location: ["home cooked"],
-    price: { min: 1, max: 10 },
+    price: mealPriceLookup["1-10"],
     maxTime: "up to 1h",
     cuisine: ["chinese"],
     createdBy: "user_1",
@@ -270,7 +273,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     name: "Poke Bowl",
     type: ["lunch", "dinner"],
     location: ["home cooked"],
-    price: { min: 10, max: 20 },
+    price: mealPriceLookup["10-20"],
     maxTime: "up to 2h",
     cuisine: ["japanese"],
     createdBy: "user_1",
@@ -280,7 +283,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     name: "Sandwich Deal",
     type: ["lunch", "dinner"],
     location: ["delivery/take out"],
-    price: { min: 1, max: 10 },
+    price: mealPriceLookup["1-10"],
     maxTime: "up to 1h",
     cuisine: ["meal deal"],
     createdBy: "user_1",
@@ -290,7 +293,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     name: "Ramen Forever",
     type: ["lunch", "dinner"],
     location: ["delivery/take out"],
-    price: { min: 10, max: 20 },
+    price: mealPriceLookup["10-20"],
     maxTime: "up to 2h",
     cuisine: ["japanese"],
     createdBy: "user_1",
@@ -300,7 +303,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     name: "Wrapped",
     type: ["lunch", "dinner"],
     location: ["delivery/take out"],
-    price: { min: 10, max: 20 },
+    price: mealPriceLookup["10-20"],
     maxTime: "up to 2h",
     cuisine: ["coffee shop"],
     createdBy: "user_1",
@@ -310,7 +313,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     name: "Panino's",
     type: ["lunch", "dinner"],
     location: ["dine in", "delivery/take out"],
-    price: { min: 1, max: 10 },
+    price: mealPriceLookup["1-10"],
     maxTime: "up to 2h",
     cuisine: ["coffee shop"],
     createdBy: "user_1",
@@ -320,7 +323,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     name: "Tea Rice with Salmon",
     type: ["lunch", "dinner"],
     location: ["home cooked"],
-    price: { min: 1, max: 10 },
+    price: mealPriceLookup["1-10"],
     maxTime: "3h +",
     cuisine: ["japanese"],
     createdBy: "user_1",
@@ -330,7 +333,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     name: "Ham and Cheese Loaf",
     type: ["dinner"],
     location: ["home cooked"],
-    price: { min: 1, max: 10 },
+    price: mealPriceLookup["1-10"],
     maxTime: "up to 3h",
     cuisine: ["french"],
     createdBy: "user_1",
@@ -340,7 +343,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     name: "Veggie Quiche",
     type: ["lunch", "dinner"],
     location: ["home cooked"],
-    price: { min: 1, max: 10 },
+    price: mealPriceLookup["1-10"],
     maxTime: "up to 1h",
     cuisine: ["french"],
     createdBy: "user_1",
@@ -350,7 +353,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     name: "Crepes",
     type: ["dinner"],
     location: ["home cooked"],
-    price: { min: 10, max: 20 },
+    price: mealPriceLookup["10-20"],
     maxTime: "up to 3h",
     cuisine: ["french"],
     createdBy: "user_1",
@@ -360,7 +363,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     name: "Steak and Mash",
     type: ["dinner"],
     location: ["home cooked"],
-    price: { min: 10, max: 20 },
+    price: mealPriceLookup["10-20"],
     maxTime: "up to 2h",
     cuisine: ["british"],
     createdBy: "user_1",
@@ -370,7 +373,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     name: "Dumplings Palace",
     type: ["lunch", "dinner"],
     location: ["dine in"],
-    price: { min: 20, max: 30 },
+    price: mealPriceLookup["20-30"],
     maxTime: "3h +",
     cuisine: ["chinese", "japanese"],
     createdBy: "user_1",
@@ -380,7 +383,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     name: "Carribean Cafe",
     type: ["lunch", "dinner"],
     location: ["delivery/take out"],
-    price: { min: 1, max: 10 },
+    price: mealPriceLookup["1-10"],
     maxTime: "up to 1h",
     cuisine: ["carribean", "french"],
     createdBy: "user_1",
@@ -390,7 +393,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     name: "Pasta Place",
     type: ["dinner"],
     location: ["dine in", "delivery/take out"],
-    price: { min: 1, max: 10 },
+    price: mealPriceLookup["1-10"],
     maxTime: "up to 1h",
     cuisine: ["italian", "spanish"],
     createdBy: "user_1",
@@ -400,7 +403,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     name: "Viet's Choice",
     type: ["lunch", "dinner"],
     location: ["dine in", "delivery/take out"],
-    price: { min: 1, max: 10 },
+    price: mealPriceLookup["1-10"],
     maxTime: "up to 2h",
     cuisine: ["vietnamese", "chinese", "japanese"],
     createdBy: "user_1",
@@ -410,7 +413,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     name: "Tamara's Cafe",
     type: ["lunch", "dinner"],
     location: ["dine in"],
-    price: { min: 20, max: 30 },
+    price: mealPriceLookup["20-30"],
     maxTime: "up to 1h",
     cuisine: ["coffee shop", "brunch"],
     createdBy: "user_1",
@@ -523,7 +526,7 @@ export const mockMealSessions: Record<string, MealSession> = {
     initiatorPreferences: {
       type: "dinner",
       location: ["dine in"],
-      price: { min: 20, max: 30 },
+      price: mealPriceLookup["20-30"],
       maxTime: "up to 2h",
       cuisine: ["japanese", "french"],
     },
@@ -536,7 +539,7 @@ export const mockMealSessions: Record<string, MealSession> = {
     initiatorPreferences: {
       type: "lunch",
       location: ["dine in"],
-      price: { min: 10, max: 20 },
+      price: mealPriceLookup["10-20"],
       maxTime: "up to 2h",
       cuisine: ["italian", "french"],
     },
