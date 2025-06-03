@@ -96,7 +96,11 @@ export function MealPreferences() {
           }}
         >
           {/* Meal type */}
-          <Typography component="legend" variant="body1">
+          <Typography
+            component="legend"
+            variant="body1"
+            sx={{ textAlign: "left" }}
+          >
             What meal are you eating?
           </Typography>
           <Stack
@@ -129,7 +133,11 @@ export function MealPreferences() {
             mt: 4,
           }}
         >
-          <Typography component="legend" variant="body1">
+          <Typography
+            component="legend"
+            variant="body1"
+            sx={{ textAlign: "left" }}
+          >
             Where are you eating?
           </Typography>
           <Typography variant="subtitle2">(Select all that apply)</Typography>
@@ -163,7 +171,11 @@ export function MealPreferences() {
             mt: 4,
           }}
         >
-          <Typography component="legend" variant="body1">
+          <Typography
+            component="legend"
+            variant="body1"
+            sx={{ textAlign: "left" }}
+          >
             How much per person?
           </Typography>
           <Typography variant="subtitle2">
@@ -201,7 +213,11 @@ export function MealPreferences() {
             mt: 4,
           }}
         >
-          <Typography component="legend" variant="body1">
+          <Typography
+            component="legend"
+            variant="body1"
+            sx={{ textAlign: "left" }}
+          >
             How much time can you afford?
           </Typography>
           <Typography variant="subtitle2">
@@ -237,7 +253,11 @@ export function MealPreferences() {
             mt: 4,
           }}
         >
-          <Typography component="legend" variant="body1">
+          <Typography
+            component="legend"
+            variant="body1"
+            sx={{ textAlign: "left" }}
+          >
             What cuisine?
           </Typography>
           <Typography variant="subtitle2">(Select all that apply)</Typography>
