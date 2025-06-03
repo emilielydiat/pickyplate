@@ -218,10 +218,10 @@ export function CreateFood() {
                 <Chip
                   key={option.key}
                   label={option.label}
-                  aria-pressed={isSelected("price", option)}
+                  aria-pressed={isSelected("price", option.key)}
                   clickable
-                  color={isSelected("price", option) ? "primary" : "default"}
-                  onClick={() => updateDraft("price", option)}
+                  color={isSelected("price", option.key) ? "primary" : "default"}
+                  onClick={() => updateDraft("price", option.key)}
                   sx={{ m: 0.5 }}
                 />
               );
