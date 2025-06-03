@@ -10,7 +10,9 @@ import { Layout } from "./components/Layout";
 import {
   AddFriend,
   AddFromExistingFoodPage,
-  CreateFoodPage,
+  CreateFood,
+  CreateFoodConfirm,
+  FoodFlowWrapper,
   EditAvatar,
   FriendProfile,
   Friends,
@@ -62,18 +64,28 @@ function App() {
                     path="friend/:friendId/shared-food-list"
                     element={<SharedFoodListPage />}
                   />
+
                   <Route
                     path="my-food-list/create-food"
-                    element={<CreateFoodPage />}
-                  />
+                    element={<FoodFlowWrapper />}
+                  >
+                    <Route index element={<CreateFood />} />
+                    <Route path="confirm" element={<CreateFoodConfirm />} />
+                  </Route>
+
                   <Route
                     path="friend/:friendId/shared-food-list/add-existing-food"
                     element={<AddFromExistingFoodPage />}
                   />
+
                   <Route
                     path="friend/:friendId/shared-food-list/create-food"
-                    element={<CreateFoodPage />}
-                  />
+                    element={<FoodFlowWrapper />}
+                  >
+                    <Route index element={<CreateFood />} />
+                    <Route path="confirm" element={<CreateFoodConfirm />} />
+                  </Route>
+
                   <Route path="requests" element={<Requests />} />
                   <Route path="settings" element={<Settings />} />
                   <Route path="edit-avatar" element={<EditAvatar />} />
