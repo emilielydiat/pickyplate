@@ -57,11 +57,11 @@ export function CreateFood() {
     }
   };
 
-  const isSelected = (field: keyof FoodEntry, value: any) => {
+  const isSelected = (field: keyof FoodEntry, value: string) => {
     if (!draft) return false;
     const selected = draft[field];
     return Array.isArray(selected)
-      ? selected.includes(value)
+      ? (selected as string[]).includes(value)
       : selected === value;
   };
 
