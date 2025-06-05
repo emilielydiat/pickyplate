@@ -54,7 +54,7 @@ export function MyFoodList() {
     <Box component="section">
       <Stack spacing={5} sx={{ alignItems: "center", pb: { xs: 10, sm: 12 } }}>
         {sortedUserFoodEntries.map((foodEntry) => (
-          <FoodCard key={foodEntry.id} foodEntry={foodEntry} />
+          <FoodCard key={foodEntry.id} foodEntry={foodEntry} variant="base" />
         ))}
       </Stack>
       {AddFoodFab}

@@ -79,6 +79,7 @@ export function SharedFoodList({ friend }: SharedFoodListProps) {
           <FoodCard
             key={foodEntry.id}
             foodEntry={foodEntry}
+            variant="base"
             onDelete={handleDelete}
           />
         ))}

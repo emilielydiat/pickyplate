@@ -6,13 +6,20 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { getCurrentUser, getSharedFoodList } from "../api/api";
+import {
+  getCurrentUser,
+  getSharedFoodList,
+  createSharedFoodEntry,
+} from "../api/api";
 import { FoodEntry } from "../data/mockData";
 
 type SharedFoodListContextType = {
   sharedFoodEntries: FoodEntry[];
   sortedSharedFoodEntries: FoodEntry[];
   setSharedFoodEntries: React.Dispatch<React.SetStateAction<FoodEntry[]>>;
+  addSharedFoodEntry: (
+    draft: Omit<FoodEntry, "id">
+  ) => Promise<FoodEntry | null>;
 };
 
 const SharedFoodListContext = createContext<SharedFoodListContextType | null>(
@@ -55,6 +62,24 @@ export function SharedFoodListProvider({
     fetchSharedFoodList();
   }, [friendId]);
 
+  const addSharedFoodEntry = async (
+    draft: Omit<FoodEntry, "id">
+  ): Promise<FoodEntry | null> => {
+    const currentUser = await getCurrentUser();
+    if (!currentUser || !friendId) return null;
+
+    const newEntry = await createSharedFoodEntry(
+      currentUser.id,
+      friendId,
+      draft
+    );
+    if (newEntry) {
+      setSharedFoodEntries((prev) => [...prev, newEntry]);
+    }
+
+    return newEntry;
+  };
+
   const sortedSharedFoodEntries = useMemo(() => {
     return [...sharedFoodEntries].sort((a, b) =>
       a.name.toLowerCase().localeCompare(b.name.toLowerCase())
@@ -67,6 +92,7 @@ export function SharedFoodListProvider({
         sharedFoodEntries,
         sortedSharedFoodEntries,
         setSharedFoodEntries,
+        addSharedFoodEntry,
       }}
     >
       {children}

@@ -54,7 +54,7 @@ function renderActionSection(
             startIcon={<Add />}
             variant="outlined"
             onClick={() => onToggleAdd?.(foodEntry)}
-            sx={{ width: "100%" }}
+            sx={{ width: "100%", mt: 3 }}
           >
             Add
           </Button>
@@ -72,6 +72,7 @@ function renderActionSection(
               color: "grey.600",
               borderColor: "grey.400",
               "&hover": { color: "grey.700", borderColor: "grey.500" },
+              mt: 3,
             }}
           >
             Added
@@ -88,7 +89,13 @@ function renderActionSection(
     case "base":
       return (
         <Box
-          sx={{ display: "flex", flexDirection: "row", width: "100%", gap: 1 }}
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            width: "100%",
+            gap: 1,
+            mt: 3,
+          }}
         >
           <Button
             aria-label={`Delete ${foodEntry.name} from shared list`}
@@ -117,7 +124,7 @@ function renderActionSection(
 }
 
 export function FoodCard({
-  variant = "base",
+  variant = "short",
   foodEntry,
   isAlreadyAdded,
   onToggleAdd,
@@ -164,7 +171,7 @@ export function FoodCard({
               sx={{ mr: 1 }}
             />
             <Typography variant="body2" color="grey.700">
-              £{foodEntry.price.min}-{foodEntry.price.max} per person
+              {foodEntry.price.label ?? `£${foodEntry.price}`} per person
             </Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
@@ -179,7 +186,6 @@ export function FoodCard({
               flexWrap: "wrap",
               justifyContent: "left",
               gap: 1,
-              mb: 3,
             }}
           >
             {foodEntry.cuisine.map((cuisine) => (

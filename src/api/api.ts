@@ -6,10 +6,12 @@ import {
   mockUserFoodLists,
   mockSharedFoodLists,
   FoodEntry,
+  mealPriceLookup,
   MealSession,
   mockMealSessions,
 } from "../data/mockData";
 import { getSessionId } from "../utils/sessionUtils";
+import { v4 as uuidv4 } from "uuid";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -72,14 +74,89 @@ export const removeFriend = async (
   }
 };
 
+export const createFoodEntry = async (
+  userId: string,
+  draft: Omit<FoodEntry, "id">
+): Promise<FoodEntry | null> => {
+  try {
+    await delay(500);
+
+    const id = `food_${uuidv4()}`;
+    const price =
+      typeof draft.price === "string"
+        ? mealPriceLookup[draft.price]
+        : draft.price;
+    const createdBy = userId;
+    const newEntry: FoodEntry = { ...draft, id, price, createdBy };
+
+    mockFoodEntries[id] = newEntry;
+
+    if (!mockUserFoodLists[createdBy]) {
+      mockUserFoodLists[createdBy] = [];
+    }
+    mockUserFoodLists[createdBy].push(id);
+
+    return newEntry;
+  } catch (error) {
+    console.error(
+      `Error creating food entry for user ${userId} personal list: `,
+      error
+    );
+    return null;
+  }
+};
+
+export const createSharedFoodEntry = async (
+  userId: string,
+  friendId: string,
+  draft: Omit<FoodEntry, "id">
+): Promise<FoodEntry | null> => {
+  try {
+    await delay(500);
+
+    const newEntry = await createFoodEntry(userId, draft);
+
+    if (newEntry) {
+      const id = newEntry.id;
+
+      if (!mockUserFoodLists[friendId]) {
+        mockUserFoodLists[friendId] = [];
+      }
+      mockUserFoodLists[friendId].push(id);
+
+      const key = getSessionId(userId, friendId);
+
+      if (!mockSharedFoodLists[key]) {
+        mockSharedFoodLists[key] = [];
+      }
+
+      mockSharedFoodLists[key].push(id);
+
+      return newEntry;
+    }
+
+    console.log("Could not create shared food entry");
+    return null;
+  } catch (error) {
+    console.error(
+      `Error creating food entry for user ${userId} personal list: `,
+      error
+    );
+    return null;
+  }
+};
+
 export const getCurrentUserFoodList = async (
   userId: string
 ): Promise<FoodEntry[]> => {
   try {
     await delay(500);
 
-    const userFoodList = mockUserFoodLists[userId] || [];
-    return userFoodList.map((id) => mockFoodEntries[id]).filter(Boolean);
+    return (mockUserFoodLists[userId] || [])
+      .map((id) => mockFoodEntries[id])
+      .filter(
+        (entry): entry is FoodEntry => entry !== undefined && entry !== null
+      );
   } catch (error) {
     console.error(`Error fetching food list for user ${userId}: `, error);
     return [];

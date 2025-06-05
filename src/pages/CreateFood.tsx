@@ -220,7 +220,9 @@ export function CreateFood() {
                   label={option.label}
                   aria-pressed={isSelected("price", option.key)}
                   clickable
-                  color={isSelected("price", option.key) ? "primary" : "default"}
+                  color={
+                    isSelected("price", option.key) ? "primary" : "default"
+                  }
                   onClick={() => updateDraft("price", option.key)}
                   sx={{ m: 0.5 }}
                 />
