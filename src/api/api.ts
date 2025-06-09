@@ -74,6 +74,27 @@ export const removeFriend = async (
   }
 };
 
+export const updateFoodEntry = async (
+  draft: FoodEntry
+): Promise<FoodEntry | null> => {
+  try {
+    await delay(500);
+
+    const { id } = draft;
+
+    if (!mockFoodEntries[id]) {
+      console.error(`No food entry found with id ${id}`);
+      return null;
+    }
+    mockFoodEntries[id] = draft;
+
+    return draft;
+  } catch (error) {
+    console.error(`Error updating food entry with id ${draft.id}:`, error);
+    return null;
+  }
+};
+
 export const createFoodEntry = async (
   userId: string,
   draft: Omit<FoodEntry, "id">
@@ -196,6 +217,18 @@ export const updateSharedFoodList = async (
       `Error updating shared food list between users ${userId} and ${friendId}: `,
       error
     );
+  }
+};
+
+export const updateMyFoodList = async (
+  userId: string,
+  updatedList: string[]
+): Promise<void> => {
+  try {
+    await delay(500);
+    mockUserFoodLists[userId] = updatedList;
+  } catch (error) {
+    console.error(`Error updating my food list`, error);
   }
 };
 

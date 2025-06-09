@@ -1,47 +1,51 @@
 import { Box, Fab, Stack, Typography } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { usePageTitleContext } from "../context/PageTitleContext";
 import { useUserContext } from "../context/UserContext";
-import { useSharedFoodListContext } from "../context/SharedFoodListContext";
-import { FoodEntry, User } from "../data/mockData";
-import { updateSharedFoodList } from "../api/api";
-import { FoodCard } from "./FoodCard";
+import { useUserFoodListContext } from "../context/UserFoodListContext";
+import { useFoodDraftContext } from "../context/FoodDraftContext";
+import { FoodEntry } from "../data/mockData";
+import { updateMyFoodList } from "../api/api";
+import { FoodCard } from "../components/FoodCard";
 
-interface SharedFoodListProps {
-  friend: User;
-}
-
-export function SharedFoodList({ friend }: SharedFoodListProps) {
+export function MyFoodList() {
+  const { id } = useUserContext();
+  const navigate = useNavigate();
+  const { setDraft } = useFoodDraftContext();
   const { setPageTitle } = usePageTitleContext();
   useEffect(() => {
-    setPageTitle(`Shared food list with ${friend.username}`);
+    setPageTitle("My food list");
     return () => setPageTitle(null);
-  }, [friend, setPageTitle]);
+  }, [setPageTitle]);
 
-  const { id } = useUserContext();
-  const { sharedFoodEntries, setSharedFoodEntries, sortedSharedFoodEntries } =
-    useSharedFoodListContext();
+  const { userFoodEntries, setUserFoodEntries, sortedUserFoodEntries } =
+    useUserFoodListContext();
 
   const handleDelete = async (foodEntry: FoodEntry) => {
-    const updatedSharedList: FoodEntry[] = sharedFoodEntries.filter(
+    const updatedList: FoodEntry[] = userFoodEntries.filter(
       (entry) => entry.id !== foodEntry.id
     );
 
-    setSharedFoodEntries(updatedSharedList);
-    await updateSharedFoodList(
+    setUserFoodEntries(updatedList);
+    await updateMyFoodList(
       id,
-      friend.id,
-      updatedSharedList.map((entry) => entry.id)
+      updatedList.map((entry) => entry.id)
     );
+  };
+
+  const handleEdit = async (foodEntry: FoodEntry) => {
+    setDraft(foodEntry);
+    console.log("handleEdit ran");
+    navigate(`/my-food-list/edit-food/${foodEntry.id}`);
   };
 
   const AddFoodFab = (
     <Fab
       component={Link}
-      to={`/friend/${friend.id}/shared-food-list/add-existing-food`}
-      aria-label="Add food"
+      to="/my-food-list/create-food"
+      aria-label="Create new food"
       variant="extended"
       size="medium"
       color="primary"
@@ -54,13 +58,13 @@ export function SharedFoodList({ friend }: SharedFoodListProps) {
       }}
     >
       <Add sx={{ mr: 1 }} />
-      Add food
+      Create new food
     </Fab>
   );
 
   // TO DO: loading
 
-  if (sharedFoodEntries.length === 0) {
+  if (userFoodEntries.length === 0) {
     return (
       <Box component="section">
         <Typography component="h2" variant="body1">
@@ -73,14 +77,15 @@ export function SharedFoodList({ friend }: SharedFoodListProps) {
   }
 
   return (
-    <Box>
+    <Box component="section">
       <Stack spacing={5} sx={{ alignItems: "center", pb: { xs: 10, sm: 12 } }}>
-        {sortedSharedFoodEntries.map((foodEntry) => (
+        {sortedUserFoodEntries.map((foodEntry) => (
           <FoodCard
             key={foodEntry.id}
             foodEntry={foodEntry}
             variant="base"
             onDelete={handleDelete}
+            onEdit={handleEdit}
           />
         ))}
       </Stack>

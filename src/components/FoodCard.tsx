@@ -35,6 +35,7 @@ interface FoodCardProps {
   isAlreadyAdded?: boolean;
   onToggleAdd?: (foodEntry: FoodEntry) => void;
   onDelete?: (foodEntry: FoodEntry) => void;
+  onEdit?: (foodEntry: FoodEntry) => void;
 }
 
 function renderActionSection(
@@ -42,7 +43,8 @@ function renderActionSection(
   variant: Variant,
   isAlreadyAdded?: boolean,
   onToggleAdd?: (foodEntry: FoodEntry) => void,
-  onDelete?: (foodEntry: FoodEntry) => void
+  onDelete?: (foodEntry: FoodEntry) => void,
+  onEdit?: (foodEntry: FoodEntry) => void
 ) {
   switch (variant) {
     case "toAdd": {
@@ -110,6 +112,7 @@ function renderActionSection(
             aria-label={`Edit ${foodEntry.name} in shared list`}
             startIcon={<Edit />}
             variant="contained"
+            onClick={() => onEdit?.(foodEntry)}
             sx={{ flex: 1 }}
           >
             Edit
@@ -129,6 +132,7 @@ export function FoodCard({
   isAlreadyAdded,
   onToggleAdd,
   onDelete,
+  onEdit,
 }: FoodCardProps) {
   return (
     <Card sx={{ width: { xs: "100%", sm: 360 } }}>
@@ -197,7 +201,8 @@ export function FoodCard({
             variant,
             isAlreadyAdded,
             onToggleAdd,
-            onDelete
+            onDelete,
+            onEdit
           )}
         </Stack>
       </CardContent>

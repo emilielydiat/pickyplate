@@ -6,26 +6,23 @@ import { usePageTitleContext } from "../context/PageTitleContext";
 import { useUserContext } from "../context/UserContext";
 import { useUserFoodListContext } from "../context/UserFoodListContext";
 import { useSharedFoodListContext } from "../context/SharedFoodListContext";
-import { FoodEntry, User } from "../data/mockData";
+import { useFriend } from "./FoodFlowWrapper";
+import { FoodEntry } from "../data/mockData";
 import { updateSharedFoodList } from "../api/api";
-import { FoodCard } from "./FoodCard";
+import { FoodCard } from "../components/FoodCard";
 
-interface AddFromExistingFoodProps {
-  friend: User;
-}
-
-export function AddFromExistingFood({ friend }: AddFromExistingFoodProps) {
+export function AddFromExistingFood() {
   const { setPageTitle } = usePageTitleContext();
   const { id } = useUserContext();
+  const { friend } = useFriend();
+  const { userFoodEntries, sortedUserFoodEntries } = useUserFoodListContext();
+  const { sharedFoodEntries, setSharedFoodEntries } =
+    useSharedFoodListContext();
 
   useEffect(() => {
     setPageTitle("Add from existing food");
     return () => setPageTitle(null);
   }, [setPageTitle]);
-
-  const { userFoodEntries, sortedUserFoodEntries } = useUserFoodListContext();
-  const { sharedFoodEntries, setSharedFoodEntries } =
-    useSharedFoodListContext();
 
   const handleToggleAdd = async (foodEntry: FoodEntry) => {
     const isAdded = sharedFoodEntries.some(

@@ -3,8 +3,10 @@ import { useParams } from "react-router-dom";
 import { User } from "../data/mockData";
 import { getUserDataById } from "../api/api";
 
-export function useFriendData() {
-  const { friendId } = useParams();
+export function useFriendData(passedFriendId?: string) {
+  const params = useParams();
+  const friendId = passedFriendId ?? params.friendId;
+
   const [friend, setFriend] = useState<User | null>(null);
 
   useEffect(() => {

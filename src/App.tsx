@@ -9,23 +9,25 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import {
   AddFriend,
-  AddFromExistingFoodPage,
+  AddFromExistingFood,
   CreateFood,
   CreateFoodConfirm,
   FoodFlowWrapper,
   EditAvatar,
+  EditFood,
+  EditFoodConfirm,
   FriendProfile,
   Friends,
   Home,
   MealPreferences,
   MealPreferencesConfirm,
   MealPreferencesFlowWrapper,
-  MyFoodListPage,
+  MyFoodList,
   PickFriend,
   Profile,
   Requests,
   Settings,
-  SharedFoodListPage,
+  SharedFoodList,
   Signup,
 } from "./pages";
 import { SupabaseProvider } from "./context/SupabaseContext.tsx";
@@ -66,31 +68,48 @@ function App() {
                       />
                     </Route>
 
-                    <Route path="my-food-list" element={<MyFoodListPage />} />
-                    <Route
-                      path="friend/:friendId/shared-food-list"
-                      element={<SharedFoodListPage />}
-                    />
-
-                    <Route
-                      path="my-food-list/create-food"
-                      element={<FoodFlowWrapper />}
-                    >
-                      <Route index element={<CreateFood />} />
-                      <Route path="confirm" element={<CreateFoodConfirm />} />
+                    <Route path="my-food-list" element={<FoodFlowWrapper />}>
+                      <Route index element={<MyFoodList />} />
+                      <Route path="edit-food/:foodId" element={<EditFood />} />
+                      <Route
+                        path="edit-food/:foodId/confirm"
+                        element={<EditFoodConfirm />}
+                      />
+                      <Route
+                        path="create-food"
+                        element={<CreateFood />}
+                      />
+                      <Route
+                        path="create-food/confirm"
+                        element={<CreateFoodConfirm />}
+                      />
                     </Route>
 
                     <Route
-                      path="friend/:friendId/shared-food-list/add-existing-food"
-                      element={<AddFromExistingFoodPage />}
-                    />
-
-                    <Route
-                      path="friend/:friendId/shared-food-list/create-food"
+                      path="friend/:friendId/shared-food-list"
                       element={<FoodFlowWrapper />}
                     >
-                      <Route index element={<CreateFood />} />
-                      <Route path="confirm" element={<CreateFoodConfirm />} />
+                      <Route index element={<SharedFoodList />} />
+                      <Route
+                        path="edit-food/:foodId"
+                        element={<EditFood />}
+                      />
+                      <Route
+                        path="edit-food/:foodId/confirm"
+                        element={<EditFoodConfirm />}
+                      />
+                      <Route
+                        path="create-food"
+                        element={<CreateFood />}
+                      />
+                      <Route
+                        path="create-food/confirm"
+                        element={<CreateFoodConfirm />}
+                      />
+                      <Route
+                        path="add-existing-food"
+                        element={<AddFromExistingFood />}
+                      />
                     </Route>
 
                     <Route path="requests" element={<Requests />} />

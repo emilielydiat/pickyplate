@@ -22,10 +22,10 @@ import {
 import { capitaliseWord } from "../utils/stringUtils";
 import { useFriend } from "./MealPreferencesFlowWrapper";
 
-export function CreateFood() {
+export function EditFood() {
   const { setPageTitle } = usePageTitleContext();
   useEffect(() => {
-    setPageTitle("Create new food");
+    setPageTitle("Edit food");
     return () => setPageTitle(null);
   }, [setPageTitle]);
 
@@ -33,6 +33,8 @@ export function CreateFood() {
   const { userFoodEntries } = useUserFoodListContext();
   const friendData = useFriend();
   const friend = friendData?.friend;
+
+  console.log("draft on EditFood page: ", draft);
 
   const updateDraft = (field: keyof FoodEntry, value: any) => {
     setDraft((prev) => ({
@@ -63,6 +65,15 @@ export function CreateFood() {
   const isSelected = (field: keyof FoodEntry, value: string) => {
     if (!draft) return false;
     const selected = draft[field];
+
+    if (
+      field === "price" &&
+      typeof selected === "object" &&
+      selected !== null
+    ) {
+      return (selected as { key: string }).key === value;
+    }
+
     return Array.isArray(selected)
       ? (selected as string[]).includes(value)
       : selected === value;
@@ -85,8 +96,8 @@ export function CreateFood() {
     draft.cuisine.length > 0;
 
   const path = friend
-    ? `/friend/${friend.id}/shared-food-list/create-food/confirm`
-    : "/my-food-list/create-food/confirm";
+    ? `/friend/${friend.id}/shared-food-list/edit-food/${draft.id}/confirm`
+    : `/my-food-list/edit-food/${draft.id}/confirm`;
 
   return (
     <Box component="section">
@@ -225,12 +236,12 @@ export function CreateFood() {
                 <Chip
                   key={option.key}
                   label={option.label}
-                  aria-pressed={isSelected("price", option.key)}
+                  aria-pressed={draft.price?.key === option.key}
                   clickable
                   color={
-                    isSelected("price", option.key) ? "primary" : "default"
+                    draft.price?.key === option.key ? "primary" : "default"
                   }
-                  onClick={() => updateDraft("price", option.key)}
+                  onClick={() => updateDraft("price", option)}
                   sx={{ m: 0.5 }}
                 />
               );

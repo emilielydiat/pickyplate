@@ -1,4 +1,4 @@
-import { Outlet, useOutletContext } from "react-router-dom";
+import { Outlet, useOutletContext, useParams } from "react-router-dom";
 import { FoodDraftProvider } from "../context/FoodDraftContext";
 import { UserFoodListProvider } from "../context/UserFoodListContext";
 import { SharedFoodListProvider } from "../context/SharedFoodListContext";
@@ -10,14 +10,15 @@ type ContextType = {
 };
 
 export function FoodFlowWrapper() {
-  const { friend } = useFriendData();
+  const { friendId } = useParams();
+  const { friend } = useFriendData(friendId);
 
   return (
     <UserFoodListProvider>
-      {friend ? (
-        <SharedFoodListProvider friendId={friend.id}>
+      {friendId ? (
+        <SharedFoodListProvider friendId={friendId}>
           <FoodDraftProvider>
-            <Outlet context={{ friend }} />
+            {friend ? <Outlet context={{ friend }} /> : "Loading"}
           </FoodDraftProvider>
         </SharedFoodListProvider>
       ) : (

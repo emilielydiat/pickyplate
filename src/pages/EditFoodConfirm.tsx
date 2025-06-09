@@ -5,11 +5,10 @@ import { usePageTitleContext } from "../context/PageTitleContext";
 import { useFoodDraftContext } from "../context/FoodDraftContext";
 import { FoodEntry } from "../data/mockData";
 import { FoodCard } from "../components/FoodCard";
-import { useUserFoodListContext } from "../context/UserFoodListContext";
-import { useSharedFoodListContext } from "../context/SharedFoodListContext";
+import { updateFoodEntry } from "../api/api";
 import { useFriend } from "./FoodFlowWrapper";
 
-export function CreateFoodConfirm() {
+export function EditFoodConfirm() {
   const { setPageTitle } = usePageTitleContext();
   useEffect(() => {
     setPageTitle("Review and save");
@@ -17,24 +16,18 @@ export function CreateFoodConfirm() {
   }, [setPageTitle]);
 
   const { draft } = useFoodDraftContext();
-  const { addFoodEntry } = useUserFoodListContext();
-  const sharedFoodListContext = useSharedFoodListContext();
-  const addSharedFoodEntry = sharedFoodListContext?.addSharedFoodEntry;
+  const navigate = useNavigate();
   const friendData = useFriend();
   const friend = friendData?.friend;
-  const navigate = useNavigate();
 
-  const handleCreate = async () => {
-    if (!draft) return;
-    if (!friend) {
-      await addFoodEntry(draft as Omit<FoodEntry, "id">);
-      navigate("/my-food-list");
-    } else {
-      if (addSharedFoodEntry) {
-        await addSharedFoodEntry(draft as Omit<FoodEntry, "id">); // also adds entry to both users' personal list
-        navigate(`/friend/${friend.id}/shared-food-list`);
-      }
-    }
+  const handleSave = async () => {
+    if (!draft || !draft.id) return;
+
+    await updateFoodEntry(draft as FoodEntry);
+
+    navigate(
+      friend ? `/friend/${friend.id}/shared-food-list` : "/my-food-list"
+    );
   };
 
   return (
@@ -51,12 +44,12 @@ export function CreateFoodConfirm() {
       <FoodCard foodEntry={draft as FoodEntry} variant="short" />
       <Box width="100%" display="flex" justifyContent="flex-end">
         <Button
-          onClick={handleCreate}
           variant="contained"
           color="primary"
+          onClick={handleSave}
           sx={{ mb: 2 }}
         >
-          Create
+          Save
         </Button>
       </Box>
     </Box>

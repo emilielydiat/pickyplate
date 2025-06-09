@@ -222,7 +222,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     createdBy: "user_1",
   },
   food_2: {
-    id: "food_17",
+    id: "food_2",
     name: "El's Buffet",
     type: ["lunch", "dinner"],
     location: ["delivery/take out"],
@@ -239,7 +239,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     createdBy: "user_1",
   },
   food_3: {
-    id: "food_2",
+    id: "food_3",
     name: "Pasta Mama",
     type: ["lunch", "dinner"],
     location: ["dine in", "delivery/take out"],
@@ -259,7 +259,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     createdBy: "user_1",
   },
   food_5: {
-    id: "food_11",
+    id: "food_5",
     name: "Fried Rice",
     type: ["lunch", "dinner"],
     location: ["home cooked"],
@@ -279,7 +279,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     createdBy: "user_1",
   },
   food_7: {
-    id: "food_8",
+    id: "food_7",
     name: "Sandwich Deal",
     type: ["lunch", "dinner"],
     location: ["delivery/take out"],
@@ -289,7 +289,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     createdBy: "user_1",
   },
   food_8: {
-    id: "food_7",
+    id: "food_8",
     name: "Ramen Forever",
     type: ["lunch", "dinner"],
     location: ["delivery/take out"],
@@ -319,7 +319,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     createdBy: "user_1",
   },
   food_11: {
-    id: "food_5",
+    id: "food_11",
     name: "Tea Rice with Salmon",
     type: ["lunch", "dinner"],
     location: ["home cooked"],
@@ -379,7 +379,7 @@ export const mockFoodEntries: Record<string, FoodEntry> = {
     createdBy: "user_1",
   },
   food_17: {
-    id: "food_3",
+    id: "food_17",
     name: "Carribean Cafe",
     type: ["lunch", "dinner"],
     location: ["delivery/take out"],

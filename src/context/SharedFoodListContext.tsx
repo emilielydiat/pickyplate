@@ -17,7 +17,7 @@ type SharedFoodListContextType = {
   sharedFoodEntries: FoodEntry[];
   sortedSharedFoodEntries: FoodEntry[];
   setSharedFoodEntries: React.Dispatch<React.SetStateAction<FoodEntry[]>>;
-  addSharedFoodEntry: (
+  addSharedFoodEntry?: (
     draft: Omit<FoodEntry, "id">
   ) => Promise<FoodEntry | null>;
 };
@@ -30,9 +30,8 @@ export function useSharedFoodListContext() {
   const context = useContext(SharedFoodListContext);
 
   if (!context) {
-    throw new Error(
-      "useSharedFoodListContext must be used within a SharedFoodListProvider"
-    );
+    console.log("No SharedFoodListContext provider");
+    return undefined; // no error throwing for pages designed not to have SharedFoodListProvider
   }
   return context;
 }
