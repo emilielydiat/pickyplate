@@ -17,6 +17,7 @@ import {
   mealPriceOptionsWithAny,
   mealMaxTimeOptionsWithAny,
   MealPreferencesData,
+  FoodEntry,
 } from "../data/mockData";
 import { useFriend } from "./MealPreferencesFlowWrapper";
 import { capitaliseWord } from "../utils/stringUtils";
@@ -31,7 +32,7 @@ export function MealPreferences() {
   }, [friend, setPageTitle]);
 
   const { draft, setDraft } = useMealPreferencesDraftContext();
-  const { sharedFoodEntries } = useSharedFoodListContext();
+  const sharedFoodListContext = useSharedFoodListContext();
 
   const updateDraft = (field: keyof MealPreferencesData, value: any) => {
     setDraft((prev) => ({
@@ -68,10 +69,12 @@ export function MealPreferences() {
   };
 
   const availableCuisines = useMemo(() => {
+    const sharedFoodEntries = sharedFoodListContext?.sharedFoodEntries ?? [];
+
     return Array.from(
-      new Set(sharedFoodEntries.flatMap((entry) => entry.cuisine))
+      new Set(sharedFoodEntries.flatMap((entry: FoodEntry) => entry.cuisine))
     ).sort((a, b) => a.localeCompare(b));
-  }, [sharedFoodEntries]);
+  }, [sharedFoodListContext?.sharedFoodEntries]);
 
   const availableCuisinesWithAny = [...availableCuisines, "any"];
 
@@ -268,17 +271,23 @@ export function MealPreferences() {
             mt={1}
             flexWrap="wrap"
           >
-            {availableCuisinesWithAny.map((option) => (
-              <Chip
-                key={option}
-                label={capitaliseWord(option)}
-                aria-pressed={isSelected("cuisine", option)}
-                clickable
-                color={isSelected("cuisine", option) ? "primary" : "default"}
-                onClick={() => toggleMultiSelect("cuisine", option)}
-                sx={{ m: 0.5 }}
-              />
-            ))}
+            {availableCuisines.length === 0 ? (
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                No cuisines found from your shared food list.
+              </Typography>
+            ) : (
+              availableCuisinesWithAny.map((option) => (
+                <Chip
+                  key={option}
+                  label={capitaliseWord(option)}
+                  aria-pressed={isSelected("cuisine", option)}
+                  clickable
+                  color={isSelected("cuisine", option) ? "primary" : "default"}
+                  onClick={() => toggleMultiSelect("cuisine", option)}
+                  sx={{ m: 0.5 }}
+                />
+              ))
+            )}
           </Stack>
         </FormControl>
       </Stack>
@@ -289,7 +298,7 @@ export function MealPreferences() {
           to={`/eat-together/${friend.id}/meal-preferences/confirm`}
           variant="contained"
           color="primary"
-          disabled={!isFormComplete}
+          disabled={!isFormComplete || availableCuisines.length === 0}
           sx={{ mb: 2 }}
         >
           Next

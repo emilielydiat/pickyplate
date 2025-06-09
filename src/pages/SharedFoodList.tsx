@@ -15,8 +15,10 @@ export function SharedFoodList() {
   const { id } = useUserContext();
   const navigate = useNavigate();
   const { friend } = useFriend();
-  const { sharedFoodEntries, setSharedFoodEntries, sortedSharedFoodEntries } =
-    useSharedFoodListContext();
+  const sharedFoodListContext = useSharedFoodListContext();
+  const sharedFoodEntries = sharedFoodListContext?.sharedFoodEntries ?? [];
+  const sortedSharedFoodEntries =
+    sharedFoodListContext?.sortedSharedFoodEntries ?? [];
   const { setDraft } = useFoodDraftContext();
 
   const { setPageTitle } = usePageTitleContext();
@@ -26,8 +28,13 @@ export function SharedFoodList() {
   }, [friend, setPageTitle]);
 
   const handleDelete = async (foodEntry: FoodEntry) => {
+    if (!sharedFoodListContext) {
+      console.log("No SharedFoodListContext provider");
+      return;
+    }
+    const { setSharedFoodEntries } = sharedFoodListContext;
     const updatedSharedList: FoodEntry[] = sharedFoodEntries.filter(
-      (entry) => entry.id !== foodEntry.id
+      (entry: FoodEntry) => entry.id !== foodEntry.id
     );
 
     setSharedFoodEntries(updatedSharedList);
@@ -40,7 +47,6 @@ export function SharedFoodList() {
 
   const handleEdit = async (foodEntry: FoodEntry) => {
     setDraft(foodEntry);
-    console.log("handleEdit ran");
     navigate(`/friend/${friend.id}/shared-food-list/edit-food/${foodEntry.id}`);
   };
 
@@ -82,7 +88,7 @@ export function SharedFoodList() {
   return (
     <Box>
       <Stack spacing={5} sx={{ alignItems: "center", pb: { xs: 10, sm: 12 } }}>
-        {sortedSharedFoodEntries.map((foodEntry) => (
+        {sortedSharedFoodEntries.map((foodEntry: FoodEntry) => (
           <FoodCard
             key={foodEntry.id}
             foodEntry={foodEntry}

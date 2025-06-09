@@ -16,24 +16,30 @@ export function AddFromExistingFood() {
   const { id } = useUserContext();
   const { friend } = useFriend();
   const { userFoodEntries, sortedUserFoodEntries } = useUserFoodListContext();
-  const { sharedFoodEntries, setSharedFoodEntries } =
-    useSharedFoodListContext();
+  const sharedFoodListContext = useSharedFoodListContext();
+  const sharedFoodEntries = sharedFoodListContext?.sharedFoodEntries ?? [];
 
   useEffect(() => {
     setPageTitle("Add from existing food");
     return () => setPageTitle(null);
   }, [setPageTitle]);
 
-  const handleToggleAdd = async (foodEntry: FoodEntry) => {
+  const handleToggleAdd = async (foodEntry: FoodEntry): Promise<void> => {
+    if (!sharedFoodListContext) {
+      console.log("No SharedFoodListContext provider");
+      return;
+    }
+
+    const { setSharedFoodEntries } = sharedFoodListContext;
     const isAdded = sharedFoodEntries.some(
-      (entry) => entry.id === foodEntry.id
+      (entry: FoodEntry) => entry.id === foodEntry.id
     );
 
     let updatedSharedList: FoodEntry[] = [];
 
     if (isAdded) {
       updatedSharedList = sharedFoodEntries.filter(
-        (entry) => entry.id !== foodEntry.id
+        (entry: FoodEntry) => entry.id !== foodEntry.id
       );
     } else {
       updatedSharedList = [...sharedFoodEntries, foodEntry];
@@ -43,7 +49,7 @@ export function AddFromExistingFood() {
     await updateSharedFoodList(
       id,
       friend.id,
-      updatedSharedList.map((entry) => entry.id)
+      updatedSharedList.map((entry: FoodEntry) => entry.id)
     );
   };
 
@@ -69,6 +75,7 @@ export function AddFromExistingFood() {
   );
 
   // TO DO: loading
+
   if (userFoodEntries.length === 0 && sharedFoodEntries.length === 0) {
     return (
       <Box component="section">
@@ -100,7 +107,7 @@ export function AddFromExistingFood() {
             foodEntry={foodEntry}
             variant="toAdd"
             isAlreadyAdded={sharedFoodEntries.some(
-              (entry) => entry.id === foodEntry.id
+              (entry: FoodEntry) => entry.id === foodEntry.id
             )}
             onToggleAdd={handleToggleAdd}
           />
