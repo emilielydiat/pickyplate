@@ -15,7 +15,7 @@ export function EditFoodConfirm() {
     return () => setPageTitle(null);
   }, [setPageTitle]);
 
-  const { draft } = useFoodDraftContext();
+  const { draft, setDraft } = useFoodDraftContext();
   const navigate = useNavigate();
   const friendData = useFriend();
   const friend = friendData?.friend;
@@ -24,6 +24,8 @@ export function EditFoodConfirm() {
     if (!draft || !draft.id) return;
 
     await updateFoodEntry(draft as FoodEntry);
+
+    setDraft(null);
 
     navigate(
       friend ? `/friend/${friend.id}/shared-food-list` : "/my-food-list"

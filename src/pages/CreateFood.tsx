@@ -114,7 +114,7 @@ export function CreateFood() {
             label="Food name"
             variant="outlined"
             fullWidth
-            value={draft.name ?? ""}
+            value={draft?.name ?? ""}
             onChange={(e) => updateDraft("name", e.target.value)}
           ></TextField>
         </FormControl>
