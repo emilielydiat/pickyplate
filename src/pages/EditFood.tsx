@@ -96,8 +96,8 @@ export function EditFood() {
     draft.cuisine.length > 0;
 
   const path = friend
-    ? `/friend/${friend.id}/shared-food-list/edit-food/${draft.id}/confirm`
-    : `/my-food-list/edit-food/${draft.id}/confirm`;
+    ? `/friend/${friend.id}/shared-food-list/edit-food/${draft?.id}/confirm`
+    : `/my-food-list/edit-food/${draft?.id}/confirm`;
 
   return (
     <Box component="section">
@@ -125,7 +125,7 @@ export function EditFood() {
             label="Food name"
             variant="outlined"
             fullWidth
-            value={draft.name ?? ""}
+            value={draft?.name ?? ""}
             onChange={(e) => updateDraft("name", e.target.value)}
           ></TextField>
         </FormControl>
@@ -236,10 +236,10 @@ export function EditFood() {
                 <Chip
                   key={option.key}
                   label={option.label}
-                  aria-pressed={draft.price?.key === option.key}
+                  aria-pressed={draft?.price?.key === option.key}
                   clickable
                   color={
-                    draft.price?.key === option.key ? "primary" : "default"
+                    draft?.price?.key === option.key ? "primary" : "default"
                   }
                   onClick={() => updateDraft("price", option)}
                   sx={{ m: 0.5 }}
