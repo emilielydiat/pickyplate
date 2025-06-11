@@ -102,8 +102,56 @@ export const mockUsers: Record<string, User> = {
   },
   user_12: {
     id: "user_12",
-    username: "Timothy19",
-    email: "tim56oth@abc.def",
+    username: "James",
+    email: "jam.es10@abc.def",
+    avatar: avatar4,
+  },
+  user_13: {
+    id: "user_13",
+    username: "Amy",
+    email: "amyyy@abc.def",
+    avatar: avatar10,
+  },
+  user_14: {
+    id: "user_14",
+    username: "Jackie",
+    email: "jack.ie@abc.def",
+    avatar: avatar6,
+  },
+  user_15: {
+    id: "user_15",
+    username: "Jenna",
+    email: "najen@abc.def",
+    avatar: avatar5,
+  },
+  user_16: {
+    id: "user_16",
+    username: "Mar",
+    email: "mar098@abc.def",
+    avatar: avatar1,
+  },
+  user_17: {
+    id: "user_17",
+    username: "PauLine",
+    email: "pau.line@abc.def",
+    avatar: avatar12,
+  },
+  user_18: {
+    id: "user_18",
+    username: "Ava",
+    email: "3ava@abc.def",
+    avatar: avatar9,
+  },
+  user_19: {
+    id: "user_19",
+    username: "Dave",
+    email: "dave567@abc.def",
+    avatar: avatar4,
+  },
+  user_20: {
+    id: "user_20",
+    username: "Tim",
+    email: "87tim@abc.def",
     avatar: avatar4,
   },
 };

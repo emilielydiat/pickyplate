@@ -15,6 +15,31 @@ import { v4 as uuidv4 } from "uuid";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+export const getAllUsers = async (): Promise<User[]> => {
+  try {
+    await delay(500);
+    return Object.values(mockUsers);
+  } catch (error) {
+    console.error("Error getting all user: ", error);
+    return [];
+  }
+};
+
+export const getUsersNotFriendsWith = async (
+  userId: string
+): Promise<User[]> => {
+  // get all users
+  const [allUsers, currentFriends] = await Promise.all([
+    getAllUsers(),
+    getCurrentUserFriends(userId),
+  ]);
+  const friendIds = new Set(currentFriends.map((friend) => friend.id));
+
+  return allUsers.filter(
+    (user) => user.id !== userId && !friendIds.has(user.id)
+  );
+};
+
 export const getUserDataById = async (userId: string): Promise<User | null> => {
   await delay(500);
 
@@ -49,15 +74,25 @@ export const getCurrentUserFriends = async (
 export const addFriend = async (
   userId: string,
   friendId: string
-): Promise<void> => {
-  await delay(500);
+): Promise<boolean> => {
+  try {
+    await delay(500);
 
-  if (!mockFriends[userId]) {
-    mockFriends[userId] = [];
-    // console.log("addFriend: User or friends not defined yet");
-  }
-  if (!mockFriends[userId].includes(friendId)) {
+    if (!mockFriends[userId]) {
+      mockFriends[userId] = [];
+      // console.log(`Initialized empty friend list for user ${userId}`);
+    }
+    if (mockFriends[userId].includes(friendId)) {
+      // console.log(`${friendId} is already a friend of ${userId}`);
+      return true;
+    }
+
     mockFriends[userId].push(friendId);
+    // console.log(`${friendId} added to friend list`);
+    return true;
+  } catch (error) {
+    console.error(`Error adding friend ${friendId}: `, error);
+    return false;
   }
 };
 
@@ -70,7 +105,7 @@ export const removeFriend = async (
   if (mockFriends[userId]) {
     mockFriends[userId] = mockFriends[userId].filter((id) => id !== friendId);
   } else {
-    // console.log("removeFriend: User or friends not defined yet");
+    console.log("Current user has no friends defined yet");
   }
 };
 
