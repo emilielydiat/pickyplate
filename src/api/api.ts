@@ -100,12 +100,17 @@ export const removeFriend = async (
   userId: string,
   friendId: string
 ): Promise<void> => {
-  await delay(500);
+  try {
+    await delay(500);
 
-  if (mockFriends[userId]) {
-    mockFriends[userId] = mockFriends[userId].filter((id) => id !== friendId);
-  } else {
-    console.log("Current user has no friends defined yet");
+    if (mockFriends[userId]) {
+      mockFriends[userId] = mockFriends[userId].filter((id) => id !== friendId);
+      // console.log(`Removed ${friendId} from friend list`);
+    } else {
+      // console.log("Current user has no friends defined yet");
+    }
+  } catch (error) {
+    console.error(`Could not remove ${friendId} from friend list`, error);
   }
 };
 

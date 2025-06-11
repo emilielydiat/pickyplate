@@ -1,13 +1,17 @@
 import { Avatar, Box, Button, Stack, Typography } from "@mui/material";
 import { Mood, Restaurant, Delete } from "@mui/icons-material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useFriendData } from "../hooks/useFriendData";
+import { removeFriend } from "../api/api";
 import { usePageTitleContext } from "../context/PageTitleContext";
+import { useUserContext } from "../context/UserContext";
 
 export function FriendProfile() {
   const { friend } = useFriendData();
+  const { id } = useUserContext();
   const { setPageTitle } = usePageTitleContext();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setPageTitle(null);
@@ -22,9 +26,14 @@ export function FriendProfile() {
     );
   }
 
-  function handleRemoveFriend() {
-    // TO DO
-  }
+  const handleRemoveFriend = async () => {
+    try {
+      await removeFriend(id, friend.id);
+      navigate("/friends");
+    } catch (error) {
+      console.error("Failed to remove friend", error);
+    }
+  };
 
   return (
     <Box
