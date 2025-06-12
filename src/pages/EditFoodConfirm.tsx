@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePageTitleContext } from "../context/PageTitleContext";
 import { useFoodDraftContext } from "../context/FoodDraftContext";
+import { useUserFoodListContext } from "../context/UserFoodListContext";
+import { useSharedFoodListContext } from "../context/SharedFoodListContext";
 import { FoodEntry } from "../data/mockData";
 import { FoodCard } from "../components/FoodCard";
 import { updateFoodEntry } from "../api/api";
@@ -19,17 +21,31 @@ export function EditFoodConfirm() {
   const navigate = useNavigate();
   const friendData = useFriend();
   const friend = friendData?.friend;
+  const { updateUserFoodEntry: updateUserFoodEntryInContext } =
+    useUserFoodListContext();
+  const sharedFoodListContext = useSharedFoodListContext();
+  const updateSharedFoodEntryInContext =
+    sharedFoodListContext?.updateSharedFoodEntry;
 
   const handleSave = async () => {
     if (!draft || !draft.id) return;
 
-    await updateFoodEntry(draft as FoodEntry);
+    const updatedEntry = await updateFoodEntry(draft as FoodEntry);
+
+    if (!updatedEntry) {
+      console.error("Failed to update food entry");
+      return;
+    }
+
+    if (friend && updateSharedFoodEntryInContext) {
+      updateSharedFoodEntryInContext(updatedEntry);
+      navigate(`/friend/${friend.id}/shared-food-list`);
+    } else {
+      updateUserFoodEntryInContext(updatedEntry);
+      navigate("/my-food-list");
+    }
 
     setDraft(null);
-
-    navigate(
-      friend ? `/friend/${friend.id}/shared-food-list` : "/my-food-list"
-    );
   };
 
   return (

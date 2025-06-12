@@ -18,6 +18,7 @@ type UserFoodListContextType = {
   sortedUserFoodEntries: FoodEntry[];
   setUserFoodEntries: React.Dispatch<React.SetStateAction<FoodEntry[]>>;
   addFoodEntry: (draft: Omit<FoodEntry, "id">) => Promise<void>;
+  updateUserFoodEntry: (udpatedEntry: FoodEntry) => void;
 };
 
 const UserFoodListContext = createContext<UserFoodListContextType | null>(null);
@@ -66,6 +67,12 @@ export function UserFoodListProvider({ children }: { children: ReactNode }) {
     );
   }, [userFoodEntries]);
 
+  const updateUserFoodEntry = (updatedEntry: FoodEntry) => {
+    setUserFoodEntries((prev) =>
+      prev.map((entry) => (entry.id === updatedEntry.id ? updatedEntry : entry))
+    );
+  };
+
   return (
     <UserFoodListContext.Provider
       value={{
@@ -73,6 +80,7 @@ export function UserFoodListProvider({ children }: { children: ReactNode }) {
         sortedUserFoodEntries,
         setUserFoodEntries,
         addFoodEntry,
+        updateUserFoodEntry,
       }}
     >
       {children}

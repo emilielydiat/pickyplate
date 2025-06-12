@@ -20,6 +20,7 @@ type SharedFoodListContextType = {
   addSharedFoodEntry?: (
     draft: Omit<FoodEntry, "id">
   ) => Promise<FoodEntry | null>;
+  updateSharedFoodEntry: (updatedEntry: FoodEntry) => void;
 };
 
 const SharedFoodListContext = createContext<SharedFoodListContextType | null>(
@@ -85,6 +86,12 @@ export function SharedFoodListProvider({
     );
   }, [sharedFoodEntries]);
 
+  const updateSharedFoodEntry = (updatedEntry: FoodEntry) => {
+    setSharedFoodEntries((prev) =>
+      prev.map((entry) => (entry.id === updatedEntry.id ? updatedEntry : entry))
+    );
+  };
+
   return (
     <SharedFoodListContext.Provider
       value={{
@@ -92,6 +99,7 @@ export function SharedFoodListProvider({
         sortedSharedFoodEntries,
         setSharedFoodEntries,
         addSharedFoodEntry,
+        updateSharedFoodEntry,
       }}
     >
       {children}
