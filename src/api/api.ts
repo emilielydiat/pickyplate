@@ -294,7 +294,7 @@ export const getMealSession = async (
   }
 };
 
-type AllUserSessionsSummary = {
+export type AllUserSessionsSummary = {
   initiatorId: string;
   status: MealSession["status"];
   friendId: string;
