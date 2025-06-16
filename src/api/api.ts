@@ -294,6 +294,40 @@ export const getMealSession = async (
   }
 };
 
+type AllUserSessionsSummary = {
+  initiatorId: string;
+  status: MealSession["status"];
+  friendId: string;
+};
+export const getAllMealSessionsForUser = async (
+  userId: string
+): Promise<AllUserSessionsSummary[]> => {
+  try {
+    await delay(500);
+    const allSessions = Object.values(mockMealSessions);
+    const userSessions = allSessions
+      .filter(
+        (session) =>
+          session.initiatorId === userId || session.receiverId === userId
+      )
+      .map((session) => {
+        const friendId =
+          session.initiatorId === userId
+            ? session.receiverId
+            : session.initiatorId;
+        return {
+          initiatorId: session.initiatorId,
+          status: session.status,
+          friendId,
+        };
+      });
+    return userSessions;
+  } catch (error) {
+    console.error(`Error fetching all sessions for user ${userId}: `, error);
+    return [];
+  }
+};
+
 export const updateMealSession = async (
   initiatorId: string,
   receiverId: string,

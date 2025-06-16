@@ -543,10 +543,11 @@ export const mockSharedFoodLists: Record<string, string[]> = {
 export type SessionStatus =
   | "invited"
   | "accepted"
-  | "preferences_set"
+  | "rejected"
+  | "everyone_preferences_set"
   | "initiator_rated"
   | "receiver_rated"
-  | "rated"
+  | "everyone_rated"
   | "cancelled";
 
 export type Rating = {
@@ -570,13 +571,20 @@ export const mockMealSessions: Record<string, MealSession> = {
     sessionId: "user_1_user_2",
     initiatorId: "user_1",
     receiverId: "user_2",
-    status: "invited",
+    status: "everyone_preferences_set",
     initiatorPreferences: {
       type: "dinner",
       location: ["dine in"],
       price: mealPriceLookup["20-30"],
       maxTime: "up to 2h",
       cuisine: ["japanese", "french"],
+    },
+    receiverPreferences: {
+      type: "dinner",
+      location: ["home cooked"],
+      price: mealPriceLookup["10-20"],
+      maxTime: "up to 1h",
+      cuisine: ["french", "coffee shop"],
     },
   },
   user_1_user_3: {
@@ -586,10 +594,123 @@ export const mockMealSessions: Record<string, MealSession> = {
     status: "invited",
     initiatorPreferences: {
       type: "lunch",
-      location: ["dine in"],
+      location: ["delivery/take out"],
       price: mealPriceLookup["10-20"],
       maxTime: "up to 2h",
       cuisine: ["italian", "french"],
+    },
+  },
+  user_1_user_4: {
+    sessionId: "user_1_user_4",
+    initiatorId: "user_1",
+    receiverId: "user_4",
+    status: "initiator_rated",
+    initiatorPreferences: {
+      type: "dinner",
+      location: ["dine in"],
+      price: mealPriceLookup["20-30"],
+      maxTime: "up to 2h",
+      cuisine: ["italian", "french", "coffee shop"],
+    },
+    receiverPreferences: {
+      type: "dinner",
+      location: ["home cooked"],
+      price: mealPriceLookup["30-40"],
+      maxTime: "up to 2h",
+      cuisine: ["japanese"],
+    },
+  },
+  user_1_user_5: {
+    sessionId: "user_1_user_5",
+    initiatorId: "user_1",
+    receiverId: "user_5",
+    status: "accepted",
+    initiatorPreferences: {
+      type: "lunch",
+      location: ["delivery/take out"],
+      price: mealPriceLookup["10-20"],
+      maxTime: "up to 2h",
+      cuisine: ["italian", "french"],
+    },
+  },
+  user_1_user_6: {
+    sessionId: "user_1_user_6",
+    initiatorId: "user_1",
+    receiverId: "user_6",
+    status: "receiver_rated",
+    initiatorPreferences: {
+      type: "dinner",
+      location: ["dine in"],
+      price: mealPriceLookup["20-30"],
+      maxTime: "up to 2h",
+      cuisine: ["italian", "french", "coffee shop"],
+    },
+    receiverPreferences: {
+      type: "dinner",
+      location: ["home cooked"],
+      price: mealPriceLookup["30-40"],
+      maxTime: "up to 2h",
+      cuisine: ["japanese"],
+    },
+  },
+  user_1_user_7: {
+    sessionId: "user_1_user_7",
+    initiatorId: "user_1",
+    receiverId: "user_7",
+    status: "everyone_rated",
+    initiatorPreferences: {
+      type: "dinner",
+      location: ["dine in"],
+      price: mealPriceLookup["20-30"],
+      maxTime: "up to 2h",
+      cuisine: ["italian", "french", "coffee shop"],
+    },
+    receiverPreferences: {
+      type: "dinner",
+      location: ["home cooked"],
+      price: mealPriceLookup["30-40"],
+      maxTime: "up to 2h",
+      cuisine: ["japanese"],
+    },
+  },
+  user_1_user_8: {
+    sessionId: "user_1_user_8",
+    initiatorId: "user_1",
+    receiverId: "user_8",
+    status: "cancelled",
+    initiatorPreferences: {
+      type: "dinner",
+      location: ["dine in"],
+      price: mealPriceLookup["20-30"],
+      maxTime: "up to 2h",
+      cuisine: ["italian", "french", "coffee shop"],
+    },
+    receiverPreferences: {
+      type: "dinner",
+      location: ["home cooked"],
+      price: mealPriceLookup["30-40"],
+      maxTime: "up to 2h",
+      cuisine: ["japanese"],
+    },
+  },
+  user_2_user_3: {
+    sessionId: "user_2_user_3",
+    initiatorId: "user_2",
+    receiverId: "user_3",
+    status: "everyone_preferences_set",
+    initiatorPreferences: {
+      type: "dinner",
+      location: ["home cooked"],
+      price: mealPriceLookup["20-30"],
+      maxTime: "up to 2h",
+      cuisine: ["italian"],
+    },
+    receiverPreferences: {
+      type: "dinner",
+      location: ["home cooked"],
+      price: mealPriceLookup["10-20"],
+      maxTime: "up to 2h",
+      cuisine: ["french"],
     },
   },
 };
