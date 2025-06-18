@@ -693,6 +693,32 @@ export const mockMealSessions: Record<string, MealSession> = {
       cuisine: ["japanese"],
     },
   },
+  user_1_user_9: {
+    sessionId: "user_1_user_9",
+    initiatorId: "user_9",
+    receiverId: "user_1",
+    status: "invited",
+    initiatorPreferences: {
+      type: "lunch",
+      location: ["delivery/take out"],
+      price: mealPriceLookup["10-20"],
+      maxTime: "up to 2h",
+      cuisine: ["italian", "french"],
+    },
+  },
+  user_1_user_10: {
+    sessionId: "user_1_user_8",
+    initiatorId: "user_10",
+    receiverId: "user_1",
+    status: "rejected",
+    initiatorPreferences: {
+      type: "dinner",
+      location: ["dine in"],
+      price: mealPriceLookup["20-30"],
+      maxTime: "up to 2h",
+      cuisine: ["italian", "french", "coffee shop"],
+    },
+  },
   user_2_user_3: {
     sessionId: "user_2_user_3",
     initiatorId: "user_2",

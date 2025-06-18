@@ -28,7 +28,6 @@ export const getAllUsers = async (): Promise<User[]> => {
 export const getUsersNotFriendsWith = async (
   userId: string
 ): Promise<User[]> => {
-  // get all users
   const [allUsers, currentFriends] = await Promise.all([
     getAllUsers(),
     getCurrentUserFriends(userId),
