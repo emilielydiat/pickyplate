@@ -14,6 +14,8 @@ export { CreateFood } from "./CreateFood";
 export { CreateFoodConfirm } from "./CreateFoodConfirm";
 export { AddFromExistingFood } from "./AddFromExistingFood";
 export { Requests } from "./Requests";
+export { SubmitRating } from "./SubmitRating";
+export { ViewResults } from "./ViewResults";
 export { Settings } from "./Settings";
 export { EditAvatar } from "./EditAvatar";
 export { EditFood } from "./EditFood";

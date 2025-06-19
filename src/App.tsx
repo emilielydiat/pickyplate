@@ -26,6 +26,8 @@ import {
   PickFriend,
   Profile,
   Requests,
+  SubmitRating,
+  ViewResults,
   Settings,
   SharedFoodList,
   Signup,
@@ -113,6 +115,8 @@ function App() {
                     </Route>
 
                     <Route path="requests" element={<Requests />} />
+                    <Route path="eat-together/:friendId/submit-rating" element={<SubmitRating />} />
+                    <Route path="eat-together/:friendId/view-results" element={<ViewResults />} />
                     <Route path="settings" element={<Settings />} />
                     <Route path="edit-avatar" element={<EditAvatar />} />
                   </Route>
