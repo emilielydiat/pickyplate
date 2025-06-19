@@ -41,7 +41,7 @@ export function Friends() {
               component={Link}
               to={`/friend/${friend.id}`}
               aria-label={`View profile of ${friend.username}`}
-              sx={{ textDecoration: "none", color: "inherit" }}
+              sx={{ px: 0, textDecoration: "none", color: "inherit" }}
             >
               <ListItemAvatar>
                 <Avatar
@@ -49,7 +49,10 @@ export function Friends() {
                   alt={`Avatar of ${friend.username}`}
                 />
               </ListItemAvatar>
-              <ListItemText primary={friend.username} />
+              <ListItemText
+                primary={friend.username}
+                sx={{ pr: 2, wordBreak: "break-word" }}
+              />
             </ListItem>
           ))}
         </List>

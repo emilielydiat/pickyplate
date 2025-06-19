@@ -67,7 +67,7 @@ export function PickFriend() {
             {filteredFriends.map((friend) => (
               <ListItem
                 key={friend.id}
-                sx={{ textDecoration: "none", color: "inherit" }}
+                sx={{ px: 0, textDecoration: "none", color: "inherit" }}
               >
                 <ListItemAvatar>
                   <Avatar
@@ -75,7 +75,10 @@ export function PickFriend() {
                     alt={`Avatar of ${friend.username}`}
                   />
                 </ListItemAvatar>
-                <ListItemText primary={friend.username} />
+                <ListItemText
+                  primary={friend.username}
+                  sx={{ pr: 2, wordBreak: "break-word" }}
+                />
                 <Button
                   component={Link}
                   to={`/eat-together/${friend.id}/meal-preferences`}

@@ -151,7 +151,7 @@ export function Requests() {
                 <ListItem
                   key={session.friendId}
                   aria-label={`Meal session with ${session.friendUsername}`}
-                  sx={{ textDecoration: "none", color: "inherit" }}
+                  sx={{ px: 0, textDecoration: "none", color: "inherit" }}
                 >
                   <ListItemAvatar>
                     <Avatar
@@ -159,7 +159,10 @@ export function Requests() {
                       alt={`Avatar of ${session.friendUsername}`}
                     />
                   </ListItemAvatar>
-                  <ListItemText primary={session.friendUsername} />
+                  <ListItemText
+                    primary={session.friendUsername}
+                    sx={{ pr: 2, wordBreak: "break-word" }}
+                  />
                   {!session.isInitiator && session.status === "invited" ? (
                     <Stack direction="row" spacing={2}>
                       <IconButton

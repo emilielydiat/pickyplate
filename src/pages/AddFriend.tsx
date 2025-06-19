@@ -94,7 +94,7 @@ export function AddFriend() {
             {filteredUsers.map((user) => (
               <ListItem
                 key={user.id}
-                sx={{ textDecoration: "none", color: "inherit" }}
+                sx={{ px: 0, textDecoration: "none", color: "inherit" }}
               >
                 <ListItemAvatar>
                   <Avatar
@@ -102,7 +102,10 @@ export function AddFriend() {
                     alt={`Avatar of ${user.username}`}
                   />
                 </ListItemAvatar>
-                <ListItemText primary={user.username} />
+                <ListItemText
+                  primary={user.username}
+                  sx={{ pr: 2, wordBreak: "break-word" }}
+                />
                 <Button
                   aria-label={`Add ${user.username} as friend`}
                   variant="contained"
