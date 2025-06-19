@@ -17,6 +17,11 @@ import { useEffect } from "react";
 import { usePageTitleContext } from "../context/PageTitleContext";
 import { capitaliseWord } from "../utils/stringUtils";
 import { useMealPreferencesDraftContext } from "../context/MealPreferencesDraftContext";
+import { useFriend } from "./MealPreferencesFlowWrapper";
+import { getMealSession, updateMealSession } from "../api/api";
+import { useUserContext } from "../context/UserContext";
+import { MealPreferencesData } from "../data/mockData";
+import { useNavigate } from "react-router-dom";
 
 export function MealPreferencesConfirm() {
   const { setPageTitle } = usePageTitleContext();
@@ -26,10 +31,39 @@ export function MealPreferencesConfirm() {
   }, [setPageTitle]);
 
   const { draft } = useMealPreferencesDraftContext();
+  const friendData = useFriend();
+  const friend = friendData?.friend;
+  const { id } = useUserContext();
+  const navigate = useNavigate();
 
   if (!draft) return <Typography>Loading...</Typography>;
 
   console.log("draft: ", draft);
+
+  async function handleConfirm() {
+    const sessionWithFriend = await getMealSession(id, friend.id);
+
+    if (sessionWithFriend) {
+      if (sessionWithFriend.status === "accepted") {
+        await updateMealSession(friend.id, id, {
+          receiverPreferences: draft as MealPreferencesData,
+          status: "everyone_preferences_set",
+        });
+        navigate(`/eat-together/${friend.id}/submit-rating`);
+      } else {
+        await updateMealSession(id, friend.id, {
+          initiatorPreferences: draft as MealPreferencesData,
+          status: "invited",
+        });
+        navigate("/requests");
+      }
+    } else {
+      await updateMealSession(id, friend.id, {
+        initiatorPreferences: draft as MealPreferencesData,
+      });
+      navigate("/requests");
+    }
+  }
 
   return (
     <Box
@@ -125,7 +159,13 @@ export function MealPreferencesConfirm() {
         </CardContent>
       </Card>
       <Box width="100%" display="flex" justifyContent="flex-end">
-        <Button variant="contained" color="primary" sx={{ mb: 2 }}>
+        <Button
+          aria-label={`Confirm your meal preferences for meal with ${friend.username}`}
+          variant="contained"
+          color="primary"
+          onClick={() => handleConfirm()}
+          sx={{ mb: 2 }}
+        >
           Confirm and send
         </Button>
       </Box>

@@ -69,6 +69,12 @@ export function Requests() {
     setUserMealSessions(updatedSessions);
   }
 
+  async function handleAccept(initiatorId: string, receiverId: string) {
+    await updateMealSession(initiatorId, receiverId, { status: "accepted" });
+    const updatedSessions = await getAllMealSessionsForUser(id);
+    setUserMealSessions(updatedSessions);
+  }
+
   function getButtonLabelForSession(session: {
     isInitiator: boolean;
     status: string;
@@ -180,9 +186,8 @@ export function Requests() {
                         <Close />
                       </IconButton>
                       <IconButton
-                        component={Link}
-                        to={`/eat-together/${session.friendId}/meal-preferences`}
                         aria-label={`Accept invitation to eat together from ${session.friendUsername}`}
+                        onClick={() => handleAccept(session.friendId, id)}
                         size="small"
                         sx={(theme) => ({
                           width: "40px",
