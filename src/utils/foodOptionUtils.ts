@@ -1,0 +1,60 @@
+import {
+  FoodEntry,
+  MealPreferencesData,
+  mealPriceLookup,
+  MealType,
+  MealLocation,
+  MealMaxTime,
+} from "../data/mockData";
+import { arraysHaveCommonItems } from "./arrayUtils";
+
+export function matchFoodToPreferences(
+  sharedFoodList: FoodEntry[],
+  preferences: MealPreferencesData
+): FoodEntry {
+  const matchingOptions = sharedFoodList.filter((food) => {
+    const typeMatch: boolean = food.type.includes(preferences.type);
+
+    const locationMatch: boolean =
+      preferences.location.includes("any") ||
+      arraysHaveCommonItems(
+        food.location,
+        preferences.location as MealLocation[]
+      );
+
+    const priceMatch: boolean =
+      preferences.price.key === "any" ||
+      (food.price.min >= preferences.price.min &&
+        food.price.max <= preferences.price.max);
+
+    const timeMatch: boolean =
+      preferences.maxTime.includes("any") ||
+      food.maxTime === preferences.maxTime;
+
+    const cuisineMatch: boolean =
+      preferences.cuisine.includes("any") ||
+      arraysHaveCommonItems(food.cuisine, preferences.cuisine);
+
+    return (
+      typeMatch && locationMatch && priceMatch && timeMatch && cuisineMatch
+    );
+  });
+
+  if (matchingOptions.length > 0) {
+    const randomIndex = Math.floor(Math.random() * matchingOptions.length);
+    return matchingOptions[randomIndex];
+  }
+
+  const fallbackOption: FoodEntry = {
+    id: "food_3",
+    name: "Pasta Mama",
+    type: ["lunch", "dinner"] as MealType[],
+    location: ["dine in", "delivery/take out"],
+    price: mealPriceLookup["1-10"],
+    maxTime: "up to 1h" as MealMaxTime,
+    cuisine: ["italian"],
+    createdBy: "user_1",
+  };
+
+  return fallbackOption;
+}

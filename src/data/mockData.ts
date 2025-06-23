@@ -551,8 +551,8 @@ export type SessionStatus =
   | "cancelled";
 
 export type Rating = {
-  initiatorPick: number;
-  receiverPick: number;
+  initiatorOption: number;
+  receiverOption: number;
 };
 
 export interface MealSession {
@@ -562,6 +562,8 @@ export interface MealSession {
   status: SessionStatus;
   initiatorPreferences?: MealPreferencesData;
   receiverPreferences?: MealPreferencesData;
+  initiatorOption?: FoodEntry;
+  receiverOption?: FoodEntry;
   initiatorRating?: Rating;
   receiverRating?: Rating;
 }
@@ -574,7 +576,7 @@ export const mockMealSessions: Record<string, MealSession> = {
     status: "everyone_preferences_set",
     initiatorPreferences: {
       type: "dinner",
-      location: ["dine in"],
+      location: ["dine in", "home cooked"],
       price: mealPriceLookup["20-30"],
       maxTime: "up to 2h",
       cuisine: ["japanese", "french"],
@@ -594,7 +596,7 @@ export const mockMealSessions: Record<string, MealSession> = {
     status: "invited",
     initiatorPreferences: {
       type: "lunch",
-      location: ["delivery/take out"],
+      location: ["dine in", "delivery/take out"],
       price: mealPriceLookup["10-20"],
       maxTime: "up to 2h",
       cuisine: ["italian", "french"],

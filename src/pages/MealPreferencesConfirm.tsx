@@ -18,10 +18,15 @@ import { usePageTitleContext } from "../context/PageTitleContext";
 import { capitaliseWord } from "../utils/stringUtils";
 import { useMealPreferencesDraftContext } from "../context/MealPreferencesDraftContext";
 import { useFriend } from "./MealPreferencesFlowWrapper";
-import { getMealSession, updateMealSession } from "../api/api";
+import {
+  getMealSession,
+  updateMealSession,
+  getSharedFoodList,
+} from "../api/api";
 import { useUserContext } from "../context/UserContext";
 import { MealPreferencesData } from "../data/mockData";
 import { useNavigate } from "react-router-dom";
+import { matchFoodToPreferences } from "../utils/foodOptionUtils";
 
 export function MealPreferencesConfirm() {
   const { setPageTitle } = usePageTitleContext();
@@ -42,24 +47,43 @@ export function MealPreferencesConfirm() {
 
   async function handleConfirm() {
     const sessionWithFriend = await getMealSession(id, friend.id);
+    const sharedFoodList = await getSharedFoodList(id, friend.id);
 
     if (sessionWithFriend) {
       if (sessionWithFriend.status === "accepted") {
+        const foodOption = matchFoodToPreferences(
+          sharedFoodList,
+          draft as MealPreferencesData
+        );
+
         await updateMealSession(friend.id, id, {
           receiverPreferences: draft as MealPreferencesData,
           status: "everyone_preferences_set",
+          receiverOption: foodOption,
         });
+
         navigate(`/eat-together/${friend.id}/submit-rating`);
       } else {
+        const foodOption = matchFoodToPreferences(
+          sharedFoodList,
+          draft as MealPreferencesData
+        );
         await updateMealSession(id, friend.id, {
           initiatorPreferences: draft as MealPreferencesData,
           status: "invited",
+          initiatorOption: foodOption,
         });
         navigate("/requests");
       }
     } else {
+      const foodOption = matchFoodToPreferences(
+        sharedFoodList,
+        draft as MealPreferencesData
+      );
       await updateMealSession(id, friend.id, {
         initiatorPreferences: draft as MealPreferencesData,
+        status: "invited",
+        initiatorOption: foodOption,
       });
       navigate("/requests");
     }
