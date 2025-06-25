@@ -27,6 +27,7 @@ import {
   Profile,
   Requests,
   SubmitRating,
+  MealRatingFlowWrapper,
   ViewResults,
   Settings,
   SharedFoodList,
@@ -56,18 +57,25 @@ function App() {
                     <Route path="friends/add-friend" element={<AddFriend />} />
                     <Route path="pick-friend" element={<PickFriend />} />
 
-                    <Route
-                      path="eat-together/:friendId"
-                      element={<MealPreferencesFlowWrapper />}
-                    >
-                      <Route
-                        path="meal-preferences"
-                        element={<MealPreferences />}
-                      />
-                      <Route
-                        path="meal-preferences/confirm"
-                        element={<MealPreferencesConfirm />}
-                      />
+                    <Route path="eat-together/:friendId">
+                      <Route element={<MealPreferencesFlowWrapper />}>
+                        <Route
+                          path="meal-preferences"
+                          element={<MealPreferences />}
+                        />
+                        <Route
+                          path="meal-preferences/confirm"
+                          element={<MealPreferencesConfirm />}
+                        />
+                      </Route>
+
+                      <Route element={<MealRatingFlowWrapper />}>
+                        <Route
+                          path="submit-rating"
+                          element={<SubmitRating />}
+                        />
+                        <Route path="view-results" element={<ViewResults />} />
+                      </Route>
                     </Route>
 
                     <Route path="my-food-list" element={<FoodFlowWrapper />}>
@@ -77,10 +85,7 @@ function App() {
                         path="edit-food/:foodId/confirm"
                         element={<EditFoodConfirm />}
                       />
-                      <Route
-                        path="create-food"
-                        element={<CreateFood />}
-                      />
+                      <Route path="create-food" element={<CreateFood />} />
                       <Route
                         path="create-food/confirm"
                         element={<CreateFoodConfirm />}
@@ -92,18 +97,12 @@ function App() {
                       element={<FoodFlowWrapper />}
                     >
                       <Route index element={<SharedFoodList />} />
-                      <Route
-                        path="edit-food/:foodId"
-                        element={<EditFood />}
-                      />
+                      <Route path="edit-food/:foodId" element={<EditFood />} />
                       <Route
                         path="edit-food/:foodId/confirm"
                         element={<EditFoodConfirm />}
                       />
-                      <Route
-                        path="create-food"
-                        element={<CreateFood />}
-                      />
+                      <Route path="create-food" element={<CreateFood />} />
                       <Route
                         path="create-food/confirm"
                         element={<CreateFoodConfirm />}
@@ -115,8 +114,6 @@ function App() {
                     </Route>
 
                     <Route path="requests" element={<Requests />} />
-                    <Route path="eat-together/:friendId/submit-rating" element={<SubmitRating />} />
-                    <Route path="eat-together/:friendId/view-results" element={<ViewResults />} />
                     <Route path="settings" element={<Settings />} />
                     <Route path="edit-avatar" element={<EditAvatar />} />
                   </Route>

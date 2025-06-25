@@ -16,6 +16,7 @@ export { AddFromExistingFood } from "./AddFromExistingFood";
 export { Requests } from "./Requests";
 export { SubmitRating } from "./SubmitRating";
 export { ViewResults } from "./ViewResults";
+export { MealRatingFlowWrapper } from "./MealRatingFlowWrapper";
 export { Settings } from "./Settings";
 export { EditAvatar } from "./EditAvatar";
 export { EditFood } from "./EditFood";

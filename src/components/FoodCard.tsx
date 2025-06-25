@@ -6,6 +6,7 @@ import {
   Chip,
   Box,
   Stack,
+  Rating,
   Button,
 } from "@mui/material";
 import {
@@ -18,7 +19,7 @@ import {
   Add,
   Check,
 } from "@mui/icons-material";
-import { FoodEntry } from "../data/mockData";
+import { FoodEntry, Rating as SessionRating } from "../data/mockData";
 import { capitaliseWord } from "../utils/stringUtils";
 
 type Variant =
@@ -33,18 +34,22 @@ interface FoodCardProps {
   foodEntry: FoodEntry;
   variant?: Variant;
   isAlreadyAdded?: boolean;
+  ratingValue?: number;
   onToggleAdd?: (foodEntry: FoodEntry) => void;
   onDelete?: (foodEntry: FoodEntry) => void;
   onEdit?: (foodEntry: FoodEntry) => void;
+  onRatingChange?: (value: number) => void;
 }
 
 function renderActionSection(
   foodEntry: FoodEntry,
   variant: Variant,
   isAlreadyAdded?: boolean,
+  ratingValue?: number,
   onToggleAdd?: (foodEntry: FoodEntry) => void,
   onDelete?: (foodEntry: FoodEntry) => void,
-  onEdit?: (foodEntry: FoodEntry) => void
+  onEdit?: (foodEntry: FoodEntry) => void,
+  onRatingChange?: (value: number) => void
 ) {
   switch (variant) {
     case "toAdd": {
@@ -83,7 +88,20 @@ function renderActionSection(
       }
     }
     case "unrated":
-      return <></>;
+      return (
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Typography component="h3" variant="body2" color="grey.700" mt={2}>
+            How much do you like this option?
+          </Typography>
+          <Rating
+            precision={0.5}
+            aria-label={`Rate ${foodEntry.name}`}
+            value={ratingValue ?? 0}
+            onChange={(_, newValue) => onRatingChange?.(newValue ?? 0)}
+            size="large"
+          />
+        </Box>
+      );
     case "ratedLost":
       return <></>;
     case "ratedWon":
@@ -130,9 +148,11 @@ export function FoodCard({
   variant = "short",
   foodEntry,
   isAlreadyAdded,
+  ratingValue,
   onToggleAdd,
   onDelete,
   onEdit,
+  onRatingChange,
 }: FoodCardProps) {
   return (
     <Card sx={{ width: { xs: "100%", sm: 360 } }}>
@@ -200,9 +220,11 @@ export function FoodCard({
             foodEntry,
             variant,
             isAlreadyAdded,
+            ratingValue,
             onToggleAdd,
             onDelete,
-            onEdit
+            onEdit,
+            onRatingChange
           )}
         </Stack>
       </CardContent>

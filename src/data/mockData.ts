@@ -614,6 +614,16 @@ export const mockMealSessions: Record<string, MealSession> = {
       maxTime: "up to 2h",
       cuisine: ["italian", "french"],
     },
+    initiatorOption: {
+      id: "food_3",
+      name: "Pasta Mama",
+      type: ["lunch", "dinner"] as MealType[],
+      location: ["dine in", "delivery/take out"],
+      price: mealPriceLookup["1-10"],
+      maxTime: "up to 1h" as MealMaxTime,
+      cuisine: ["italian"],
+      createdBy: "user_1",
+    },
   },
   user_1_user_5: {
     sessionId: "user_1_user_5",
