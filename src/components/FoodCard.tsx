@@ -19,7 +19,7 @@ import {
   Add,
   Check,
 } from "@mui/icons-material";
-import { FoodEntry, Rating as SessionRating } from "../data/mockData";
+import { FoodEntry } from "../data/mockData";
 import { capitaliseWord } from "../utils/stringUtils";
 
 type Variant =
