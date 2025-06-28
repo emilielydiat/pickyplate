@@ -116,7 +116,7 @@ function renderVariantContent(
     case "unrated":
       return (
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Typography component="h3" variant="body2" color="grey.700" mt={2}>
+          <Typography component="h4" variant="body2" color="grey.700" mt={2}>
             How much do you like this option?
           </Typography>
           <Rating
@@ -141,7 +141,12 @@ function renderVariantContent(
         >
           <Box>
             <Stack sx={{ flexDirection: "row", alignItems: "center" }}>
-              <Typography variant="body2" color="grey.700" paddingRight={1}>
+              <Typography
+                component="h4"
+                variant="body2"
+                color="grey.700"
+                paddingRight={1}
+              >
                 You rated:
               </Typography>
               <Rating
@@ -149,13 +154,18 @@ function renderVariantContent(
                 value={userRating}
                 size="medium"
                 readOnly
-                sx={{ color: "grey.400" }}
+                sx={{ color: "grey.500" }}
               />
             </Stack>
             <Stack
               sx={{ flexDirection: "row", spacing: 1, alignItems: "center" }}
             >
-              <Typography variant="body2" color="grey.700" paddingRight={1}>
+              <Typography
+                component="h4"
+                variant="body2"
+                color="grey.700"
+                paddingRight={1}
+              >
                 Friend rated:
               </Typography>
               <Rating
@@ -163,12 +173,12 @@ function renderVariantContent(
                 value={friendRating}
                 size="medium"
                 readOnly
-                sx={{ color: "grey.400" }}
+                sx={{ color: "grey.500" }}
               />
             </Stack>
           </Box>
           <Box>
-            <Typography component="h3" variant="h6" color="grey.500">
+            <Typography component="h4" variant="h6" color="grey.600">
               {averageRating}/5
             </Typography>
           </Box>
@@ -187,7 +197,12 @@ function renderVariantContent(
         >
           <Box>
             <Stack sx={{ flexDirection: "row", alignItems: "center" }}>
-              <Typography variant="body2" color="grey.700" paddingRight={1}>
+              <Typography
+                component="h4"
+                variant="body2"
+                color="grey.700"
+                paddingRight={1}
+              >
                 You rated:
               </Typography>
               <Rating
@@ -203,7 +218,12 @@ function renderVariantContent(
             <Stack
               sx={{ flexDirection: "row", spacing: 1, alignItems: "center" }}
             >
-              <Typography variant="body2" color="grey.700" paddingRight={1}>
+              <Typography
+                component="h4"
+                variant="body2"
+                color="grey.700"
+                paddingRight={1}
+              >
                 Friend rated:
               </Typography>
               <Rating
@@ -219,7 +239,7 @@ function renderVariantContent(
           </Box>
           <Box>
             <Typography
-              component="h3"
+              component="h4"
               variant="h6"
               color="grey.700"
               sx={(theme) => ({
