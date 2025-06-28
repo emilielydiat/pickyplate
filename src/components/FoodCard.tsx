@@ -35,17 +35,43 @@ interface FoodCardProps {
   variant?: Variant;
   isAlreadyAdded?: boolean;
   ratingValue?: number;
+  userRating?: number;
+  friendRating?: number;
+  averageRating?: number;
+
   onToggleAdd?: (foodEntry: FoodEntry) => void;
   onDelete?: (foodEntry: FoodEntry) => void;
   onEdit?: (foodEntry: FoodEntry) => void;
   onRatingChange?: (value: number) => void;
 }
 
-function renderActionSection(
+const WinnerBanner = () => (
+  <Box
+    sx={(theme) => ({
+      width: "100%",
+      height: "32px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      bgcolor: theme.palette.primary.main,
+      borderTopRightRadius: "4px",
+      borderTopLeftRadius: "4px",
+    })}
+  >
+    <Typography variant="body2" sx={{ color: "#ffffff" }}>
+      WINNER
+    </Typography>
+  </Box>
+);
+
+function renderVariantContent(
   foodEntry: FoodEntry,
   variant: Variant,
   isAlreadyAdded?: boolean,
   ratingValue?: number,
+  userRating?: number,
+  friendRating?: number,
+  averageRating?: number,
   onToggleAdd?: (foodEntry: FoodEntry) => void,
   onDelete?: (foodEntry: FoodEntry) => void,
   onEdit?: (foodEntry: FoodEntry) => void,
@@ -103,9 +129,108 @@ function renderActionSection(
         </Box>
       );
     case "ratedLost":
-      return <></>;
+      return (
+        <Stack
+          sx={{
+            width: "100%",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            mt: 2,
+          }}
+        >
+          <Box>
+            <Stack sx={{ flexDirection: "row", alignItems: "center" }}>
+              <Typography variant="body2" color="grey.700" paddingRight={1}>
+                You rated:
+              </Typography>
+              <Rating
+                precision={0.5}
+                value={userRating}
+                size="medium"
+                readOnly
+                sx={{ color: "grey.400" }}
+              />
+            </Stack>
+            <Stack
+              sx={{ flexDirection: "row", spacing: 1, alignItems: "center" }}
+            >
+              <Typography variant="body2" color="grey.700" paddingRight={1}>
+                Friend rated:
+              </Typography>
+              <Rating
+                precision={0.5}
+                value={friendRating}
+                size="medium"
+                readOnly
+                sx={{ color: "grey.400" }}
+              />
+            </Stack>
+          </Box>
+          <Box>
+            <Typography component="h3" variant="h6" color="grey.500">
+              {averageRating}/5
+            </Typography>
+          </Box>
+        </Stack>
+      );
     case "ratedWon":
-      return <></>;
+      return (
+        <Stack
+          sx={{
+            width: "100%",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            mt: 2,
+          }}
+        >
+          <Box>
+            <Stack sx={{ flexDirection: "row", alignItems: "center" }}>
+              <Typography variant="body2" color="grey.700" paddingRight={1}>
+                You rated:
+              </Typography>
+              <Rating
+                precision={0.5}
+                value={userRating}
+                size="medium"
+                readOnly
+                sx={(theme) => ({
+                  color: theme.palette.primary.main,
+                })}
+              />
+            </Stack>
+            <Stack
+              sx={{ flexDirection: "row", spacing: 1, alignItems: "center" }}
+            >
+              <Typography variant="body2" color="grey.700" paddingRight={1}>
+                Friend rated:
+              </Typography>
+              <Rating
+                precision={0.5}
+                value={friendRating}
+                size="medium"
+                readOnly
+                sx={(theme) => ({
+                  color: theme.palette.primary.main,
+                })}
+              />
+            </Stack>
+          </Box>
+          <Box>
+            <Typography
+              component="h3"
+              variant="h6"
+              color="grey.700"
+              sx={(theme) => ({
+                color: theme.palette.primary.main,
+              })}
+            >
+              {averageRating}/5
+            </Typography>
+          </Box>
+        </Stack>
+      );
     case "base":
       return (
         <Box
@@ -149,12 +274,15 @@ export function FoodCard({
   foodEntry,
   isAlreadyAdded,
   ratingValue,
+  userRating,
+  friendRating,
+  averageRating,
   onToggleAdd,
   onDelete,
   onEdit,
   onRatingChange,
 }: FoodCardProps) {
-  return (
+  const cardBody = (
     <Card sx={{ width: { xs: "100%", sm: 360 } }}>
       <CardContent
         sx={{
@@ -216,11 +344,14 @@ export function FoodCard({
               <Chip key={cuisine} label={capitaliseWord(cuisine)} />
             ))}
           </Box>
-          {renderActionSection(
+          {renderVariantContent(
             foodEntry,
             variant,
             isAlreadyAdded,
             ratingValue,
+            userRating,
+            friendRating,
+            averageRating,
             onToggleAdd,
             onDelete,
             onEdit,
@@ -230,4 +361,15 @@ export function FoodCard({
       </CardContent>
     </Card>
   );
+
+  if (variant === "ratedWon") {
+    return (
+      <Box>
+        <WinnerBanner />
+        {cardBody}
+      </Box>
+    );
+  }
+
+  return cardBody;
 }
