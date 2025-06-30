@@ -7,6 +7,7 @@ import { useFriend } from "./MealRatingFlowWrapper";
 import { useUserContext } from "../context/UserContext";
 import { useMealSessionContext } from "../context/MealSessionContext";
 import { updateMealSession } from "../api/api";
+import { useNavigate } from "react-router-dom";
 
 export function SubmitRating() {
   const { setPageTitle } = usePageTitleContext();
@@ -15,6 +16,7 @@ export function SubmitRating() {
     return () => setPageTitle(null);
   }, [setPageTitle]);
 
+  const navigate = useNavigate();
   const { id } = useUserContext();
   const { friend } = useFriend();
   const { mealSession, setMealSession } = useMealSessionContext();
@@ -28,6 +30,7 @@ export function SubmitRating() {
   if (!mealSession) return <Typography>Loading...</Typography>;
 
   const isInitiator = mealSession.initiatorId === id;
+  const sessionStatus = mealSession.status;
   const initiatorOption = mealSession.initiatorOption as FoodEntry;
   const receiverOption = mealSession.receiverOption as FoodEntry;
 
@@ -54,15 +57,16 @@ export function SubmitRating() {
         };
       }
     });
+    console.log("ratingValueOnHandleRatingChange: ", ratingValue);
   }
 
   const handleSubmit = async () => {
     if (!mealSession) return;
-
     const updates: Partial<MealSession> = {};
 
-    if (isInitiator) {
+    if (sessionStatus === "everyone_preferences_set" && isInitiator) {
       const ir = ratingValue.initiatorRating;
+
       if (
         ir?.initiatorOption !== undefined &&
         ir?.receiverOption !== undefined
@@ -72,11 +76,12 @@ export function SubmitRating() {
           receiverOption: ir.receiverOption,
         };
       }
-      updates.status = ratingValue.receiverRating
-        ? "everyone_rated"
-        : "initiator_rated";
-    } else {
+      updates.status = "initiator_rated";
+    }
+
+    if (sessionStatus === "everyone_preferences_set" && !isInitiator) {
       const rr = ratingValue.receiverRating;
+
       if (
         rr?.initiatorOption !== undefined &&
         rr?.receiverOption !== undefined
@@ -86,10 +91,39 @@ export function SubmitRating() {
           receiverOption: rr.receiverOption,
         };
       }
-      updates.status = ratingValue.initiatorRating
-        ? "everyone_rated"
-        : "receiver_rated";
+      updates.status = "receiver_rated";
     }
+
+    if (sessionStatus === "initiator_rated" && !isInitiator) {
+      const rr = ratingValue.receiverRating;
+
+      if (
+        rr?.initiatorOption !== undefined &&
+        rr?.receiverOption !== undefined
+      ) {
+        updates.receiverRating = {
+          initiatorOption: rr.initiatorOption,
+          receiverOption: rr.receiverOption,
+        };
+      }
+      updates.status = "everyone_rated";
+    }
+
+    if (sessionStatus === "receiver_rated" && isInitiator) {
+      const ir = ratingValue.initiatorRating;
+
+      if (
+        ir?.initiatorOption !== undefined &&
+        ir?.receiverOption !== undefined
+      ) {
+        updates.initiatorRating = {
+          initiatorOption: ir.initiatorOption,
+          receiverOption: ir.receiverOption,
+        };
+      }
+      updates.status = "everyone_rated";
+    }
+
     await updateMealSession(
       mealSession.initiatorId,
       mealSession.receiverId,
@@ -99,6 +133,16 @@ export function SubmitRating() {
       ...prev!,
       ...updates,
     }));
+    console.log("mealSessionOnSubmit: ", mealSession);
+
+    if (
+      updates.status === "initiator_rated" ||
+      updates.status === "receiver_rated"
+    ) {
+      navigate("/requests");
+    } else if (updates.status === "everyone_rated") {
+      navigate(`/eat-together/${friend.id}/view-results`);
+    }
   };
 
   const isSubmitDisabled = isInitiator
@@ -110,6 +154,8 @@ export function SubmitRating() {
       ratingValue.receiverRating?.initiatorOption === 0 ||
       ratingValue.receiverRating?.receiverOption === undefined ||
       ratingValue.receiverRating?.receiverOption === 0;
+
+  console.log("ratingValueOnLoad: ", ratingValue);
 
   return (
     <Box component="section">
