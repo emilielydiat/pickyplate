@@ -38,93 +38,61 @@ export function SubmitRating() {
     ? (mealSession.receiverOption as FoodEntry)
     : (mealSession.initiatorOption as FoodEntry);
 
+  const currentRating = isInitiator
+    ? ratingValue.initiatorRating
+    : ratingValue.receiverRating;
+
   function handleRatingChange(
     value: number,
     optionKey: "initiatorOption" | "receiverOption"
   ) {
     setRatingValue((prev) => {
-      if (isInitiator) {
-        return {
-          ...prev,
-          initiatorRating: {
-            ...prev.initiatorRating,
-            [optionKey]: value,
-          },
-        };
-      } else {
-        return {
-          ...prev,
-          receiverRating: {
-            ...prev.receiverRating,
-            [optionKey]: value,
-          },
-        };
-      }
+      const updated = isInitiator
+        ? {
+            ...prev,
+            initiatorRating: {
+              ...prev.initiatorRating,
+              [optionKey]: value,
+            },
+          }
+        : {
+            ...prev,
+            receiverRating: {
+              ...prev.receiverRating,
+              [optionKey]: value,
+            },
+          };
+      return updated;
     });
-    console.log("ratingValueOnHandleRatingChange: ", ratingValue);
   }
 
   const handleSubmit = async () => {
     if (!mealSession) return;
     const updates: Partial<MealSession> = {};
 
-    if (sessionStatus === "everyone_preferences_set" && isInitiator) {
-      const ir = ratingValue.initiatorRating;
-
-      if (
-        ir?.initiatorOption !== undefined &&
-        ir?.receiverOption !== undefined
-      ) {
+    if (
+      currentRating?.initiatorOption !== undefined &&
+      currentRating?.receiverOption !== undefined
+    ) {
+      if (isInitiator) {
         updates.initiatorRating = {
-          initiatorOption: ir.initiatorOption,
-          receiverOption: ir.receiverOption,
+          initiatorOption: currentRating.initiatorOption,
+          receiverOption: currentRating.receiverOption,
         };
-      }
-      updates.status = "initiator_rated";
-    }
-
-    if (sessionStatus === "everyone_preferences_set" && !isInitiator) {
-      const rr = ratingValue.receiverRating;
-
-      if (
-        rr?.initiatorOption !== undefined &&
-        rr?.receiverOption !== undefined
-      ) {
+      } else {
         updates.receiverRating = {
-          initiatorOption: rr.initiatorOption,
-          receiverOption: rr.receiverOption,
+          initiatorOption: currentRating.initiatorOption,
+          receiverOption: currentRating.receiverOption,
         };
       }
-      updates.status = "receiver_rated";
     }
 
-    if (sessionStatus === "initiator_rated" && !isInitiator) {
-      const rr = ratingValue.receiverRating;
-
-      if (
-        rr?.initiatorOption !== undefined &&
-        rr?.receiverOption !== undefined
-      ) {
-        updates.receiverRating = {
-          initiatorOption: rr.initiatorOption,
-          receiverOption: rr.receiverOption,
-        };
-      }
-      updates.status = "everyone_rated";
-    }
-
-    if (sessionStatus === "receiver_rated" && isInitiator) {
-      const ir = ratingValue.initiatorRating;
-
-      if (
-        ir?.initiatorOption !== undefined &&
-        ir?.receiverOption !== undefined
-      ) {
-        updates.initiatorRating = {
-          initiatorOption: ir.initiatorOption,
-          receiverOption: ir.receiverOption,
-        };
-      }
+    if (sessionStatus === "everyone_preferences_set") {
+      updates.status = isInitiator ? "initiator_rated" : "receiver_rated";
+    } else if (
+      (sessionStatus === "initiator_rated" && !isInitiator) ||
+      (sessionStatus === "receiver_rated" && isInitiator)
+    ) {
       updates.status = "everyone_rated";
     }
 
@@ -137,7 +105,6 @@ export function SubmitRating() {
       ...prev!,
       ...updates,
     }));
-    console.log("mealSessionOnSubmit: ", mealSession);
 
     if (
       updates.status === "initiator_rated" ||
@@ -149,17 +116,11 @@ export function SubmitRating() {
     }
   };
 
-  const isSubmitDisabled = isInitiator
-    ? ratingValue.initiatorRating?.initiatorOption === undefined ||
-      ratingValue.initiatorRating?.initiatorOption === 0 ||
-      ratingValue.initiatorRating?.receiverOption === undefined ||
-      ratingValue.initiatorRating?.receiverOption === 0
-    : ratingValue.receiverRating?.initiatorOption === undefined ||
-      ratingValue.receiverRating?.initiatorOption === 0 ||
-      ratingValue.receiverRating?.receiverOption === undefined ||
-      ratingValue.receiverRating?.receiverOption === 0;
-
-  console.log("ratingValueOnLoad: ", ratingValue);
+  const isSubmitDisabled =
+    currentRating?.initiatorOption === undefined ||
+    currentRating?.initiatorOption === 0 ||
+    currentRating?.receiverOption === undefined ||
+    currentRating?.receiverOption === 0;
 
   return (
     <Box component="section">
@@ -176,11 +137,7 @@ export function SubmitRating() {
           <FoodCard
             variant="unrated"
             foodEntry={userPick}
-            ratingValue={
-              isInitiator
-                ? ratingValue.initiatorRating?.initiatorOption
-                : ratingValue.receiverRating?.initiatorOption
-            }
+            ratingValue={currentRating?.initiatorOption}
             onRatingChange={(value) =>
               handleRatingChange(value, "initiatorOption")
             }
@@ -198,11 +155,7 @@ export function SubmitRating() {
           <FoodCard
             variant="unrated"
             foodEntry={friendPick}
-            ratingValue={
-              isInitiator
-                ? ratingValue.initiatorRating?.receiverOption
-                : ratingValue.receiverRating?.receiverOption
-            }
+            ratingValue={currentRating?.receiverOption}
             onRatingChange={(value) =>
               handleRatingChange(value, "receiverOption")
             }
