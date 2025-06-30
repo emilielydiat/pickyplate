@@ -169,7 +169,7 @@ export function SubmitRating() {
           disabled={isSubmitDisabled}
           onClick={handleSubmit}
         >
-          Submit ratings
+          Submit rating
         </Button>
       </Box>
     </Box>
