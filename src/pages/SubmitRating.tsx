@@ -31,8 +31,12 @@ export function SubmitRating() {
 
   const isInitiator = mealSession.initiatorId === id;
   const sessionStatus = mealSession.status;
-  const initiatorOption = mealSession.initiatorOption as FoodEntry;
-  const receiverOption = mealSession.receiverOption as FoodEntry;
+  const userPick = isInitiator
+    ? (mealSession.initiatorOption as FoodEntry)
+    : (mealSession.receiverOption as FoodEntry);
+  const friendPick = isInitiator
+    ? (mealSession.receiverOption as FoodEntry)
+    : (mealSession.initiatorOption as FoodEntry);
 
   function handleRatingChange(
     value: number,
@@ -167,11 +171,11 @@ export function SubmitRating() {
             textAlign="left"
             mb="16px"
           >
-            {isInitiator ? "Your pick" : "Friend's pick"}
+            Your pick
           </Typography>
           <FoodCard
             variant="unrated"
-            foodEntry={initiatorOption}
+            foodEntry={userPick}
             ratingValue={
               isInitiator
                 ? ratingValue.initiatorRating?.initiatorOption
@@ -189,11 +193,11 @@ export function SubmitRating() {
             textAlign="left"
             mb="16px"
           >
-            {isInitiator ? "Friend's pick" : "Your pick"}
+            Friend's pick
           </Typography>
           <FoodCard
             variant="unrated"
-            foodEntry={receiverOption}
+            foodEntry={friendPick}
             ratingValue={
               isInitiator
                 ? ratingValue.initiatorRating?.receiverOption
