@@ -160,7 +160,7 @@ export function SubmitRating() {
   return (
     <Box component="section">
       <Stack spacing={5} sx={{ alignItems: "center" }}>
-        <Box width="100%">
+        <Box sx={{ width: "100%", maxWidth: "360px", mx: "auto" }}>
           <Typography
             component="h2"
             variant="h6Branded"
@@ -182,7 +182,7 @@ export function SubmitRating() {
             }
           />
         </Box>
-        <Box width="100%">
+        <Box sx={{ width: "100%", maxWidth: "360px", mx: "auto" }}>
           <Typography
             component="h2"
             variant="h6Branded"
