@@ -21,7 +21,7 @@ interface AppDialogProps {
   onClose: () => void;
   onConfirm: () => void;
   onCancel?: () => void;
-  onTextFieldChange: (value: string) => void;
+  onTextFieldChange?: (value: string) => void;
 }
 
 export function AppDialog({
