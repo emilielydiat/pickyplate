@@ -11,10 +11,13 @@ import {
   Typography,
 } from "@mui/material";
 import { useState, useMemo, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { User } from "../data/mockData";
+import { AppDialog } from "../components/AppDialog";
 import { usePageTitleContext } from "../context/PageTitleContext";
 import { useFriendsContext } from "../context/FriendsContext";
+import { useUserContext } from "../context/UserContext";
+import { getSharedFoodList } from "../api/api";
 
 export function PickFriend() {
   const { setPageTitle } = usePageTitleContext();
@@ -23,8 +26,12 @@ export function PickFriend() {
     return () => setPageTitle(null);
   }, [setPageTitle]);
 
+  const navigate = useNavigate();
+  const { id } = useUserContext();
   const { friends } = useFriendsContext();
   const [searchInput, setSearchInput] = useState<string>("");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedFriend, setSelectedFriend] = useState<User | null>(null);
 
   const filteredFriends: User[] = useMemo(() => {
     const input = searchInput.toLowerCase();
@@ -37,17 +44,41 @@ export function PickFriend() {
     }
   }, [searchInput, friends]);
 
+  const handleEatTogetherClick = async (friend: User) => {
+    const sharedFoodList = await getSharedFoodList(id, friend.id);
+
+    if (sharedFoodList.length === 0) {
+      setSelectedFriend(friend);
+      setDialogOpen(true);
+      return;
+    }
+
+    navigate(`/eat-together/${friend.id}/meal-preferences`);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+    setSelectedFriend(null);
+  };
+
+  const handleDialogConfirm = () => {
+    if (selectedFriend) {
+      setDialogOpen(false);
+      navigate(`/friend/${selectedFriend.id}/shared-food-list`);
+    }
+  };
+
   return (
     <Box component="section">
       <Stack spacing={2}>
         <TextField
-          type="search"
           label="Search friend"
           variant="outlined"
+          type="search"
           fullWidth
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-        ></TextField>
+        />
 
         {!searchInput.trim() && (
           <Typography component="p" variant="body1">
@@ -80,10 +111,10 @@ export function PickFriend() {
                   sx={{ pr: 2, wordBreak: "break-word" }}
                 />
                 <Button
-                  component={Link}
-                  to={`/eat-together/${friend.id}/meal-preferences`}
                   aria-label={`Eat together with ${friend.username}`}
                   variant="contained"
+                  type="button"
+                  onClick={() => handleEatTogetherClick(friend)}
                   sx={{ cursor: "pointer" }}
                 >
                   Eat together
@@ -93,6 +124,19 @@ export function PickFriend() {
           </List>
         )}
       </Stack>
+
+      <AppDialog
+        open={dialogOpen}
+        withTextField={false}
+        titleText="Oops, no shared food to pick from"
+        contentText="Your food list with this friend is empty! 
+          Add some food, to explore your next meal together."
+        confirmBtnLabel="Add food"
+        cancelBtnLabel="Close"
+        onClose={handleDialogClose}
+        onCancel={handleDialogClose}
+        onConfirm={handleDialogConfirm}
+      />
     </Box>
   );
 }
