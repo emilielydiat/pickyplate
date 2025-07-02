@@ -48,6 +48,7 @@ export function AppDialog({
       aria-describedby={contentText ? contentId : undefined}
       open={open}
       onClose={onClose}
+      sx={{ textAlign: "left" }}
     >
       <DialogTitle id={titleId}>{titleText}</DialogTitle>
       <DialogContent>
