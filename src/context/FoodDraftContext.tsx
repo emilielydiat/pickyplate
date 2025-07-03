@@ -18,7 +18,16 @@ export function useFoodDraftContext() {
 }
 
 export function FoodDraftProvider({ children }: { children: ReactNode }) {
-  const [draft, setDraft] = useState<Partial<FoodEntry> | null>(null);
+  const initialDraft: Partial<FoodEntry> = {
+    name: "",
+    type: [],
+    location: [],
+    price: undefined,
+    maxTime: undefined,
+    cuisine: [],
+  };
+
+  const [draft, setDraft] = useState<Partial<FoodEntry> | null>(initialDraft);
 
   return (
     <FoodDraftContext.Provider value={{ draft, setDraft }}>
