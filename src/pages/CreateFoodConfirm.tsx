@@ -16,7 +16,7 @@ export function CreateFoodConfirm() {
     return () => setPageTitle(null);
   }, [setPageTitle]);
 
-  const { draft } = useFoodDraftContext();
+  const { draft, resetDraft } = useFoodDraftContext();
   const { addFoodEntry } = useUserFoodListContext();
   const sharedFoodListContext = useSharedFoodListContext();
   const addSharedFoodEntry = sharedFoodListContext?.addSharedFoodEntry;
@@ -28,10 +28,12 @@ export function CreateFoodConfirm() {
     if (!draft) return;
     if (!friend) {
       await addFoodEntry(draft as Omit<FoodEntry, "id">);
+      resetDraft();
       navigate("/my-food-list");
     } else {
       if (addSharedFoodEntry) {
         await addSharedFoodEntry(draft as Omit<FoodEntry, "id">); // also adds entry to both users' personal list
+        resetDraft();
         navigate(`/friend/${friend.id}/shared-food-list`);
       }
     }
