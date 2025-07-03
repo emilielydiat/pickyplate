@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePageTitleContext } from "../context/PageTitleContext";
 import { useUserFoodListContext } from "../context/UserFoodListContext";
 import { useFoodDraftContext } from "../context/FoodDraftContext";
@@ -21,6 +21,7 @@ import {
 } from "../data/mockData";
 import { capitaliseWord } from "../utils/stringUtils";
 import { useFriend } from "./MealPreferencesFlowWrapper";
+import { AppDialog } from "../components/AppDialog";
 
 export function CreateFood() {
   const { setPageTitle } = usePageTitleContext();
@@ -33,6 +34,10 @@ export function CreateFood() {
   const { userFoodEntries } = useUserFoodListContext();
   const friendData = useFriend();
   const friend = friendData?.friend;
+
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [newCuisine, setNewCuisine] = useState<string>("");
+  const [additionalCuisines, setAdditionalCuisines] = useState<string[]>([]);
 
   const updateDraft = (field: keyof FoodEntry, value: any) => {
     setDraft((prev) => ({
@@ -69,10 +74,12 @@ export function CreateFood() {
   };
 
   const availableCuisines = useMemo(() => {
-    return Array.from(
-      new Set(userFoodEntries.flatMap((entry) => entry.cuisine))
-    ).sort((a, b) => a.localeCompare(b));
-  }, [userFoodEntries]);
+    const userCuisines = userFoodEntries.flatMap((entry) => entry.cuisine);
+    const merged = Array.from(
+      new Set([...userCuisines, ...additionalCuisines])
+    );
+    return merged.sort((a, b) => a.localeCompare(b));
+  }, [userFoodEntries, additionalCuisines]);
 
   const isFormComplete =
     !!draft?.name &&
@@ -87,6 +94,26 @@ export function CreateFood() {
   const path = friend
     ? `/friend/${friend.id}/shared-food-list/create-food/confirm`
     : "/my-food-list/create-food/confirm";
+
+  const handleNewCuisineClick = () => {
+    setNewCuisine("");
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setNewCuisine("");
+    setDialogOpen(false);
+  };
+
+  const handleDialogConfirm = () => {
+    const trimmed = newCuisine.trim();
+    if (!trimmed) return;
+
+    setAdditionalCuisines((prev) => [...prev, trimmed]);
+    toggleMultiSelect("cuisine", trimmed);
+    setNewCuisine("");
+    setDialogOpen(false);
+  };
 
   return (
     <Box component="section">
@@ -313,6 +340,13 @@ export function CreateFood() {
                 sx={{ m: 0.5 }}
               />
             ))}
+            <Chip
+              label="+ New"
+              variant="outlined"
+              clickable
+              onClick={handleNewCuisineClick}
+              sx={{ m: 0.5 }}
+            />
           </Stack>
         </FormControl>
       </Stack>
@@ -323,12 +357,27 @@ export function CreateFood() {
           to={path}
           variant="contained"
           color="primary"
+          type="button"
           disabled={!isFormComplete}
           sx={{ mb: 2 }}
         >
           Next
         </Button>
       </Box>
+
+      <AppDialog
+        open={dialogOpen}
+        withTextField
+        titleText="Add new cuisine"
+        confirmBtnLabel="Confirm"
+        cancelBtnLabel="Cancel"
+        textFieldLabel="Cuisine name"
+        textFieldValue={newCuisine}
+        onClose={handleDialogClose}
+        onCancel={handleDialogClose}
+        onConfirm={handleDialogConfirm}
+        onTextFieldChange={setNewCuisine}
+      />
     </Box>
   );
 }
