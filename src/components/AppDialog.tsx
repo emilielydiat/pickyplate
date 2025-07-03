@@ -17,6 +17,8 @@ interface AppDialogProps {
   cancelBtnLabel?: string;
   textFieldLabel?: string;
   textFieldValue?: string;
+  textFieldError?: boolean;
+  textFieldHelperText?: string;
 
   onClose: () => void;
   onConfirm: () => void;
@@ -33,12 +35,15 @@ export function AppDialog({
   cancelBtnLabel,
   textFieldLabel,
   textFieldValue = "",
+  textFieldError,
+  textFieldHelperText,
   onClose,
   onConfirm,
   onCancel,
   onTextFieldChange,
 }: AppDialogProps) {
-  const isConfirmDisabled = withTextField && textFieldValue.trim() === "";
+  const isConfirmDisabled =
+    (withTextField && textFieldValue.trim() === "") || textFieldError;
   const titleId = "dialog-title";
   const contentId = "dialog-description";
 
@@ -64,7 +69,9 @@ export function AppDialog({
             autoFocus
             fullWidth
             value={textFieldValue}
+            helperText={textFieldHelperText}
             onChange={(e) => onTextFieldChange?.(e.target.value)}
+            error={textFieldError}
           />
         )}
       </DialogContent>

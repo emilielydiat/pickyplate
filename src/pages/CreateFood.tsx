@@ -36,6 +36,7 @@ export function CreateFood() {
   const friend = friendData?.friend;
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [newCuisineError, setNewCuisineError] = useState<string>("");
   const [newCuisine, setNewCuisine] = useState<string>("");
   const [additionalCuisines, setAdditionalCuisines] = useState<string[]>([]);
 
@@ -97,21 +98,36 @@ export function CreateFood() {
 
   const handleNewCuisineClick = () => {
     setNewCuisine("");
+    setNewCuisineError("");
     setDialogOpen(true);
   };
 
   const handleDialogClose = () => {
     setNewCuisine("");
+    setNewCuisineError("");
     setDialogOpen(false);
   };
 
-  const handleDialogConfirm = () => {
-    const trimmed = newCuisine.trim();
-    if (!trimmed) return;
+  const handleNewCuisineChange = (value: string) => {
+    const trimmed = value.trim().toLowerCase();
+    setNewCuisine(trimmed);
 
-    setAdditionalCuisines((prev) => [...prev, trimmed]);
-    toggleMultiSelect("cuisine", trimmed);
+    if (availableCuisines.includes(trimmed)) {
+      setNewCuisineError("Cuisine already exists");
+      return;
+    } else {
+      setNewCuisineError("");
+    }
+  };
+
+  const handleDialogConfirm = () => {
+    // const trimmed = newCuisine.trim();
+    if (!newCuisine || newCuisineError) return;
+
+    setAdditionalCuisines((prev) => [...prev, newCuisine]);
+    toggleMultiSelect("cuisine", newCuisine);
     setNewCuisine("");
+    setNewCuisineError("");
     setDialogOpen(false);
   };
 
@@ -373,10 +389,12 @@ export function CreateFood() {
         cancelBtnLabel="Cancel"
         textFieldLabel="Cuisine name"
         textFieldValue={newCuisine}
+        textFieldError={!!newCuisineError}
+        textFieldHelperText={newCuisineError}
         onClose={handleDialogClose}
         onCancel={handleDialogClose}
         onConfirm={handleDialogConfirm}
-        onTextFieldChange={setNewCuisine}
+        onTextFieldChange={handleNewCuisineChange}
       />
     </Box>
   );
