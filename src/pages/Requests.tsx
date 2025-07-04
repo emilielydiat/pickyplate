@@ -66,7 +66,7 @@ export function Requests() {
   async function handleReject(initiatorId: string, receiverId: string) {
     await updateMealSession(initiatorId, receiverId, { status: "rejected" });
     const updatedSessions = await getAllMealSessionsForUser(id);
-    setUserMealSessions(updatedSessions); 
+    setUserMealSessions(updatedSessions);
   }
 
   async function handleAccept(initiatorId: string, receiverId: string) {
@@ -194,6 +194,9 @@ export function Requests() {
                           height: "40px",
                           color: "white",
                           bgcolor: theme.palette.primary.main,
+                          "&:hover": {
+                            bgcolor: theme.palette.primary.dark,
+                          },
                         })}
                       >
                         <Check />
