@@ -1,4 +1,3 @@
-// TO DO: variants
 import {
   Card,
   CardContent,
@@ -322,7 +321,7 @@ export function FoodCard({
               focusable="false"
               sx={{ mr: 1 }}
             />
-            <Typography variant="body2" color="grey.700">
+            <Typography variant="body2" color="grey.700" textAlign="left">
               {foodEntry.type.map(capitaliseWord).join(" | ")}
             </Typography>
           </Box>
@@ -332,7 +331,7 @@ export function FoodCard({
               focusable="false"
               sx={{ mr: 1 }}
             />
-            <Typography variant="body2" color="grey.700">
+            <Typography variant="body2" color="grey.700" textAlign="left">
               {foodEntry.location.map(capitaliseWord).join(" | ")}
             </Typography>
           </Box>
@@ -342,13 +341,13 @@ export function FoodCard({
               focusable="false"
               sx={{ mr: 1 }}
             />
-            <Typography variant="body2" color="grey.700">
+            <Typography variant="body2" color="grey.700" textAlign="left">
               {foodEntry.price.label ?? `£${foodEntry.price}`} per person
             </Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
             <AccessTime aria-hidden="true" focusable="false" sx={{ mr: 1 }} />
-            <Typography variant="body2" color="grey.700">
+            <Typography variant="body2" color="grey.700" textAlign="left">
               {capitaliseWord(foodEntry.maxTime)}
             </Typography>
           </Box>
