@@ -12,7 +12,7 @@ interface AppDialogProps {
   open: boolean;
   withTextField: boolean;
   titleText: string;
-  contentText?: string;
+  contentText?: string | React.ReactNode;
   confirmBtnLabel: string;
   cancelBtnLabel?: string;
   textFieldLabel?: string;

@@ -17,7 +17,20 @@ import { AppDialog } from "../components/AppDialog";
 import { usePageTitleContext } from "../context/PageTitleContext";
 import { useFriendsContext } from "../context/FriendsContext";
 import { useUserContext } from "../context/UserContext";
-import { getSharedFoodList } from "../api/api";
+import {
+  getSharedFoodList,
+  getMealSession,
+  resetMealSession,
+} from "../api/api";
+
+type DialogConfig = {
+  titleText: string;
+  contentText: string | React.ReactNode;
+  confirmBtnLabel: string;
+  cancelBtnLabel: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+};
 
 export function PickFriend() {
   const { setPageTitle } = usePageTitleContext();
@@ -31,7 +44,17 @@ export function PickFriend() {
   const { friends } = useFriendsContext();
   const [searchInput, setSearchInput] = useState<string>("");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedFriend, setSelectedFriend] = useState<User | null>(null);
+
+  const defaultDialogConfig: DialogConfig = {
+    titleText: "",
+    contentText: "",
+    confirmBtnLabel: "",
+    cancelBtnLabel: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  };
+  const [dialogConfig, setDialogConfig] =
+    useState<DialogConfig>(defaultDialogConfig);
 
   const filteredFriends: User[] = useMemo(() => {
     const input = searchInput.toLowerCase();
@@ -48,9 +71,56 @@ export function PickFriend() {
     const sharedFoodList = await getSharedFoodList(id, friend.id);
 
     if (sharedFoodList.length === 0) {
-      setSelectedFriend(friend);
+      setDialogConfig({
+        titleText: "Oops, no shared food to pick from",
+        contentText:
+          "Your food list with this friend is empty! Add some food to explore your next meal together.",
+        confirmBtnLabel: "Add food",
+        cancelBtnLabel: "Close",
+        onConfirm: () => {
+          setDialogOpen(false);
+          navigate(`/friend/${friend.id}/shared-food-list`);
+        },
+        onCancel: handleDialogClose,
+      });
       setDialogOpen(true);
       return;
+    }
+
+    const mealSession = await getMealSession(id, friend.id);
+
+    if (mealSession) {
+      if (
+        !(
+          mealSession.status === "everyone_rated" ||
+          mealSession.status === "cancelled" ||
+          mealSession.status === "rejected"
+        )
+      ) {
+        setDialogConfig({
+          titleText: "You’re already deciding what to eat together!",
+          contentText: (
+            <>
+              Find your current session in the “Decide what to eat together”
+              section in your Requests menu. <br /> <br /> Want to start fresh
+              instead? Begin a new session if you’d like.
+            </>
+          ),
+          confirmBtnLabel: "Go to current",
+          cancelBtnLabel: "New session",
+          onConfirm: () => {
+            setDialogOpen(false);
+            navigate("/requests");
+          },
+          onCancel: async () => {
+            await resetMealSession(id, friend.id);
+            setDialogOpen(false);
+            navigate(`/eat-together/${friend.id}/meal-preferences`);
+          },
+        });
+        setDialogOpen(true);
+        return;
+      }
     }
 
     navigate(`/eat-together/${friend.id}/meal-preferences`);
@@ -58,14 +128,6 @@ export function PickFriend() {
 
   const handleDialogClose = () => {
     setDialogOpen(false);
-    setSelectedFriend(null);
-  };
-
-  const handleDialogConfirm = () => {
-    if (selectedFriend) {
-      setDialogOpen(false);
-      navigate(`/friend/${selectedFriend.id}/shared-food-list`);
-    }
   };
 
   return (
@@ -128,14 +190,13 @@ export function PickFriend() {
       <AppDialog
         open={dialogOpen}
         withTextField={false}
-        titleText="Oops, no shared food to pick from"
-        contentText="Your food list with this friend is empty! 
-          Add some food, to explore your next meal together."
-        confirmBtnLabel="Add food"
-        cancelBtnLabel="Close"
+        titleText={dialogConfig.titleText}
+        contentText={dialogConfig.contentText}
+        confirmBtnLabel={dialogConfig.confirmBtnLabel}
+        cancelBtnLabel={dialogConfig.cancelBtnLabel}
         onClose={handleDialogClose}
-        onCancel={handleDialogClose}
-        onConfirm={handleDialogConfirm}
+        onCancel={dialogConfig.onCancel}
+        onConfirm={dialogConfig.onConfirm}
       />
     </Box>
   );

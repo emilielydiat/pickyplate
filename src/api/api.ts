@@ -360,3 +360,28 @@ export const updateMealSession = async (
     );
   }
 };
+
+export const resetMealSession = async (
+  initiatorId: string,
+  receiverId: string
+): Promise<void> => {
+  try {
+    await updateMealSession(initiatorId, receiverId, {
+      initiatorId: undefined,
+      receiverId: undefined,
+      status: "cancelled",
+      initiatorPreferences: undefined,
+      receiverPreferences: undefined,
+      initiatorOption: undefined,
+      receiverOption: undefined,
+      initiatorRating: undefined,
+      receiverRating: undefined,
+    });
+    console.log(`Session reset between users ${initiatorId} and ${receiverId}`);
+  } catch (error) {
+    console.error(
+      `Error resetting session between users ${initiatorId} and ${receiverId}: `,
+      error
+    );
+  }
+};
