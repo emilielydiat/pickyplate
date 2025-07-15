@@ -44,8 +44,6 @@ export function MealPreferencesConfirm() {
 
   if (!draft) return <Typography>Loading...</Typography>;
 
-  console.log("draft: ", draft);
-
   async function handleConfirm() {
     const sessionWithFriend = await getMealSession(id, friend.id);
     const sharedFoodList = await getSharedFoodList(id, friend.id);
