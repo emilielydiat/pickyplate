@@ -836,8 +836,8 @@ export const mockMealSessions: Record<string, MealSession> = {
   },
   user_1_user_10: {
     sessionId: "user_1_user_10",
-    initiatorId: "user_10",
-    receiverId: "user_1",
+    initiatorId: "user_1",
+    receiverId: "user_10",
     status: "rejected",
     initiatorPreferences: {
       type: "dinner",

@@ -17,11 +17,7 @@ import { AppDialog } from "../components/AppDialog";
 import { usePageTitleContext } from "../context/PageTitleContext";
 import { useFriendsContext } from "../context/FriendsContext";
 import { useUserContext } from "../context/UserContext";
-import {
-  getSharedFoodList,
-  getMealSession,
-  resetMealSession,
-} from "../api/api";
+import { getSharedFoodList, getMealSession } from "../api/api";
 
 type DialogConfig = {
   titleText: string;
@@ -113,7 +109,6 @@ export function PickFriend() {
             navigate("/requests");
           },
           onCancel: async () => {
-            await resetMealSession(id, friend.id);
             setDialogOpen(false);
             navigate(`/eat-together/${friend.id}/meal-preferences`);
           },

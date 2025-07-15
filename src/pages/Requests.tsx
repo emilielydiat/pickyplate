@@ -47,6 +47,8 @@ export function Requests() {
     fetchSessionsData();
   }, [id]);
 
+  console.log("userMealSessions on Requests load: ", userMealSessions);
+
   const displaySessions = userMealSessions
     .map((session) => {
       const { friendId, initiatorId, status } = session;

@@ -22,6 +22,7 @@ import {
   getMealSession,
   updateMealSession,
   getSharedFoodList,
+  resetMealSession,
 } from "../api/api";
 import { useUserContext } from "../context/UserContext";
 import { MealPreferencesData } from "../data/mockData";
@@ -49,13 +50,13 @@ export function MealPreferencesConfirm() {
     const sessionWithFriend = await getMealSession(id, friend.id);
     const sharedFoodList = await getSharedFoodList(id, friend.id);
 
+    const foodOption = matchFoodToPreferences(
+      sharedFoodList,
+      draft as MealPreferencesData
+    );
+
     if (sessionWithFriend) {
       if (sessionWithFriend.status === "accepted") {
-        const foodOption = matchFoodToPreferences(
-          sharedFoodList,
-          draft as MealPreferencesData
-        );
-
         await updateMealSession(friend.id, id, {
           receiverPreferences: draft as MealPreferencesData,
           status: "everyone_preferences_set",
@@ -64,13 +65,12 @@ export function MealPreferencesConfirm() {
 
         navigate(`/eat-together/${friend.id}/submit-rating`);
       } else {
-        const foodOption = matchFoodToPreferences(
-          sharedFoodList,
-          draft as MealPreferencesData
-        );
+        await resetMealSession(id, friend.id);
         await updateMealSession(id, friend.id, {
           initiatorPreferences: draft as MealPreferencesData,
           status: "invited",
+          initiatorId: id,
+          receiverId: friend.id,
           initiatorOption: foodOption,
         });
         navigate("/requests");
