@@ -6,6 +6,7 @@ import { useFriendData } from "../hooks/useFriendData";
 import { getSharedFoodList, getMealSession, removeFriend } from "../api/api";
 import { usePageTitleContext } from "../context/PageTitleContext";
 import { useUserContext } from "../context/UserContext";
+import { useFriendsContext } from "../context/FriendsContext";
 import { User } from "../data/mockData";
 import { AppDialog } from "../components/AppDialog";
 
@@ -27,6 +28,7 @@ export function FriendProfile() {
   const navigate = useNavigate();
   const { id } = useUserContext();
   const { friend } = useFriendData();
+  const { updateFriends } = useFriendsContext();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const defaultDialogConfig: DialogConfig = {
@@ -50,6 +52,8 @@ export function FriendProfile() {
   }
 
   const handleEatTogetherClick = async (friend: User) => {
+    if (!id) return;
+
     const sharedFoodList = await getSharedFoodList(id, friend.id);
 
     if (sharedFoodList.length === 0) {
@@ -112,12 +116,25 @@ export function FriendProfile() {
   };
 
   const handleRemoveFriend = async () => {
-    try {
-      await removeFriend(id, friend.id);
-      navigate("/friends");
-    } catch (error) {
-      console.error("Failed to remove friend", error);
-    }
+    setDialogConfig({
+      titleText: "Remove friend?",
+      contentText: `This will permanently remove ${friend.username} from your friend list`,
+      confirmBtnLabel: "Remove friend",
+      cancelBtnLabel: "Cancel",
+      onConfirm: async () => {
+        setDialogOpen(false);
+        try {
+          await removeFriend(id, friend.id);
+          await updateFriends();
+          navigate("/friends");
+        } catch (error) {
+          console.error("Failed to remove friend", error);
+        }
+      },
+      onCancel: handleDialogClose,
+    });
+    setDialogOpen(true);
+    return;
   };
 
   return (

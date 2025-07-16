@@ -13,11 +13,7 @@ import {
 import { useState, useMemo, useEffect } from "react";
 import { User } from "../data/mockData";
 import { usePageTitleContext } from "../context/PageTitleContext";
-import {
-  addFriend,
-  getUsersNotFriendsWith,
-  getCurrentUserFriends,
-} from "../api/api";
+import { addFriend, getUsersNotFriendsWith } from "../api/api";
 import { useUserContext } from "../context/UserContext";
 import { useFriendsContext } from "../context/FriendsContext";
 
@@ -29,7 +25,7 @@ export function AddFriend() {
   }, [setPageTitle]);
 
   const { id } = useUserContext();
-  const { setFriends } = useFriendsContext();
+  const { updateFriends } = useFriendsContext();
   const [searchInput, setSearchInput] = useState<string>("");
   const [nonFriendUsers, setNonFriendUsers] = useState<User[]>([]);
   const [addedUserIds, setAddedUserIds] = useState<string[]>([]);
@@ -58,9 +54,7 @@ export function AddFriend() {
   const handleAddFriend = async (friendId: string) => {
     const wasAdded = await addFriend(id, friendId);
     if (wasAdded) {
-      const friends = await getCurrentUserFriends(id);
-      setFriends(friends);
-      setAddedUserIds((prev) => [...prev, friendId]);
+      await updateFriends();
     }
   };
 

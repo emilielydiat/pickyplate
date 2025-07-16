@@ -5,12 +5,14 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { getCurrentUser, getCurrentUserFriends } from "../api/api";
+import { getCurrentUserFriends } from "../api/api";
 import { User } from "../data/mockData";
+import { useUserContext } from "../context/UserContext";
 
 type FriendsContextType = {
   friends: User[];
   setFriends: React.Dispatch<React.SetStateAction<User[]>>;
+  updateFriends: () => Promise<void>;
 };
 
 const FriendsContext = createContext<FriendsContextType | null>(null);
@@ -26,20 +28,27 @@ export function useFriendsContext() {
 
 export function FriendsProvider({ children }: { children: ReactNode }) {
   const [friends, setFriends] = useState<User[]>([]);
+  const { id } = useUserContext();
 
   useEffect(() => {
     async function fetchFriends() {
-      const currentUser = await getCurrentUser();
-      if (currentUser) {
-        const friendsList = await getCurrentUserFriends(currentUser.id);
+      if (id) {
+        const friendsList = await getCurrentUserFriends(id);
         setFriends(friendsList);
       }
     }
     fetchFriends();
-  }, []);
+  }, [id]);
+
+  const updateFriends = async () => {
+    if (id) {
+      const friendList = await getCurrentUserFriends(id);
+      setFriends(friendList);
+    }
+  };
 
   return (
-    <FriendsContext.Provider value={{ friends, setFriends }}>
+    <FriendsContext.Provider value={{ friends, setFriends, updateFriends }}>
       {children}
     </FriendsContext.Provider>
   );
