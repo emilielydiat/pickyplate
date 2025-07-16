@@ -54,6 +54,7 @@ export function AddFriend() {
   const handleAddFriend = async (friendId: string) => {
     const wasAdded = await addFriend(id, friendId);
     if (wasAdded) {
+      setAddedUserIds((prev) => [...prev, friendId]);
       await updateFriends();
     }
   };
