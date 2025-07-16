@@ -1,21 +1,44 @@
 import { Avatar, Box, Button, Stack, Typography } from "@mui/material";
 import { Mood, Restaurant, Delete } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useFriendData } from "../hooks/useFriendData";
-import { removeFriend } from "../api/api";
+import { getSharedFoodList, getMealSession, removeFriend } from "../api/api";
 import { usePageTitleContext } from "../context/PageTitleContext";
 import { useUserContext } from "../context/UserContext";
+import { User } from "../data/mockData";
+import { AppDialog } from "../components/AppDialog";
+
+type DialogConfig = {
+  titleText: string;
+  contentText: string | React.ReactNode;
+  confirmBtnLabel: string;
+  cancelBtnLabel: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+};
 
 export function FriendProfile() {
-  const { friend } = useFriendData();
-  const { id } = useUserContext();
   const { setPageTitle } = usePageTitleContext();
-  const navigate = useNavigate();
-
   useEffect(() => {
     setPageTitle(null);
   }, [setPageTitle]);
+
+  const navigate = useNavigate();
+  const { id } = useUserContext();
+  const { friend } = useFriendData();
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const defaultDialogConfig: DialogConfig = {
+    titleText: "",
+    contentText: "",
+    confirmBtnLabel: "",
+    cancelBtnLabel: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+  };
+  const [dialogConfig, setDialogConfig] =
+    useState<DialogConfig>(defaultDialogConfig);
 
   // TO DO: loading
   if (!friend) {
@@ -25,6 +48,68 @@ export function FriendProfile() {
       </Typography>
     );
   }
+
+  const handleEatTogetherClick = async (friend: User) => {
+    const sharedFoodList = await getSharedFoodList(id, friend.id);
+
+    if (sharedFoodList.length === 0) {
+      setDialogConfig({
+        titleText: "Oops, no shared food to pick from",
+        contentText:
+          "Your food list with this friend is empty! Add some food to explore your next meal together.",
+        confirmBtnLabel: "Add food",
+        cancelBtnLabel: "Close",
+        onConfirm: () => {
+          setDialogOpen(false);
+          navigate(`/friend/${friend.id}/shared-food-list`);
+        },
+        onCancel: handleDialogClose,
+      });
+      setDialogOpen(true);
+      return;
+    }
+
+    const mealSession = await getMealSession(id, friend.id);
+
+    if (mealSession) {
+      if (
+        !(
+          mealSession.status === "everyone_rated" ||
+          mealSession.status === "cancelled" ||
+          mealSession.status === "rejected"
+        )
+      ) {
+        setDialogConfig({
+          titleText: "You’re already deciding what to eat together!",
+          contentText: (
+            <>
+              Find your current session in the “Decide what to eat together”
+              section in your Requests menu. <br /> <br /> Want to start fresh
+              instead? Begin a new session if you’d like.
+            </>
+          ),
+          confirmBtnLabel: "Go to current",
+          cancelBtnLabel: "New session",
+          onConfirm: () => {
+            setDialogOpen(false);
+            navigate("/requests");
+          },
+          onCancel: async () => {
+            setDialogOpen(false);
+            navigate(`/eat-together/${friend.id}/meal-preferences`);
+          },
+        });
+        setDialogOpen(true);
+        return;
+      }
+    }
+
+    navigate(`/eat-together/${friend.id}/meal-preferences`);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
 
   const handleRemoveFriend = async () => {
     try {
@@ -66,11 +151,11 @@ export function FriendProfile() {
       >
         <Stack spacing={2} sx={{ width: "100%" }}>
           <Button
-            component={Link}
-            to={`/eat-together/${friend.id}/meal-preferences`}
             aria-label={`Eat together with ${friend.username}`}
             startIcon={<Mood />}
             variant="outlined"
+            type="button"
+            onClick={() => handleEatTogetherClick(friend)}
             sx={{ width: "100%" }}
           >
             Eat together
@@ -106,6 +191,17 @@ export function FriendProfile() {
           Remove friend
         </Button>
       </Box>
+      <AppDialog
+        open={dialogOpen}
+        withTextField={false}
+        titleText={dialogConfig.titleText}
+        contentText={dialogConfig.contentText}
+        confirmBtnLabel={dialogConfig.confirmBtnLabel}
+        cancelBtnLabel={dialogConfig.cancelBtnLabel}
+        onClose={handleDialogClose}
+        onCancel={dialogConfig.onCancel}
+        onConfirm={dialogConfig.onConfirm}
+      />
     </Box>
   );
 }
