@@ -13,7 +13,7 @@ import {
   AccountBalanceWalletOutlined,
   AccessTime,
 } from "@mui/icons-material";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { usePageTitleContext } from "../context/PageTitleContext";
 import { capitaliseWord } from "../utils/stringUtils";
 import { useMealPreferencesDraftContext } from "../context/MealPreferencesDraftContext";
@@ -28,6 +28,14 @@ import { useUserContext } from "../context/UserContext";
 import { MealPreferencesData } from "../data/mockData";
 import { useNavigate } from "react-router-dom";
 import { matchFoodToPreferences } from "../utils/foodOptionUtils";
+import { AppDialog } from "../components/AppDialog";
+
+type DialogConfig = {
+  titleText: string;
+  contentText: string | React.ReactNode;
+  confirmBtnLabel: string;
+  onConfirm: () => void;
+};
 
 export function MealPreferencesConfirm() {
   const { setPageTitle } = usePageTitleContext();
@@ -41,6 +49,16 @@ export function MealPreferencesConfirm() {
   const friend = friendData?.friend;
   const { id } = useUserContext();
   const navigate = useNavigate();
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const defaultDialogConfig: DialogConfig = {
+    titleText: "",
+    contentText: "",
+    confirmBtnLabel: "",
+    onConfirm: () => {},
+  };
+  const [dialogConfig, setDialogConfig] =
+    useState<DialogConfig>(defaultDialogConfig);
 
   if (!draft) return <Typography>Loading...</Typography>;
 
@@ -53,17 +71,25 @@ export function MealPreferencesConfirm() {
       draft as MealPreferencesData
     );
 
-    if (sessionWithFriend) {
-      if (sessionWithFriend.status === "accepted") {
-        await updateMealSession(friend.id, id, {
-          receiverPreferences: draft as MealPreferencesData,
-          status: "everyone_preferences_set",
-          receiverOption: foodOption,
+    // if no existing session
+    if (!sessionWithFriend) {
+      // if matching food
+      if (foodOption) {
+        setDialogConfig({
+          titleText: "Meal invitation sent",
+          contentText: (
+            <>
+              Your friend will receive the invite to eat together. <br />
+              <br /> Check the “Decide what to eat together” section in your
+              Requests menu for updates.
+            </>
+          ),
+          confirmBtnLabel: "Go to requests menu",
+          onConfirm: () => {
+            setDialogOpen(false);
+            navigate("/requests");
+          },
         });
-
-        navigate(`/eat-together/${friend.id}/submit-rating`);
-      } else {
-        await resetMealSession(id, friend.id);
         await updateMealSession(id, friend.id, {
           initiatorPreferences: draft as MealPreferencesData,
           status: "invited",
@@ -71,21 +97,95 @@ export function MealPreferencesConfirm() {
           receiverId: friend.id,
           initiatorOption: foodOption,
         });
-        navigate("/requests");
+        setDialogOpen(true);
+      } else {
+        // if no matching food
+        setDialogConfig({
+          titleText: "Oops! No matching food found",
+          contentText: (
+            <>
+              No food matches your preferences in the shared list with this
+              friend.
+              <br /> <br />
+              Change your meal preferences and try again.
+            </>
+          ),
+          confirmBtnLabel: "Change meal preferences",
+          onConfirm: () => {
+            setDialogOpen(false);
+            navigate(-1);
+          },
+        });
+        setDialogOpen(true);
       }
-    } else {
-      const foodOption = matchFoodToPreferences(
-        sharedFoodList,
-        draft as MealPreferencesData
-      );
-      await updateMealSession(id, friend.id, {
-        initiatorPreferences: draft as MealPreferencesData,
-        status: "invited",
-        initiatorOption: foodOption,
-      });
-      navigate("/requests");
+    }
+
+    // if existing session
+    if (sessionWithFriend) {
+      // if matching food
+      if (foodOption) {
+        if (sessionWithFriend.status === "accepted") {
+          await updateMealSession(friend.id, id, {
+            receiverPreferences: draft as MealPreferencesData,
+            status: "everyone_preferences_set",
+            receiverOption: foodOption,
+          });
+
+          navigate(`/eat-together/${friend.id}/submit-rating`);
+        } else {
+          setDialogConfig({
+            titleText: "Meal invitation sent",
+            contentText: (
+              <>
+                Your friend will receive the invite to eat together. <br />
+                <br /> Check the “Decide what to eat together” section in your
+                Requests menu for updates.
+              </>
+            ),
+            confirmBtnLabel: "Go to requests menu",
+            onConfirm: () => {
+              setDialogOpen(false);
+              navigate("/requests");
+            },
+          });
+          await resetMealSession(id, friend.id);
+          await updateMealSession(id, friend.id, {
+            initiatorPreferences: draft as MealPreferencesData,
+            status: "invited",
+            initiatorId: id,
+            receiverId: friend.id,
+            initiatorOption: foodOption,
+          });
+          setDialogOpen(true);
+        }
+      }
+
+      // if no matching food
+      else {
+        setDialogConfig({
+          titleText: "Oops! No matching food found",
+          contentText: (
+            <>
+              No food matches your preferences in the shared list with this
+              friend.
+              <br /> <br />
+              Change your meal preferences and try again.
+            </>
+          ),
+          confirmBtnLabel: "Change meal preferences",
+          onConfirm: () => {
+            setDialogOpen(false);
+            navigate(-1);
+          },
+        });
+        setDialogOpen(true);
+      }
     }
   }
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
 
   return (
     <Box
@@ -191,6 +291,15 @@ export function MealPreferencesConfirm() {
           Confirm and send
         </Button>
       </Box>
+      <AppDialog
+        open={dialogOpen}
+        withTextField={false}
+        titleText={dialogConfig.titleText}
+        contentText={dialogConfig.contentText}
+        confirmBtnLabel={dialogConfig.confirmBtnLabel}
+        onClose={handleDialogClose}
+        onConfirm={dialogConfig.onConfirm}
+      />
     </Box>
   );
 }

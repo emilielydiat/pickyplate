@@ -1,17 +1,10 @@
-import {
-  FoodEntry,
-  MealPreferencesData,
-  mealPriceLookup,
-  MealType,
-  MealLocation,
-  MealMaxTime,
-} from "../data/mockData";
+import { FoodEntry, MealPreferencesData, MealLocation } from "../data/mockData";
 import { arraysHaveCommonItems } from "./arrayUtils";
 
 export function matchFoodToPreferences(
   sharedFoodList: FoodEntry[],
   preferences: MealPreferencesData
-): FoodEntry {
+): FoodEntry | null {
   const matchingOptions = sharedFoodList.filter((food) => {
     const typeMatch: boolean = food.type.includes(preferences.type);
 
@@ -45,16 +38,5 @@ export function matchFoodToPreferences(
     return matchingOptions[randomIndex];
   }
 
-  const fallbackOption: FoodEntry = {
-    id: "food_3",
-    name: "Pasta Mama",
-    type: ["lunch", "dinner"] as MealType[],
-    location: ["dine in", "delivery/take out"],
-    price: mealPriceLookup["1-10"],
-    maxTime: "up to 1h" as MealMaxTime,
-    cuisine: ["italian"],
-    createdBy: "user_1",
-  };
-
-  return fallbackOption;
+  return null;
 }
