@@ -11,11 +11,13 @@ import {
   Typography,
 } from "@mui/material";
 import { useState, useMemo, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { User } from "../data/mockData";
 import { usePageTitleContext } from "../context/PageTitleContext";
 import { addFriend, getUsersNotFriendsWith } from "../api/api";
 import { useUserContext } from "../context/UserContext";
 import { useFriendsContext } from "../context/FriendsContext";
+import { AppDialog } from "../components/AppDialog";
 
 export function AddFriend() {
   const { setPageTitle } = usePageTitleContext();
@@ -24,11 +26,13 @@ export function AddFriend() {
     return () => setPageTitle(null);
   }, [setPageTitle]);
 
+  const navigate = useNavigate();
   const { id } = useUserContext();
   const { updateFriends } = useFriendsContext();
   const [searchInput, setSearchInput] = useState<string>("");
   const [nonFriendUsers, setNonFriendUsers] = useState<User[]>([]);
   const [addedUserIds, setAddedUserIds] = useState<string[]>([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     async function fetchNonFriendUsers() {
@@ -56,6 +60,7 @@ export function AddFriend() {
     if (wasAdded) {
       setAddedUserIds((prev) => [...prev, friendId]);
       await updateFriends();
+      setDialogOpen(true);
     }
   };
 
@@ -115,6 +120,29 @@ export function AddFriend() {
           </List>
         )}
       </Stack>
+      <AppDialog
+        open={dialogOpen}
+        withTextField={false}
+        titleText="Friend request sent"
+        contentText={
+          <>
+            {/* TO DO (after friend request management set): */}
+            {/*Track it in Requests page. You’ll be able to decide what to eat
+            together once they accept.
+            <br /> <br />*/}
+            In the meantime, why not build your food list? It’ll make choosing
+            easier later!
+          </>
+        }
+        confirmBtnLabel="Build my food list"
+        cancelBtnLabel="Not now"
+        onClose={() => setDialogOpen(false)}
+        onConfirm={() => {
+          setDialogOpen(false);
+          navigate("/my-food-list");
+        }}
+        onCancel={() => setDialogOpen(false)}
+      />
     </Box>
   );
 }
