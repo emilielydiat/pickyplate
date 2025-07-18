@@ -12,6 +12,7 @@ import {
   createFoodEntry,
 } from "../api/api";
 import { FoodEntry } from "../data/mockData";
+import { isValidFoodEntry } from "../utils/validators";
 
 type UserFoodListContextType = {
   userFoodEntries: FoodEntry[];
@@ -55,7 +56,8 @@ export function UserFoodListProvider({ children }: { children: ReactNode }) {
       const currentUser = await getCurrentUser();
       if (currentUser) {
         const userFoodList = await getCurrentUserFoodList(currentUser.id);
-        setUserFoodEntries(userFoodList);
+        const validFoodList = userFoodList.filter(isValidFoodEntry);
+        setUserFoodEntries(validFoodList);
       }
     }
     fetchUserFoodList();

@@ -12,6 +12,7 @@ import {
   createSharedFoodEntry,
 } from "../api/api";
 import { FoodEntry } from "../data/mockData";
+import { isValidFoodEntry } from "../utils/validators";
 
 type SharedFoodListContextType = {
   sharedFoodEntries: FoodEntry[];
@@ -57,7 +58,8 @@ export function SharedFoodListProvider({
       if (!currentUser || !friendId) return;
 
       const sharedFoodList = await getSharedFoodList(currentUser.id, friendId);
-      setSharedFoodEntries(sharedFoodList);
+      const validSharedFoodList = sharedFoodList.filter(isValidFoodEntry);
+      setSharedFoodEntries(validSharedFoodList);
     }
     fetchSharedFoodList();
   }, [friendId]);

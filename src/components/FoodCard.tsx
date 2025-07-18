@@ -301,6 +301,13 @@ export function FoodCard({
   onEdit,
   onRatingChange,
 }: FoodCardProps) {
+  if (!foodEntry || !foodEntry.name) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("FoodCard received invalid foodEntry:", foodEntry);
+    }
+    return null;
+  }
+
   const cardBody = (
     <Card sx={{ width: { xs: "100%", sm: 360 } }}>
       <CardContent
@@ -342,7 +349,8 @@ export function FoodCard({
               sx={{ mr: 1 }}
             />
             <Typography variant="body2" color="grey.700" textAlign="left">
-              {foodEntry.price.label ?? `£${foodEntry.price}`} per person
+              {foodEntry.price?.label ? foodEntry.price.label : "Price not set"}{" "}
+              per person
             </Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
