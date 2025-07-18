@@ -60,9 +60,45 @@ export function MealPreferencesConfirm() {
   const [dialogConfig, setDialogConfig] =
     useState<DialogConfig>(defaultDialogConfig);
 
+  function getOopsDialogConfig(onNavigate: () => void): DialogConfig {
+    return {
+      titleText: "Oops! No matching food found",
+      contentText: (
+        <>
+          No food matches your preferences in the shared list with this friend.
+          <br /> <br />
+          Change your meal preferences and try again.
+        </>
+      ),
+      confirmBtnLabel: "Change meal preferences",
+      onConfirm: () => {
+        setDialogOpen(false);
+        onNavigate();
+      },
+    };
+  }
+
+  function getInvitedDialogConfig(onNavigate: () => void): DialogConfig {
+    return {
+      titleText: "Meal invitation sent",
+      contentText: (
+        <>
+          Your friend will receive the invite to eat together. <br />
+          <br /> Check the “Decide what to eat together” section in your
+          Requests menu for updates.
+        </>
+      ),
+      confirmBtnLabel: "Go to requests menu",
+      onConfirm: () => {
+        setDialogOpen(false);
+        onNavigate();
+      },
+    };
+  }
+
   if (!draft) return <Typography>Loading...</Typography>;
 
-  async function handleConfirm() {
+  async function handleSubmitPreferences() {
     const sessionWithFriend = await getMealSession(id, friend.id);
     const sharedFoodList = await getSharedFoodList(id, friend.id);
 
@@ -71,116 +107,46 @@ export function MealPreferencesConfirm() {
       draft as MealPreferencesData
     );
 
-    // if no existing session
+    if (!foodOption) {
+      setDialogConfig(getOopsDialogConfig(() => navigate(-1)));
+      setDialogOpen(true);
+      return;
+    }
+
     if (!sessionWithFriend) {
-      // if matching food
-      if (foodOption) {
-        setDialogConfig({
-          titleText: "Meal invitation sent",
-          contentText: (
-            <>
-              Your friend will receive the invite to eat together. <br />
-              <br /> Check the “Decide what to eat together” section in your
-              Requests menu for updates.
-            </>
-          ),
-          confirmBtnLabel: "Go to requests menu",
-          onConfirm: () => {
-            setDialogOpen(false);
-            navigate("/requests");
-          },
-        });
-        await updateMealSession(id, friend.id, {
-          initiatorPreferences: draft as MealPreferencesData,
-          status: "invited",
-          initiatorId: id,
-          receiverId: friend.id,
-          initiatorOption: foodOption,
-        });
-        setDialogOpen(true);
-      } else {
-        // if no matching food
-        setDialogConfig({
-          titleText: "Oops! No matching food found",
-          contentText: (
-            <>
-              No food matches your preferences in the shared list with this
-              friend.
-              <br /> <br />
-              Change your meal preferences and try again.
-            </>
-          ),
-          confirmBtnLabel: "Change meal preferences",
-          onConfirm: () => {
-            setDialogOpen(false);
-            navigate(-1);
-          },
-        });
-        setDialogOpen(true);
-      }
+      setDialogConfig(getInvitedDialogConfig(() => navigate("/requests")));
+      setDialogOpen(true);
+      await updateMealSession(id, friend.id, {
+        initiatorPreferences: draft as MealPreferencesData,
+        status: "invited",
+        initiatorId: id,
+        receiverId: friend.id,
+        initiatorOption: foodOption,
+      });
+      return;
     }
 
-    // if existing session
-    if (sessionWithFriend) {
-      // if matching food
-      if (foodOption) {
-        if (sessionWithFriend.status === "accepted") {
-          await updateMealSession(friend.id, id, {
-            receiverPreferences: draft as MealPreferencesData,
-            status: "everyone_preferences_set",
-            receiverOption: foodOption,
-          });
+    if (sessionWithFriend.status === "accepted") {
+      await updateMealSession(friend.id, id, {
+        receiverPreferences: draft as MealPreferencesData,
+        status: "everyone_preferences_set",
+        receiverOption: foodOption,
+      });
 
-          navigate(`/eat-together/${friend.id}/submit-rating`);
-        } else {
-          setDialogConfig({
-            titleText: "Meal invitation sent",
-            contentText: (
-              <>
-                Your friend will receive the invite to eat together. <br />
-                <br /> Check the “Decide what to eat together” section in your
-                Requests menu for updates.
-              </>
-            ),
-            confirmBtnLabel: "Go to requests menu",
-            onConfirm: () => {
-              setDialogOpen(false);
-              navigate("/requests");
-            },
-          });
-          await resetMealSession(id, friend.id);
-          await updateMealSession(id, friend.id, {
-            initiatorPreferences: draft as MealPreferencesData,
-            status: "invited",
-            initiatorId: id,
-            receiverId: friend.id,
-            initiatorOption: foodOption,
-          });
-          setDialogOpen(true);
-        }
-      }
-
-      // if no matching food
-      else {
-        setDialogConfig({
-          titleText: "Oops! No matching food found",
-          contentText: (
-            <>
-              No food matches your preferences in the shared list with this
-              friend.
-              <br /> <br />
-              Change your meal preferences and try again.
-            </>
-          ),
-          confirmBtnLabel: "Change meal preferences",
-          onConfirm: () => {
-            setDialogOpen(false);
-            navigate(-1);
-          },
-        });
-        setDialogOpen(true);
-      }
+      navigate(`/eat-together/${friend.id}/submit-rating`);
+      return;
     }
+
+    setDialogConfig(getInvitedDialogConfig(() => navigate("/requests")));
+    setDialogOpen(true);
+    await resetMealSession(id, friend.id);
+    await updateMealSession(id, friend.id, {
+      initiatorPreferences: draft as MealPreferencesData,
+      status: "invited",
+      initiatorId: id,
+      receiverId: friend.id,
+      initiatorOption: foodOption,
+    });
   }
 
   const handleDialogClose = () => {
@@ -285,7 +251,7 @@ export function MealPreferencesConfirm() {
           aria-label={`Confirm your meal preferences for meal with ${friend.username}`}
           variant="contained"
           color="primary"
-          onClick={() => handleConfirm()}
+          onClick={() => handleSubmitPreferences()}
           sx={{ mb: 2 }}
         >
           Confirm and send
