@@ -8,6 +8,7 @@ import { useUserContext } from "../context/UserContext";
 import { useMealSessionContext } from "../context/MealSessionContext";
 import { updateMealSession } from "../api/api";
 import { useNavigate } from "react-router-dom";
+import { AppDialog } from "../components/AppDialog";
 
 export function SubmitRating() {
   const { setPageTitle } = usePageTitleContext();
@@ -26,6 +27,7 @@ export function SubmitRating() {
       receiverRating?: Partial<Rating>;
     }>
   >({});
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   if (!mealSession) return <Typography>Loading...</Typography>;
 
@@ -66,6 +68,7 @@ export function SubmitRating() {
     });
   }
 
+  // HERE: add dialog -> only show if status === "everyone_preferences_set"
   const handleSubmit = async () => {
     if (!mealSession) return;
     const updates: Partial<MealSession> = {};
@@ -110,7 +113,7 @@ export function SubmitRating() {
       updates.status === "initiator_rated" ||
       updates.status === "receiver_rated"
     ) {
-      navigate("/requests");
+      setDialogOpen(true);
     } else if (updates.status === "everyone_rated") {
       navigate(`/eat-together/${friend.id}/view-results`);
     }
@@ -172,6 +175,26 @@ export function SubmitRating() {
           Submit rating
         </Button>
       </Box>
+      <AppDialog
+        open={dialogOpen}
+        withTextField={false}
+        titleText="Ratings submitted"
+        contentText={
+          <>
+            Your ratings are in! We’re now waiting for your friend to submit
+            theirs.
+            <br /> <br />
+            Check the “Decide what to eat together” section in your Requests
+            menu for updates.
+          </>
+        }
+        confirmBtnLabel="Done"
+        onClose={() => setDialogOpen(false)}
+        onConfirm={() => {
+          setDialogOpen(false);
+          navigate("/requests");
+        }}
+      />
     </Box>
   );
 }
