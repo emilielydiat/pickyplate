@@ -20,6 +20,7 @@ type UserFoodListContextType = {
   setUserFoodEntries: React.Dispatch<React.SetStateAction<FoodEntry[]>>;
   addFoodEntry: (draft: Omit<FoodEntry, "id">) => Promise<void>;
   updateUserFoodEntry: (udpatedEntry: FoodEntry) => void;
+  updateUserFoodList: () => Promise<void>;
 };
 
 const UserFoodListContext = createContext<UserFoodListContextType | null>(null);
@@ -51,16 +52,17 @@ export function UserFoodListProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  useEffect(() => {
-    async function fetchUserFoodList() {
-      const currentUser = await getCurrentUser();
-      if (currentUser) {
-        const userFoodList = await getCurrentUserFoodList(currentUser.id);
-        const validFoodList = userFoodList.filter(isValidFoodEntry);
-        setUserFoodEntries(validFoodList);
-      }
+  const updateUserFoodList = async () => {
+    const currentUser = await getCurrentUser();
+    if (currentUser) {
+      const updatedFoodList = await getCurrentUserFoodList(currentUser.id);
+      const validFoodList = updatedFoodList.filter(isValidFoodEntry);
+      setUserFoodEntries(validFoodList);
     }
-    fetchUserFoodList();
+  };
+
+  useEffect(() => {
+    updateUserFoodList();
   }, []);
 
   const sortedUserFoodEntries = useMemo(() => {
@@ -83,6 +85,7 @@ export function UserFoodListProvider({ children }: { children: ReactNode }) {
         setUserFoodEntries,
         addFoodEntry,
         updateUserFoodEntry,
+        updateUserFoodList,
       }}
     >
       {children}
