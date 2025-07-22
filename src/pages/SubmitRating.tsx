@@ -27,7 +27,7 @@ export function SubmitRating() {
       receiverRating?: Partial<Rating>;
     }>
   >({});
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   if (!mealSession) return <Typography>Loading...</Typography>;
 

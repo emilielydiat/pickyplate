@@ -29,7 +29,7 @@ export function FriendProfile() {
   const { id } = useUserContext();
   const { friend } = useFriendData();
   const { updateFriends } = useFriendsContext();
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const defaultDialogConfig: DialogConfig = {
     titleText: "",

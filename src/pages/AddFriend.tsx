@@ -32,7 +32,7 @@ export function AddFriend() {
   const [searchInput, setSearchInput] = useState<string>("");
   const [nonFriendUsers, setNonFriendUsers] = useState<User[]>([]);
   const [addedUserIds, setAddedUserIds] = useState<string[]>([]);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   useEffect(() => {
     async function fetchNonFriendUsers() {

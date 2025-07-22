@@ -39,7 +39,7 @@ export function PickFriend() {
   const { id } = useUserContext();
   const { friends } = useFriendsContext();
   const [searchInput, setSearchInput] = useState<string>("");
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const defaultDialogConfig: DialogConfig = {
     titleText: "",

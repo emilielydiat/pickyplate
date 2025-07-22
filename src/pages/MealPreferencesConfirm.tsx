@@ -49,7 +49,7 @@ export function MealPreferencesConfirm() {
   const friend = friendData?.friend;
   const { id } = useUserContext();
   const navigate = useNavigate();
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const defaultDialogConfig: DialogConfig = {
     titleText: "",
