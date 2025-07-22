@@ -1,14 +1,26 @@
 import { Box, Fab, Stack, Typography } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { usePageTitleContext } from "../context/PageTitleContext";
 import { useUserContext } from "../context/UserContext";
 import { useUserFoodListContext } from "../context/UserFoodListContext";
 import { useFoodDraftContext } from "../context/FoodDraftContext";
-import { FoodEntry } from "../data/mockData";
+import { FoodEntry, mockSharedFoodLists } from "../data/mockData";
 import { updateMyFoodList } from "../api/api";
 import { FoodCard } from "../components/FoodCard";
+import { AppDialog } from "../components/AppDialog";
+import { isFoodEntryUsedInSharedLists } from "../utils/foodUtils";
+
+type DialogConfig = {
+  titleText: string;
+  contentText: string | React.ReactNode;
+  confirmBtnLabel: string;
+  cancelBtnLabel?: string;
+  onConfirm: () => void;
+  onCancel?: () => void;
+  onClose: () => void;
+};
 
 export function MyFoodList() {
   const { id } = useUserContext();
@@ -22,8 +34,21 @@ export function MyFoodList() {
 
   const { userFoodEntries, setUserFoodEntries, sortedUserFoodEntries } =
     useUserFoodListContext();
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
-  const handleDelete = async (foodEntry: FoodEntry) => {
+  const defaultDialogConfig: DialogConfig = {
+    titleText: "",
+    contentText: "",
+    confirmBtnLabel: "",
+    cancelBtnLabel: "",
+    onConfirm: () => {},
+    onCancel: () => {},
+    onClose: () => {},
+  };
+  const [dialogConfig, setDialogConfig] =
+    useState<DialogConfig>(defaultDialogConfig);
+
+  async function deleteFoodEntryFromUserList(foodEntry: FoodEntry) {
     const updatedList: FoodEntry[] = userFoodEntries.filter(
       (entry) => entry.id !== foodEntry.id
     );
@@ -33,6 +58,50 @@ export function MyFoodList() {
       id,
       updatedList.map((entry) => entry.id)
     );
+  }
+
+  const handleDelete = async (foodEntry: FoodEntry) => {
+    const isInUse = isFoodEntryUsedInSharedLists(
+      id,
+      foodEntry.id,
+      mockSharedFoodLists
+    );
+
+    if (isInUse) {
+      setDialogConfig({
+        titleText: "Oops! This food is in use in your shared list",
+        contentText: (
+          <>
+            You can't delete this food just yet because it's being used in one
+            or more shared lists with your friends. <br /> <br /> To delete it,
+            take it off those lists first!
+          </>
+        ),
+        confirmBtnLabel: "Close",
+        onConfirm: () => {
+          setDialogOpen(false);
+        },
+        onClose: () => setDialogOpen(false),
+      });
+      setDialogOpen(true);
+      return;
+    } else {
+      setDialogConfig({
+        titleText: "Delete food?",
+        contentText: (
+          <>Once removed, this item will no longer appear in your food list</>
+        ),
+        confirmBtnLabel: "Delete",
+        cancelBtnLabel: "Cancel",
+        onConfirm: async () => {
+          setDialogOpen(false);
+          await deleteFoodEntryFromUserList(foodEntry);
+        },
+        onCancel: () => setDialogOpen(false),
+        onClose: () => setDialogOpen(false),
+      });
+      setDialogOpen(true);
+    }
   };
 
   const handleEdit = async (foodEntry: FoodEntry) => {
@@ -63,7 +132,6 @@ export function MyFoodList() {
   );
 
   // TO DO: loading
-
   if (userFoodEntries.length === 0) {
     return (
       <Box component="section">
@@ -90,6 +158,17 @@ export function MyFoodList() {
         ))}
       </Stack>
       {AddFoodFab}
+      <AppDialog
+        open={dialogOpen}
+        withTextField={false}
+        titleText={dialogConfig.titleText}
+        contentText={dialogConfig.contentText}
+        confirmBtnLabel={dialogConfig.confirmBtnLabel}
+        cancelBtnLabel={dialogConfig.cancelBtnLabel}
+        onClose={dialogConfig.onClose}
+        onCancel={dialogConfig.onCancel}
+        onConfirm={dialogConfig.onConfirm}
+      />
     </Box>
   );
 }
