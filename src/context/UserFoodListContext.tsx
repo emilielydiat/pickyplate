@@ -6,13 +6,10 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import {
-  getCurrentUser,
-  getCurrentUserFoodList,
-  createFoodEntry,
-} from "../api/api";
+import { getCurrentUserFoodList, createFoodEntry } from "../api/api";
 import { FoodEntry } from "../data/mockData";
 import { isValidFoodEntry } from "../utils/validators";
+import { useUserContext } from "./UserContext";
 
 type UserFoodListContextType = {
   userFoodEntries: FoodEntry[];
@@ -38,24 +35,23 @@ export function useUserFoodListContext() {
 
 export function UserFoodListProvider({ children }: { children: ReactNode }) {
   const [userFoodEntries, setUserFoodEntries] = useState<FoodEntry[]>([]);
+  const { id } = useUserContext();
 
   const addFoodEntry = async (draft: Omit<FoodEntry, "id">) => {
-    const currentUser = await getCurrentUser();
-    if (!currentUser) {
+    if (!id) {
       console.error("No current user found");
       return;
     }
 
-    const newEntry = await createFoodEntry(currentUser.id, draft);
+    const newEntry = await createFoodEntry(id, draft);
     if (newEntry) {
       setUserFoodEntries((prev) => [...prev, newEntry]);
     }
   };
 
   const updateUserFoodList = async () => {
-    const currentUser = await getCurrentUser();
-    if (currentUser) {
-      const updatedFoodList = await getCurrentUserFoodList(currentUser.id);
+    if (id) {
+      const updatedFoodList = await getCurrentUserFoodList(id);
       const validFoodList = updatedFoodList.filter(isValidFoodEntry);
       setUserFoodEntries(validFoodList);
     }

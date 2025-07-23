@@ -5,8 +5,9 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { getCurrentUser, getMealSession } from "../api/api";
+import { getMealSession } from "../api/api";
 import { MealSession } from "../data/mockData";
+import { useUserContext } from "../context/UserContext";
 
 type MealSessionContextType = {
   mealSession: MealSession | null;
@@ -34,20 +35,18 @@ export function MealSessionProvider({
   children: ReactNode;
 }) {
   const [mealSession, setMealSession] = useState<MealSession | null>(null);
+  const { id } = useUserContext();
 
   useEffect(() => {
-    if (!friendId) return;
+    if (!id || !friendId) return;
 
     async function fetchMealSession() {
-      const currentUser = await getCurrentUser();
-
-      if (!currentUser || !friendId) return;
-
-      const session = await getMealSession(currentUser.id, friendId);
+      const session = await getMealSession(id, friendId);
       setMealSession(session);
     }
+
     fetchMealSession();
-  }, [friendId]);
+  }, [id, friendId]);
 
   return (
     <MealSessionContext.Provider

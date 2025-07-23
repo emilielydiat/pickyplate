@@ -1,5 +1,12 @@
-import { createContext, useContext, useState, ReactNode } from "react";
-import { mockUsers } from "../data/mockData";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  ReactNode,
+} from "react";
+import { getCurrentUser } from "../api/api";
 
 type UserContextType = {
   avatar: string;
@@ -23,24 +30,36 @@ export function useUserContext() {
 }
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const [avatar, setAvatar] = useState(mockUsers.user_1.avatar);
-  const [username, setUsername] = useState(mockUsers.user_1.username);
-  const [email, setEmail] = useState(mockUsers.user_1.email);
-  const id = mockUsers.user_1.id;
+  const [avatar, setAvatar] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [id, setId] = useState<string>("");
 
-  return (
-    <UserContext.Provider
-      value={{
-        avatar,
-        setAvatar,
-        username,
-        setUsername,
-        email,
-        setEmail,
-        id,
-      }}
-    >
-      {children}
-    </UserContext.Provider>
+  useEffect(() => {
+    async function fetchCurrentUser() {
+      const user = await getCurrentUser();
+      if (user) {
+        setAvatar(user.avatar);
+        setUsername(user.username);
+        setEmail(user.email);
+        setId(user.id);
+      }
+    }
+    fetchCurrentUser();
+  }, []);
+
+  const value = useMemo(
+    () => ({
+      avatar,
+      setAvatar,
+      username,
+      setUsername,
+      email,
+      setEmail,
+      id,
+    }),
+    [avatar, username, email, id]
   );
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }

@@ -6,13 +6,10 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import {
-  getCurrentUser,
-  getSharedFoodList,
-  createSharedFoodEntry,
-} from "../api/api";
+import { getSharedFoodList, createSharedFoodEntry } from "../api/api";
 import { FoodEntry } from "../data/mockData";
 import { isValidFoodEntry } from "../utils/validators";
+import { useUserContext } from "./UserContext";
 
 type SharedFoodListContextType = {
   sharedFoodEntries: FoodEntry[];
@@ -46,6 +43,7 @@ export function SharedFoodListProvider({
   children: ReactNode;
 }) {
   const [sharedFoodEntries, setSharedFoodEntries] = useState<FoodEntry[]>([]);
+  const { id } = useUserContext();
 
   useEffect(() => {
     if (!friendId) {
@@ -53,28 +51,21 @@ export function SharedFoodListProvider({
     }
 
     async function fetchSharedFoodList() {
-      const currentUser = await getCurrentUser();
+      if (!id || !friendId) return;
 
-      if (!currentUser || !friendId) return;
-
-      const sharedFoodList = await getSharedFoodList(currentUser.id, friendId);
+      const sharedFoodList = await getSharedFoodList(id, friendId);
       const validSharedFoodList = sharedFoodList.filter(isValidFoodEntry);
       setSharedFoodEntries(validSharedFoodList);
     }
     fetchSharedFoodList();
-  }, [friendId]);
+  }, [id, friendId]);
 
   const addSharedFoodEntry = async (
     draft: Omit<FoodEntry, "id">
   ): Promise<FoodEntry | null> => {
-    const currentUser = await getCurrentUser();
-    if (!currentUser || !friendId) return null;
+    if (!id || !friendId) return null;
 
-    const newEntry = await createSharedFoodEntry(
-      currentUser.id,
-      friendId,
-      draft
-    );
+    const newEntry = await createSharedFoodEntry(id, friendId, draft);
     if (newEntry) {
       setSharedFoodEntries((prev) => [...prev, newEntry]);
     }
