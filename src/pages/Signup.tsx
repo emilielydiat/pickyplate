@@ -1,10 +1,8 @@
-import { useContext, SyntheticEvent, useState } from "react";
-import { SupabaseContext } from "../context/SupabaseContext.tsx";
+import { SyntheticEvent, useState } from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
+import supabase from "../supabase";
 
 export function Signup() {
-  const { supabase } = useContext(SupabaseContext);
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [success, setSuccess] = useState(false);
