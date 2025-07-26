@@ -22,3 +22,4 @@ export { EditAvatar } from "./EditAvatar";
 export { EditFood } from "./EditFood";
 export { EditFoodConfirm } from "./EditFoodConfirm";
 export { Signup } from "./Signup";
+export { Login } from "./Login";
