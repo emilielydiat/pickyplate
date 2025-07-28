@@ -1,11 +1,31 @@
-import { AppBar, Box, Container, Toolbar, Typography } from "@mui/material";
+import {
+  AppBar,
+  Box,
+  Container,
+  Icon,
+  IconButton,
+  Toolbar,
+  Typography,
+} from "@mui/material";
+import { ArrowBack } from "@mui/icons-material";
 import { Navbar } from "./Navbar";
+import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { usePageTitleContext } from "../context/PageTitleContext";
 
-type PageHeaderProps = {
-  pageTitle?: string | null;
-};
+export function PageHeader() {
+  const { pageTitle, showBackBtn } = usePageTitleContext();
+  const navigate = useNavigate();
 
-export function PageHeader({ pageTitle }: PageHeaderProps) {
+  const canGoBack = useMemo(() => window.history.length > 1, []);
+  const handleBack = () => {
+    if (canGoBack) {
+      navigate(-1);
+    } else {
+      navigate("/");
+    }
+  };
+
   return (
     <AppBar
       component="header"
@@ -31,16 +51,35 @@ export function PageHeader({ pageTitle }: PageHeaderProps) {
             <Box
               sx={{
                 width: "100%",
-                height: 80,
+                minHeight: 80,
                 display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
                 alignItems: "center",
+                justifyContent: "space-between",
               }}
             >
-              <Typography component="h1" variant="h6" aria-label={pageTitle}>
-                {pageTitle}
-              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  width: "48px",
+                }}
+              >
+                {showBackBtn && (
+                  <IconButton
+                    aria-label="Go back"
+                    onClick={handleBack}
+                    sx={{ width: "48px", height: "48px" }}
+                  >
+                    <ArrowBack fontSize="medium" />
+                  </IconButton>
+                )}
+              </Box>
+              <Box sx={{ flexGrow: 1, textAlign: "center", px: 1 }}>
+                <Typography component="h1" variant="h6" aria-label={pageTitle}>
+                  {pageTitle}
+                </Typography>
+              </Box>
+              <Box sx={{ width: "48px" }}></Box>
             </Box>
           )}
         </Toolbar>
