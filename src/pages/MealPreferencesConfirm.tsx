@@ -13,8 +13,7 @@ import {
   AccountBalanceWalletOutlined,
   AccessTime,
 } from "@mui/icons-material";
-import { useState, useEffect } from "react";
-import { usePageTitleContext } from "../context/PageTitleContext";
+import { useState } from "react";
 import { capitaliseWord } from "../utils/stringUtils";
 import { useMealPreferencesDraftContext } from "../context/MealPreferencesDraftContext";
 import { useFriend } from "./MealPreferencesFlowWrapper";
@@ -29,6 +28,7 @@ import { MealPreferencesData } from "../data/mockData";
 import { useNavigate } from "react-router-dom";
 import { matchFoodToPreferences } from "../utils/foodOptionUtils";
 import { AppDialog } from "../components/AppDialog";
+import { usePageHeader } from "../hooks/usePageHeader";
 
 type DialogConfig = {
   titleText: string;
@@ -38,11 +38,7 @@ type DialogConfig = {
 };
 
 export function MealPreferencesConfirm() {
-  const { setPageTitle } = usePageTitleContext();
-  useEffect(() => {
-    setPageTitle("Confirm and send");
-    return () => setPageTitle(null);
-  }, [setPageTitle]);
+  usePageHeader("Confirm and send", true);
 
   const { draft } = useMealPreferencesDraftContext();
   const friendData = useFriend();

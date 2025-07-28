@@ -1,14 +1,14 @@
 import { Avatar, Box, Button, Stack, Typography } from "@mui/material";
 import { Mood, Restaurant, Delete } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useFriendData } from "../hooks/useFriendData";
 import { getSharedFoodList, getMealSession, removeFriend } from "../api/api";
-import { usePageTitleContext } from "../context/PageTitleContext";
 import { useUserContext } from "../context/UserContext";
 import { useFriendsContext } from "../context/FriendsContext";
 import { User } from "../data/mockData";
 import { AppDialog } from "../components/AppDialog";
+import { usePageHeader } from "../hooks/usePageHeader";
 
 type DialogConfig = {
   titleText: string;
@@ -20,11 +20,7 @@ type DialogConfig = {
 };
 
 export function FriendProfile() {
-  const { setPageTitle } = usePageTitleContext();
-  useEffect(() => {
-    setPageTitle("Friend's profile");
-    return () => setPageTitle(null);
-  }, [setPageTitle]);
+  usePageHeader("Friend's profile", true);
 
   const navigate = useNavigate();
   const { id } = useUserContext();

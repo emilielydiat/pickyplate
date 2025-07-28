@@ -1,8 +1,7 @@
 import { Box, Fab, Stack, Typography } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { usePageTitleContext } from "../context/PageTitleContext";
 import { useUserContext } from "../context/UserContext";
 import { useUserFoodListContext } from "../context/UserFoodListContext";
 import { useFoodDraftContext } from "../context/FoodDraftContext";
@@ -11,6 +10,7 @@ import { updateMyFoodList } from "../api/api";
 import { FoodCard } from "../components/FoodCard";
 import { AppDialog } from "../components/AppDialog";
 import { isFoodEntryUsedInSharedLists } from "../utils/foodUtils";
+import { usePageHeader } from "../hooks/usePageHeader";
 
 type DialogConfig = {
   titleText: string;
@@ -23,15 +23,11 @@ type DialogConfig = {
 };
 
 export function MyFoodList() {
+  usePageHeader("My food list", false);
+
   const { id } = useUserContext();
   const navigate = useNavigate();
   const { setDraft } = useFoodDraftContext();
-  const { setPageTitle } = usePageTitleContext();
-  useEffect(() => {
-    setPageTitle("My food list");
-    return () => setPageTitle(null);
-  }, [setPageTitle]);
-
   const { userFoodEntries, setUserFoodEntries, sortedUserFoodEntries } =
     useUserFoodListContext();
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);

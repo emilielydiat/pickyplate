@@ -10,15 +10,11 @@ import {
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
 import { useFriendsContext } from "../context/FriendsContext";
-import { usePageTitleContext } from "../context/PageTitleContext";
+import { usePageHeader } from "../hooks/usePageHeader";
 
 export function Friends() {
-  const { setPageTitle } = usePageTitleContext();
-  useEffect(() => {
-    setPageTitle("Friends");
-  }, [setPageTitle]);
+  usePageHeader("Friends", false);
 
   const { friends } = useFriendsContext();
 

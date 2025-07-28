@@ -1,15 +1,11 @@
 import { Avatar, Box, IconButton, Typography } from "@mui/material";
 import { Edit } from "@mui/icons-material";
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
-import { usePageTitleContext } from "../context/PageTitleContext";
+import { usePageHeader } from "../hooks/usePageHeader";
 
 export function Profile() {
-  const { setPageTitle } = usePageTitleContext();
-  useEffect(() => {
-    setPageTitle(null);
-  }, [setPageTitle]);
+  usePageHeader("Profile", false);
 
   const { avatar, username, email } = useUserContext();
 

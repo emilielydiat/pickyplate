@@ -1,13 +1,8 @@
 import { Typography } from "@mui/material";
-import { useEffect } from "react";
-import { usePageTitleContext } from "../context/PageTitleContext";
+import { usePageHeader } from "../hooks/usePageHeader";
 
 export function Settings() {
-  const { setPageTitle } = usePageTitleContext();
-  useEffect(() => {
-    setPageTitle("Settings");
-    return () => setPageTitle(null);
-  }, [setPageTitle]);
+  usePageHeader("Settings", false);
 
   return <Typography>Settings page (coming soon)</Typography>;
 }

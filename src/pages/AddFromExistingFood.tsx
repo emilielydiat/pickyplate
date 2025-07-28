@@ -1,6 +1,4 @@
 import { Box, Stack, Typography } from "@mui/material";
-import { useEffect } from "react";
-import { usePageTitleContext } from "../context/PageTitleContext";
 import { useUserContext } from "../context/UserContext";
 import { useUserFoodListContext } from "../context/UserFoodListContext";
 import { useSharedFoodListContext } from "../context/SharedFoodListContext";
@@ -8,19 +6,16 @@ import { useFriend } from "./FoodFlowWrapper";
 import { FoodEntry } from "../data/mockData";
 import { updateSharedFoodList } from "../api/api";
 import { FoodCard } from "../components/FoodCard";
+import { usePageHeader } from "../hooks/usePageHeader";
 
 export function AddFromExistingFood() {
-  const { setPageTitle } = usePageTitleContext();
+  usePageHeader("Add from existing food", true);
+
   const { id } = useUserContext();
   const { friend } = useFriend();
   const { userFoodEntries, sortedUserFoodEntries } = useUserFoodListContext();
   const sharedFoodListContext = useSharedFoodListContext();
   const sharedFoodEntries = sharedFoodListContext?.sharedFoodEntries ?? [];
-
-  useEffect(() => {
-    setPageTitle("Add from existing food");
-    return () => setPageTitle(null);
-  }, [setPageTitle]);
 
   const handleToggleAdd = async (foodEntry: FoodEntry): Promise<void> => {
     if (!sharedFoodListContext) {

@@ -1,15 +1,11 @@
 import { Button, Box, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
 import { useUserContext } from "../context/UserContext";
-import { usePageTitleContext } from "../context/PageTitleContext";
+import { usePageHeader } from "../hooks/usePageHeader";
 
 export function Home() {
   const { username } = useUserContext();
-  const { setPageTitle } = usePageTitleContext();
-  useEffect(() => {
-    setPageTitle(null);
-  }, [setPageTitle]);
+  usePageHeader("", false);
 
   return (
     <Box

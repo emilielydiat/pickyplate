@@ -8,8 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
-import { usePageTitleContext } from "../context/PageTitleContext";
+import { useMemo, useState } from "react";
 import { useUserFoodListContext } from "../context/UserFoodListContext";
 import { useFoodDraftContext } from "../context/FoodDraftContext";
 import {
@@ -22,13 +21,10 @@ import {
 import { capitaliseWord } from "../utils/stringUtils";
 import { useFriend } from "./MealPreferencesFlowWrapper";
 import { AppDialog } from "../components/AppDialog";
+import { usePageHeader } from "../hooks/usePageHeader";
 
 export function CreateFood() {
-  const { setPageTitle } = usePageTitleContext();
-  useEffect(() => {
-    setPageTitle("Create new food");
-    return () => setPageTitle(null);
-  }, [setPageTitle]);
+  usePageHeader("Create new food", true);
 
   const { draft, setDraft } = useFoodDraftContext();
   const { userFoodEntries } = useUserFoodListContext();

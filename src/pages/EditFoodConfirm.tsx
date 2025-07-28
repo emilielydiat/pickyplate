@@ -1,7 +1,5 @@
 import { Box, Button } from "@mui/material";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { usePageTitleContext } from "../context/PageTitleContext";
 import { useFoodDraftContext } from "../context/FoodDraftContext";
 import { useUserFoodListContext } from "../context/UserFoodListContext";
 import { useSharedFoodListContext } from "../context/SharedFoodListContext";
@@ -9,13 +7,10 @@ import { FoodEntry } from "../data/mockData";
 import { FoodCard } from "../components/FoodCard";
 import { updateFoodEntry } from "../api/api";
 import { useFriend } from "./FoodFlowWrapper";
+import { usePageHeader } from "../hooks/usePageHeader";
 
 export function EditFoodConfirm() {
-  const { setPageTitle } = usePageTitleContext();
-  useEffect(() => {
-    setPageTitle("Review and save");
-    return () => setPageTitle(null);
-  }, [setPageTitle]);
+  usePageHeader("Review and save", true);
 
   const { draft, setDraft } = useFoodDraftContext();
   const navigate = useNavigate();

@@ -1,6 +1,5 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import { usePageTitleContext } from "../context/PageTitleContext";
+import { useState } from "react";
 import { FoodCard } from "../components/FoodCard";
 import { FoodEntry, MealSession, Rating } from "../data/mockData";
 import { useFriend } from "./MealRatingFlowWrapper";
@@ -9,13 +8,10 @@ import { useMealSessionContext } from "../context/MealSessionContext";
 import { updateMealSession } from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { AppDialog } from "../components/AppDialog";
+import { usePageHeader } from "../hooks/usePageHeader";
 
 export function SubmitRating() {
-  const { setPageTitle } = usePageTitleContext();
-  useEffect(() => {
-    setPageTitle("Submit rating");
-    return () => setPageTitle(null);
-  }, [setPageTitle]);
+  usePageHeader("Submit rating", true);
 
   const navigate = useNavigate();
   const { id } = useUserContext();

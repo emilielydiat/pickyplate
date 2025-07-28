@@ -1,16 +1,12 @@
 import { Avatar, Box, Button, Grid2, Stack } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { usePageTitleContext } from "../context/PageTitleContext";
+import { useState } from "react";
 import { useUserContext } from "../context/UserContext";
 import { avatarOptions } from "../data/mockData";
+import { usePageHeader } from "../hooks/usePageHeader";
 
 export function EditAvatar() {
-  const { setPageTitle } = usePageTitleContext();
-  useEffect(() => {
-    setPageTitle("Choose your avatar");
-    return () => setPageTitle(null);
-  }, [setPageTitle]);
+  usePageHeader("Choose your avatar", true);
 
   const user = useUserContext();
   const [selectedAvatar, setSelectedAvatar] = useState<string>(user.avatar);

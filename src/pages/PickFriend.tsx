@@ -10,14 +10,14 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { User } from "../data/mockData";
 import { AppDialog } from "../components/AppDialog";
-import { usePageTitleContext } from "../context/PageTitleContext";
 import { useFriendsContext } from "../context/FriendsContext";
 import { useUserContext } from "../context/UserContext";
 import { getSharedFoodList, getMealSession } from "../api/api";
+import { usePageHeader } from "../hooks/usePageHeader";
 
 type DialogConfig = {
   titleText: string;
@@ -29,11 +29,7 @@ type DialogConfig = {
 };
 
 export function PickFriend() {
-  const { setPageTitle } = usePageTitleContext();
-  useEffect(() => {
-    setPageTitle("Pick a friend");
-    return () => setPageTitle(null);
-  }, [setPageTitle]);
+  usePageHeader("Pick a friend", true);
 
   const navigate = useNavigate();
   const { id } = useUserContext();

@@ -13,7 +13,6 @@ import {
 import { Check, Close } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { usePageTitleContext } from "../context/PageTitleContext";
 import { useUserContext } from "../context/UserContext";
 import { User } from "../data/mockData";
 import {
@@ -22,18 +21,16 @@ import {
   updateMealSession,
   getCurrentUserFriends,
 } from "../api/api";
+import { usePageHeader } from "../hooks/usePageHeader";
 
 export function Requests() {
+  usePageHeader("Requests", false);
+
   const [userMealSessions, setUserMealSessions] = useState<
     AllUserSessionsSummary[]
   >([]);
   const [userFriends, setUserFriends] = useState<User[]>([]);
   const { id } = useUserContext();
-  const { setPageTitle } = usePageTitleContext();
-  useEffect(() => {
-    setPageTitle("Requests");
-    return () => setPageTitle(null);
-  }, [setPageTitle]);
 
   useEffect(() => {
     async function fetchSessionsData() {

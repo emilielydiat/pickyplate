@@ -13,18 +13,14 @@ import {
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { User } from "../data/mockData";
-import { usePageTitleContext } from "../context/PageTitleContext";
 import { addFriend, getUsersNotFriendsWith } from "../api/api";
 import { useUserContext } from "../context/UserContext";
 import { useFriendsContext } from "../context/FriendsContext";
 import { AppDialog } from "../components/AppDialog";
+import { usePageHeader } from "../hooks/usePageHeader";
 
 export function AddFriend() {
-  const { setPageTitle } = usePageTitleContext();
-  useEffect(() => {
-    setPageTitle("Add friend");
-    return () => setPageTitle(null);
-  }, [setPageTitle]);
+  usePageHeader("Add friend", true);
 
   const navigate = useNavigate();
   const { id } = useUserContext();

@@ -1,18 +1,13 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
-import { useEffect } from "react";
-import { usePageTitleContext } from "../context/PageTitleContext";
 import { FoodCard } from "../components/FoodCard";
 import { FoodEntry, Rating } from "../data/mockData";
 import { useUserContext } from "../context/UserContext";
 import { useMealSessionContext } from "../context/MealSessionContext";
 import { Link } from "react-router-dom";
+import { usePageHeader } from "../hooks/usePageHeader";
 
 export function ViewResults() {
-  const { setPageTitle } = usePageTitleContext();
-  useEffect(() => {
-    setPageTitle("View results");
-    return () => setPageTitle(null);
-  }, [setPageTitle]);
+  usePageHeader("View results", true);
 
   const { id } = useUserContext();
   const { mealSession } = useMealSessionContext();

@@ -7,8 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useEffect, useMemo } from "react";
-import { usePageTitleContext } from "../context/PageTitleContext";
+import { useMemo } from "react";
 import { useMealPreferencesDraftContext } from "../context/MealPreferencesDraftContext";
 import { useSharedFoodListContext } from "../context/SharedFoodListContext";
 import {
@@ -21,15 +20,11 @@ import {
 } from "../data/mockData";
 import { useFriend } from "./MealPreferencesFlowWrapper";
 import { capitaliseWord } from "../utils/stringUtils";
+import { usePageHeader } from "../hooks/usePageHeader";
 
 export function MealPreferences() {
   const { friend } = useFriend();
-  const { setPageTitle } = usePageTitleContext();
-
-  useEffect(() => {
-    setPageTitle(`Meal preferences with ${friend.username}`);
-    return () => setPageTitle(null);
-  }, [friend, setPageTitle]);
+  usePageHeader(`Meal preferences with ${friend.username}`, true);
 
   const { draft, setDraft } = useMealPreferencesDraftContext();
   const sharedFoodListContext = useSharedFoodListContext();
