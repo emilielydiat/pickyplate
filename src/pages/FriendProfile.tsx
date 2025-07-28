@@ -22,7 +22,8 @@ type DialogConfig = {
 export function FriendProfile() {
   const { setPageTitle } = usePageTitleContext();
   useEffect(() => {
-    setPageTitle(null);
+    setPageTitle("Friend's profile");
+    return () => setPageTitle(null);
   }, [setPageTitle]);
 
   const navigate = useNavigate();
