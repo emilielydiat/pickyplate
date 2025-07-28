@@ -1,7 +1,5 @@
-import { Fab, Box, Stack, Typography } from "@mui/material";
-import { Add } from "@mui/icons-material";
+import { Box, Stack, Typography } from "@mui/material";
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
 import { usePageTitleContext } from "../context/PageTitleContext";
 import { useUserContext } from "../context/UserContext";
 import { useUserFoodListContext } from "../context/UserFoodListContext";
@@ -53,36 +51,12 @@ export function AddFromExistingFood() {
     );
   };
 
-  const AddFoodFab = (
-    <Fab
-      component={Link}
-      to={`/friend/${friend.id}/shared-food-list/create-food`}
-      aria-label="Create new food"
-      variant="extended"
-      size="medium"
-      color="primary"
-      sx={{
-        position: "fixed",
-        bottom: { xs: 16, md: 24 },
-        right: { xs: 16, md: "calc(50% - 450px + 24px)" },
-        zIndex: 1050,
-        cursor: "pointer",
-      }}
-    >
-      <Add sx={{ mr: 1 }} />
-      Create new food
-    </Fab>
-  );
-
-  // TO DO: loading
-
   if (userFoodEntries.length === 0 && sharedFoodEntries.length === 0) {
     return (
       <Box component="section">
         <Typography component="h2" variant="body1">
           Loading...
         </Typography>
-        {AddFoodFab}
       </Box>
     );
   }
@@ -93,7 +67,6 @@ export function AddFromExistingFood() {
         <Typography component="h2" variant="body1">
           No food entries available to add.
         </Typography>
-        {AddFoodFab}
       </Box>
     );
   }
@@ -113,7 +86,6 @@ export function AddFromExistingFood() {
           />
         ))}
       </Stack>
-      {AddFoodFab}
     </Box>
   );
 }

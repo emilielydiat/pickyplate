@@ -1,7 +1,15 @@
-import { Box, Fab, Stack, Typography } from "@mui/material";
-import { Add } from "@mui/icons-material";
-import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Box,
+  Button,
+  Fab,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
+import { Add, Edit } from "@mui/icons-material";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { usePageTitleContext } from "../context/PageTitleContext";
 import { useUserContext } from "../context/UserContext";
 import { useSharedFoodListContext } from "../context/SharedFoodListContext";
@@ -10,6 +18,7 @@ import { useFriend } from "./FoodFlowWrapper";
 import { FoodEntry } from "../data/mockData";
 import { updateSharedFoodList } from "../api/api";
 import { FoodCard } from "../components/FoodCard";
+import { AppDialog } from "../components/AppDialog";
 
 export function SharedFoodList() {
   const { id } = useUserContext();
@@ -20,6 +29,10 @@ export function SharedFoodList() {
   const sortedSharedFoodEntries =
     sharedFoodListContext?.sortedSharedFoodEntries ?? [];
   const { setDraft } = useFoodDraftContext();
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const { setPageTitle } = usePageTitleContext();
   useEffect(() => {
@@ -52,8 +65,7 @@ export function SharedFoodList() {
 
   const AddFoodFab = (
     <Fab
-      component={Link}
-      to={`/friend/${friend.id}/shared-food-list/add-existing-food`}
+      onClick={() => setDialogOpen(true)}
       aria-label="Add food"
       variant="extended"
       size="medium"
@@ -99,6 +111,72 @@ export function SharedFoodList() {
         ))}
       </Stack>
       {AddFoodFab}
+      <AppDialog
+        open={dialogOpen}
+        withTextField={false}
+        titleText="Add food"
+        contentText="What would you like to do?"
+        onClose={() => setDialogOpen(false)}
+        customActions={
+          isMobile ? (
+            <Stack sx={{ width: "100%", gap: 1 }}>
+              <Button
+                startIcon={<Add />}
+                variant="contained"
+                fullWidth
+                type="button"
+                onClick={() => {
+                  setDialogOpen(false);
+                  navigate(
+                    `/friend/${friend.id}/shared-food-list/add-existing-food`
+                  );
+                }}
+              >
+                Add from existing food
+              </Button>
+              <Button
+                startIcon={<Edit />}
+                variant="outlined"
+                fullWidth
+                type="button"
+                onClick={() => {
+                  setDialogOpen(false);
+                  navigate(`/friend/${friend.id}/shared-food-list/create-food`);
+                }}
+              >
+                Create new food
+              </Button>
+            </Stack>
+          ) : (
+            <Stack sx={{ flexDirection: "row", width: "100%", gap: 1 }}>
+              <Button
+                startIcon={<Add />}
+                variant="contained"
+                type="button"
+                onClick={() => {
+                  setDialogOpen(false);
+                  navigate(
+                    `/friend/${friend.id}/shared-food-list/add-existing-food`
+                  );
+                }}
+              >
+                Add from existing food
+              </Button>
+              <Button
+                startIcon={<Edit />}
+                variant="outlined"
+                type="button"
+                onClick={() => {
+                  setDialogOpen(false);
+                  navigate(`/friend/${friend.id}/shared-food-list/create-food`);
+                }}
+              >
+                Create new food
+              </Button>
+            </Stack>
+          )
+        }
+      />
     </Box>
   );
 }
