@@ -18,7 +18,7 @@ export function Layout() {
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>
-      <PageHeader pageTitle={pageTitle} />
+      <PageHeader />
       <Container
         id="main-content"
         role="region"
