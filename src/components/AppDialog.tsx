@@ -13,15 +13,16 @@ interface AppDialogProps {
   withTextField: boolean;
   titleText: string;
   contentText?: string | React.ReactNode;
-  confirmBtnLabel: string;
+  confirmBtnLabel?: string;
   cancelBtnLabel?: string;
   textFieldLabel?: string;
   textFieldValue?: string;
   textFieldError?: boolean;
   textFieldHelperText?: string;
+  customActions?: React.ReactNode;
 
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm?: () => void;
   onCancel?: () => void;
   onTextFieldChange?: (value: string) => void;
 }
@@ -37,6 +38,7 @@ export function AppDialog({
   textFieldValue = "",
   textFieldError,
   textFieldHelperText,
+  customActions,
   onClose,
   onConfirm,
   onCancel,
@@ -75,21 +77,25 @@ export function AppDialog({
           />
         )}
       </DialogContent>
-      <DialogActions>
-        {cancelBtnLabel && onCancel && (
-          <Button variant="outlined" type="button" onClick={onCancel}>
-            {cancelBtnLabel}
+      {customActions ? (
+        <DialogActions>{customActions}</DialogActions>
+      ) : (
+        <DialogActions>
+          {cancelBtnLabel && onCancel && (
+            <Button variant="outlined" type="button" onClick={onCancel}>
+              {cancelBtnLabel}
+            </Button>
+          )}
+          <Button
+            variant="contained"
+            type="button"
+            disabled={isConfirmDisabled}
+            onClick={onConfirm}
+          >
+            {confirmBtnLabel}
           </Button>
-        )}
-        <Button
-          variant="contained"
-          type="button"
-          disabled={isConfirmDisabled}
-          onClick={onConfirm}
-        >
-          {confirmBtnLabel}
-        </Button>
-      </DialogActions>
+        </DialogActions>
+      )}
     </Dialog>
   );
 }
