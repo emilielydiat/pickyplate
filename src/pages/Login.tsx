@@ -12,10 +12,12 @@ export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setIsLoading(true);
     setLoginError("");
 
     const { error } = await supabase.auth.signInWithPassword({
@@ -26,8 +28,6 @@ export function Login() {
     if (error) {
       setLoginError(error.message);
     } else {
-      setEmail("");
-      setPassword("");
       navigate("/");
     }
   };
@@ -60,7 +60,7 @@ export function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button type="submit" disabled={!email || !password}>
+          <Button type="submit" disabled={!email || !password || isLoading}>
             Login
           </Button>
           <Link to={"/signup"}>Click here to register</Link>

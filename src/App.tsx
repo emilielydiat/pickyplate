@@ -35,28 +35,20 @@ import {
   Login,
 } from "./pages";
 import supabase from "./supabase";
-import { User } from "@supabase/auth-js/src/lib/types.ts";
 import { useEffect, useState } from "react";
 import { SupabaseUserContext } from "./context/SupabaseUserContext.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
+import { User } from "./types.ts";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialised, setIsInitialised] = useState(true);
 
   const getUser = async () => {
-    try {
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.getUser();
-
-      if (error) return;
-
-      setUser(user);
-    } finally {
-      setIsLoading(false);
-    }
+    const { data, error } = await supabase.from("user_profile").select();
+    if (error) return;
+    setUser(data[0]);
+    setIsInitialised(true);
   };
 
   // Subscribe to auth state changes
@@ -78,12 +70,12 @@ function App() {
     void getUser();
   }, []);
 
-  if (isLoading) return "Loading...";
+  if (!isInitialised) return "Loading...";
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <SupabaseUserContext.Provider value={{ user, isLoading }}>
+      <SupabaseUserContext.Provider value={{ user, isInitialised }}>
         <UserProvider>
           <FriendsProvider>
             <PageTitleProvider>
