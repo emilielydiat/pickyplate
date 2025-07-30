@@ -3,7 +3,7 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import supabase from "../supabase";
 import logo from "../assets/logo-medium.svg";
-import { SupabaseUserContext } from "../context/SupabaseUserContext.tsx";
+import { SupabaseUserContext } from "../context/SupabaseUserContext";
 
 export function Login() {
   const { user } = useContext(SupabaseUserContext);

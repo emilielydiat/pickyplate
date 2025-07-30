@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { User } from "../types.ts";
+import { User } from "../types";
 
 type Context = {
   user: User | null;

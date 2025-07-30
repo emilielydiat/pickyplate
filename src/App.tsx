@@ -36,9 +36,9 @@ import {
 } from "./pages";
 import supabase from "./supabase";
 import { useEffect, useState } from "react";
-import { SupabaseUserContext } from "./context/SupabaseUserContext.tsx";
-import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
-import { User } from "./types.ts";
+import { SupabaseUserContext } from "./context/SupabaseUserContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { User } from "./types";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);

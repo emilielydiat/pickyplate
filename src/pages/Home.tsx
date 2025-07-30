@@ -1,7 +1,7 @@
 import { Button, Box, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
-import { SupabaseUserContext } from "../context/SupabaseUserContext.tsx";
+import { SupabaseUserContext } from "../context/SupabaseUserContext";
 import { usePageHeader } from "../hooks/usePageHeader";
 
 export function Home() {

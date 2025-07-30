@@ -11,7 +11,7 @@ import { NavbarMenu } from "./NavbarMenu";
 import { useUserContext } from "../context/UserContext";
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import { SupabaseUserContext } from "../context/SupabaseUserContext.tsx";
+import { SupabaseUserContext } from "../context/SupabaseUserContext";
 
 export function Navbar() {
   const [open, setOpen] = useState<boolean>(false);
