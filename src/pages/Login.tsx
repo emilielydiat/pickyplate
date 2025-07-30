@@ -36,36 +36,40 @@ export function Login() {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          maxWidth: "sm",
+          gap: 2,
+          padding: 2,
+          marginX: "auto",
+        }}
+        component="form"
+        onSubmit={handleSubmit}
+      >
+        <Box maxHeight={46}>
           <img src={logo} alt="PickyPlate" />
-
-          <TextField
-            label="Email address"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <TextField
-            type="password"
-            label="Password"
-            name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Button type="submit" disabled={!email || !password || isLoading}>
-            Login
-          </Button>
-          <Link to={"/signup"}>Click here to register</Link>
         </Box>
-      </form>
+
+        <TextField
+          label="Email address"
+          name="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <TextField
+          type="password"
+          label="Password"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <Button type="submit" disabled={!email || !password || isLoading}>
+          Login
+        </Button>
+        <Link to={"/signup"}>Click here to register</Link>
+      </Box>
 
       {loginError && <Typography variant="body2">{loginError}</Typography>}
     </>
