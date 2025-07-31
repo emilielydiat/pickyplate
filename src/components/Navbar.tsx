@@ -9,15 +9,13 @@ import { KeyboardArrowDown } from "@mui/icons-material";
 import logoSmall from "../assets/logo-small.svg";
 import { NavbarMenu } from "./NavbarMenu";
 import { useUserContext } from "../context/UserContext";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { SupabaseUserContext } from "../context/SupabaseUserContext";
 
 export function Navbar() {
   const [open, setOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const { avatar, username } = useUserContext();
-  const { user } = useContext(SupabaseUserContext);
+  const { user } = useUserContext();
 
   function handleMenuToggle(event: React.MouseEvent<HTMLElement>) {
     setOpen((prev) => !prev);
@@ -51,7 +49,7 @@ export function Navbar() {
           aria-label="Open user menu"
           aria-haspopup="menu"
           aria-expanded={open}
-          startIcon={<Avatar src={avatar} alt={`${username}'s avatar`} />}
+          startIcon={<Avatar alt={`${user!.name}'s avatar`} />}
           endIcon={
             <KeyboardArrowDown sx={{ display: { xs: "none", sm: "inline" } }} />
           }

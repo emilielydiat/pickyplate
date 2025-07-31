@@ -1,12 +1,12 @@
-import { SyntheticEvent, useContext, useState } from "react";
+import { SyntheticEvent, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import supabase from "../supabase";
 import logo from "../assets/logo-medium.svg";
-import { SupabaseUserContext } from "../context/SupabaseUserContext";
+import { useUserContext } from "../context/UserContext";
 
 export function Login() {
-  const { user } = useContext(SupabaseUserContext);
+  const { user } = useUserContext();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");

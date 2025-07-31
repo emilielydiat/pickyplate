@@ -1,11 +1,10 @@
 import { Button, Box, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useContext } from "react";
-import { SupabaseUserContext } from "../context/SupabaseUserContext";
 import { usePageHeader } from "../hooks/usePageHeader";
+import { useUserContext } from "../context/UserContext";
 
 export function Home() {
-  const { user } = useContext(SupabaseUserContext);
+  const { user } = useUserContext();
   usePageHeader("", false);
 
   return (

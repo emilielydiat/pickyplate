@@ -1,24 +1,25 @@
 import { Avatar, Box, Button, Grid2, Stack } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { useUserContext } from "../context/UserContext";
+// import { useUserContext } from "../context/UserContext";
 import { avatarOptions } from "../data/mockData";
 import { usePageHeader } from "../hooks/usePageHeader";
 
+// This component will be updated to integrate Supabase in the next iteration
 export function EditAvatar() {
   usePageHeader("Choose your avatar", true);
 
-  const user = useUserContext();
-  const [selectedAvatar, setSelectedAvatar] = useState<string>(user.avatar);
+  // const { user } = useUserContext();
+  const [selectedAvatar, setSelectedAvatar] = useState("");
 
   function handleAvatarSelection(avatar: string) {
     setSelectedAvatar(avatar);
   }
 
   function handleAvatarConfirm() {
-    if (user.avatar !== selectedAvatar) {
-      user.setAvatar(selectedAvatar);
-    }
+    // if (user.avatar !== selectedAvatar) {
+    //   user.setAvatar(selectedAvatar);
+    // }
 
     return;
   }
@@ -46,13 +47,7 @@ export function EditAvatar() {
               height: 80,
               width: 80,
               color: "primary.main",
-              border: selectedAvatar
-                ? selectedAvatar === avatarOption
-                  ? "4px solid"
-                  : "none"
-                : user.avatar === avatarOption
-                  ? "4px solid"
-                  : "none",
+              border: selectedAvatar === avatarOption ? "4px solid" : "none",
               borderRadius: "50%",
               cursor: "pointer",
               "&:hover": { opacity: 0.8 },
