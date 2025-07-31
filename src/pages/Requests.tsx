@@ -22,6 +22,7 @@ import {
   getCurrentUserFriends,
 } from "../api/api";
 import { usePageHeader } from "../hooks/usePageHeader";
+import { constructAvatarURL } from "../utils/supabase";
 
 export function Requests() {
   usePageHeader("Requests", false);
@@ -143,7 +144,7 @@ export function Requests() {
           {displaySessions
             .filter(
               (session) =>
-                !(session.status === "rejected" && !session.isInitiator)
+                !(session.status === "rejected" && !session.isInitiator),
             )
             .map((session) => {
               const buttonLabel = getButtonLabelForSession(session);
@@ -158,7 +159,7 @@ export function Requests() {
                 >
                   <ListItemAvatar>
                     <Avatar
-                      src={session.friendAvatar}
+                      src={constructAvatarURL(session.friendAvatar)}
                       alt={`Avatar of ${session.friendUsername}`}
                     />
                   </ListItemAvatar>

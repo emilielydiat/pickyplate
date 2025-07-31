@@ -1,8 +1,9 @@
-import { Box, IconButton, Typography } from "@mui/material";
+import { Avatar, Box, IconButton, Typography } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
 import { usePageHeader } from "../hooks/usePageHeader";
+import { constructAvatarURL } from "../utils/supabase";
 
 export function Profile() {
   usePageHeader("Profile", false);
@@ -21,15 +22,14 @@ export function Profile() {
       }}
     >
       <Box sx={{ position: "relative", mb: 3 }}>
-        {/* To be brought back in the next iteration */}
-        {/*<Avatar*/}
-        {/*  src={avatar}*/}
-        {/*  alt="Your avatar"*/}
-        {/*  sx={{*/}
-        {/*    height: 112,*/}
-        {/*    width: 112,*/}
-        {/*  }}*/}
-        {/*/>*/}
+        <Avatar
+          src={constructAvatarURL(user!.avatar)}
+          alt="Your avatar"
+          sx={{
+            height: 112,
+            width: 112,
+          }}
+        />
         <IconButton
           component={Link}
           to="/edit-avatar"

@@ -9,6 +9,7 @@ import { useFriendsContext } from "../context/FriendsContext";
 import { User } from "../data/mockData";
 import { AppDialog } from "../components/AppDialog";
 import { usePageHeader } from "../hooks/usePageHeader";
+import { constructAvatarURL } from "../utils/supabase";
 
 type DialogConfig = {
   titleText: string;
@@ -146,7 +147,7 @@ export function FriendProfile() {
       }}
     >
       <Avatar
-        src={friend.avatar}
+        src={constructAvatarURL(friend.avatar)}
         alt={`Avatar of ${friend.username}`}
         sx={{ width: "112px", height: "112px", mb: 3 }}
       />

@@ -59,6 +59,28 @@ export const getUserById = async (id: string): Promise<SupabaseUser | null> => {
   return data[0] ?? null;
 };
 
+export const getAvailableAvatars = async () => {
+  const { data, error } = await supabase.storage.from("avatars").list("", {
+    sortBy: { column: "name", order: "asc" },
+  });
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};
+
+export const updateUserProfile = async (
+  id: string,
+  payload: { name?: string; avatar?: string },
+) => {
+  const { error } = await supabase
+    .from("user_profile")
+    .update(payload)
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+};
+
 export const getCurrentUserFriends = async (
   userId: string
 ): Promise<User[]> => {
