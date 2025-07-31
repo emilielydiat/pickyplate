@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 export function Navbar() {
   const [open, setOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const { avatar, username } = useUserContext();
+  const { user } = useUserContext();
 
   function handleMenuToggle(event: React.MouseEvent<HTMLElement>) {
     setOpen((prev) => !prev);
@@ -49,7 +49,7 @@ export function Navbar() {
           aria-label="Open user menu"
           aria-haspopup="menu"
           aria-expanded={open}
-          startIcon={<Avatar src={avatar} alt={`${username}'s avatar`} />}
+          startIcon={<Avatar alt={`${user!.name}'s avatar`} />}
           endIcon={
             <KeyboardArrowDown sx={{ display: { xs: "none", sm: "inline" } }} />
           }
@@ -68,7 +68,7 @@ export function Navbar() {
           }}
         >
           <Typography sx={{ display: { xs: "none", sm: "inline" } }}>
-            {username}
+            {user!.name}
           </Typography>
         </Button>
       </Box>

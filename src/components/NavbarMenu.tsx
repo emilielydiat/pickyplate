@@ -8,6 +8,7 @@ import {
   Logout,
 } from "@mui/icons-material";
 import { Link } from "react-router-dom";
+import supabase from "../supabase";
 
 type NavbarMenuProps = {
   open: boolean;
@@ -69,7 +70,7 @@ export function NavbarMenu(props: NavbarMenuProps) {
           </ListItemIcon>
           Settings
         </MenuItem>
-        <MenuItem onClick={handleMenuClose}>
+        <MenuItem onClick={() => supabase.auth.signOut()}>
           <ListItemIcon>
             <Logout />
           </ListItemIcon>

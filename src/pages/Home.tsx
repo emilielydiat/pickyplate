@@ -1,10 +1,10 @@
 import { Button, Box, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useUserContext } from "../context/UserContext";
 import { usePageHeader } from "../hooks/usePageHeader";
+import { useUserContext } from "../context/UserContext";
 
 export function Home() {
-  const { username } = useUserContext();
+  const { user } = useUserContext();
   usePageHeader("", false);
 
   return (
@@ -20,7 +20,7 @@ export function Home() {
       }}
     >
       <Typography id="welcome-section" component="h1" variant="h6Branded">
-        Welcome, {username}
+        Welcome, {user!.name}
       </Typography>
       <Typography variant="body2" sx={{ color: "grey.700", mb: 2 }}>
         Hungry for a decision?
