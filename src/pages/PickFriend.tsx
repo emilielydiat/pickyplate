@@ -10,14 +10,16 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { Add } from "@mui/icons-material";
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { User } from "../data/mockData";
+import { User, emptyStateImages } from "../data/mockData";
 import { AppDialog } from "../components/AppDialog";
 import { useFriendsContext } from "../context/FriendsContext";
 import { useUserContext } from "../context/UserContext";
 import { getSharedFoodList, getMealSession } from "../api/api";
 import { usePageHeader } from "../hooks/usePageHeader";
+import { EmptyState } from "../components/EmptyState";
 
 type DialogConfig = {
   titleText: string;
@@ -140,10 +142,20 @@ export function PickFriend() {
         )}
 
         {filteredFriends.length === 0 && searchInput.trim() && (
-          <Typography component="p" variant="body1">
-            No friends found.
-            <br /> Try a different spelling or invite them to join!
-          </Typography>
+          <EmptyState
+            image={emptyStateImages.pickAFriend}
+            heading="Can't find that friend"
+            textContent="Try another name or add them to your friend list!"
+            button={
+              <Button
+                startIcon={<Add />}
+                variant="contained"
+                onClick={() => navigate("/friends/add-friend")}
+              >
+                Add friend
+              </Button>
+            }
+          />
         )}
 
         {filteredFriends.length !== 0 && (

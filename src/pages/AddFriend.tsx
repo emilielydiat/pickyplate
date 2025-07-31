@@ -12,12 +12,13 @@ import {
 } from "@mui/material";
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { User } from "../data/mockData";
+import { User, emptyStateImages } from "../data/mockData";
 import { addFriend, getUsersNotFriendsWith } from "../api/api";
 import { useUserContext } from "../context/UserContext";
 import { useFriendsContext } from "../context/FriendsContext";
 import { AppDialog } from "../components/AppDialog";
 import { usePageHeader } from "../hooks/usePageHeader";
+import { EmptyState } from "../components/EmptyState";
 
 export function AddFriend() {
   usePageHeader("Add friend", true);
@@ -79,10 +80,11 @@ export function AddFriend() {
         )}
 
         {filteredUsers.length === 0 && searchInput.trim() && (
-          <Typography component="p" variant="body1">
-            No friends found.
-            <br /> Try a different spelling or invite them to join!
-          </Typography>
+          <EmptyState
+            image={emptyStateImages.addFriend}
+            heading="Hmm... didn't find anyone"
+            textContent="Are they registered yet? If not, invite them!"
+          />
         )}
 
         {filteredUsers.length !== 0 && (

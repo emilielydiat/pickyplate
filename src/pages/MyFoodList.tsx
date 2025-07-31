@@ -1,16 +1,21 @@
-import { Box, Fab, Stack, Typography } from "@mui/material";
+import { Box, Fab, Stack } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
 import { useUserFoodListContext } from "../context/UserFoodListContext";
 import { useFoodDraftContext } from "../context/FoodDraftContext";
-import { FoodEntry, mockSharedFoodLists } from "../data/mockData";
+import {
+  FoodEntry,
+  mockSharedFoodLists,
+  emptyStateImages,
+} from "../data/mockData";
 import { updateMyFoodList } from "../api/api";
 import { FoodCard } from "../components/FoodCard";
 import { AppDialog } from "../components/AppDialog";
 import { isFoodEntryUsedInSharedLists } from "../utils/foodUtils";
 import { usePageHeader } from "../hooks/usePageHeader";
+import { EmptyState } from "../components/EmptyState";
 
 type DialogConfig = {
   titleText: string;
@@ -131,10 +136,11 @@ export function MyFoodList() {
   if (userFoodEntries.length === 0) {
     return (
       <Box component="section">
-        <Typography component="h2" variant="body1">
-          You haven't added any food entries yet. <br /> Click the button below
-          to add one!
-        </Typography>
+        <EmptyState
+          image={emptyStateImages.myFoodList}
+          heading="Start your food list"
+          textContent="Add a few favourites, so deciding what to eat together is easier later!"
+        />
         {AddFoodFab}
       </Box>
     );

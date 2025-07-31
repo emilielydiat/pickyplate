@@ -6,12 +6,13 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-  Typography,
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { Link } from "react-router-dom";
+import { emptyStateImages } from "../data/mockData";
 import { useFriendsContext } from "../context/FriendsContext";
 import { usePageHeader } from "../hooks/usePageHeader";
+import { EmptyState } from "../components/EmptyState";
 
 export function Friends() {
   usePageHeader("Friends", false);
@@ -25,10 +26,11 @@ export function Friends() {
   return (
     <Box component="section">
       {sortedFriends.length === 0 ? (
-        <Typography component="h2" variant="body1">
-          You haven’t added any friends yet. <br /> Click on the button below to
-          add one.
-        </Typography>
+        <EmptyState
+          image={emptyStateImages.friends}
+          heading="Hungry for company?"
+          textContent="Click the button below to add someone you want to share a meal with!"
+        />
       ) : (
         <List>
           {sortedFriends.map((friend) => (

@@ -3,7 +3,6 @@ import {
   Button,
   Fab,
   Stack,
-  Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -14,11 +13,12 @@ import { useUserContext } from "../context/UserContext";
 import { useSharedFoodListContext } from "../context/SharedFoodListContext";
 import { useFoodDraftContext } from "../context/FoodDraftContext";
 import { useFriend } from "./FoodFlowWrapper";
-import { FoodEntry } from "../data/mockData";
+import { FoodEntry, emptyStateImages } from "../data/mockData";
 import { updateSharedFoodList } from "../api/api";
 import { FoodCard } from "../components/FoodCard";
 import { AppDialog } from "../components/AppDialog";
 import { usePageHeader } from "../hooks/usePageHeader";
+import { EmptyState } from "../components/EmptyState";
 
 export function SharedFoodList() {
   const { friend } = useFriend();
@@ -153,10 +153,11 @@ export function SharedFoodList() {
   if (sharedFoodEntries.length === 0) {
     return (
       <Box component="section">
-        <Typography component="h2" variant="body1">
-          You haven't added any food entries yet. <br /> Click the button below
-          to add one!
-        </Typography>
+        <EmptyState
+          image={emptyStateImages.sharedFoodList}
+          heading="Start building your shared food list"
+          textContent={`Add some food you'd love to share with ${friend.username}, it'll make choosing together a breeze!`}
+        />
         {AddFoodFab}
         {CustomAppDialog}
       </Box>
