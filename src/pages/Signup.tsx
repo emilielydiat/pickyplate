@@ -21,7 +21,7 @@ export function Signup() {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { name } },
+      options: { data: { name }, emailRedirectTo: location.origin },
     });
 
     if (error) {
