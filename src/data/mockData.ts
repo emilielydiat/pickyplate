@@ -11,6 +11,22 @@ import avatar10 from "../assets/avatars/avatar-10.svg";
 import avatar11 from "../assets/avatars/avatar-11.svg";
 import avatar12 from "../assets/avatars/avatar-12.svg";
 
+import emptyMyFoodListImage from "../assets/empty-states/my-food-list-empty.svg";
+import emptySharedFoodListImage from "../assets/empty-states/shared-food-list-empty.svg";
+import emptyFriendsImage from "../assets/empty-states/friends-empty.svg";
+import emptyPickAFriendImage from "../assets/empty-states/pick-a-friend-empty.svg";
+import emptyAddFriendImage from "../assets/empty-states/add-friend-empty.svg";
+
+export const emptyStateImages = {
+  myFoodList: emptyMyFoodListImage,
+  sharedFoodList: emptySharedFoodListImage,
+  friends: emptyFriendsImage,
+  pickAFriend: emptyPickAFriendImage,
+  addFriend: emptyAddFriendImage,
+} as const;
+
+export type emptyStateImagesKey = keyof typeof emptyStateImages;
+
 export const avatarOptions: string[] = [
   avatar1,
   avatar2,
