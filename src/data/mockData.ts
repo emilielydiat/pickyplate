@@ -1,21 +1,29 @@
-import avatar1 from "../assets/avatars/avatar-1.svg";
-import avatar2 from "../assets/avatars/avatar-2.svg";
-import avatar3 from "../assets/avatars/avatar-3.svg";
-import avatar4 from "../assets/avatars/avatar-4.svg";
-import avatar5 from "../assets/avatars/avatar-5.svg";
-import avatar6 from "../assets/avatars/avatar-6.svg";
-import avatar7 from "../assets/avatars/avatar-7.svg";
-import avatar8 from "../assets/avatars/avatar-8.svg";
-import avatar9 from "../assets/avatars/avatar-9.svg";
-import avatar10 from "../assets/avatars/avatar-10.svg";
-import avatar11 from "../assets/avatars/avatar-11.svg";
-import avatar12 from "../assets/avatars/avatar-12.svg";
+import avatar1 from "../assets/avatars/avatar-1.png";
+import avatar2 from "../assets/avatars/avatar-2.png";
+import avatar3 from "../assets/avatars/avatar-3.png";
+import avatar4 from "../assets/avatars/avatar-4.png";
+import avatar5 from "../assets/avatars/avatar-5.png";
+import avatar6 from "../assets/avatars/avatar-6.png";
+import avatar7 from "../assets/avatars/avatar-7.png";
+import avatar8 from "../assets/avatars/avatar-8.png";
+import avatar9 from "../assets/avatars/avatar-9.png";
+import avatar10 from "../assets/avatars/avatar-10.png";
+import avatar11 from "../assets/avatars/avatar-11.png";
+import avatar12 from "../assets/avatars/avatar-12.png";
+import avatar13 from "../assets/avatars/avatar-13.png";
+import avatar14 from "../assets/avatars/avatar-14.png";
+import avatar15 from "../assets/avatars/avatar-15.png";
+import avatar16 from "../assets/avatars/avatar-16.png";
+import avatar17 from "../assets/avatars/avatar-17.png";
+import avatar18 from "../assets/avatars/avatar-18.png";
+import avatar19 from "../assets/avatars/avatar-19.png";
+import avatar20 from "../assets/avatars/avatar-20.png";
 
-import emptyMyFoodListImage from "../assets/empty-states/my-food-list-empty.svg";
-import emptySharedFoodListImage from "../assets/empty-states/shared-food-list-empty.svg";
-import emptyFriendsImage from "../assets/empty-states/friends-empty.svg";
-import emptyPickAFriendImage from "../assets/empty-states/pick-a-friend-empty.svg";
-import emptyAddFriendImage from "../assets/empty-states/add-friend-empty.svg";
+import emptyMyFoodListImage from "../assets/empty-states/my-food-list-empty.png";
+import emptySharedFoodListImage from "../assets/empty-states/shared-food-list-empty.png";
+import emptyFriendsImage from "../assets/empty-states/friends-empty.png";
+import emptyPickAFriendImage from "../assets/empty-states/pick-a-friend-empty.png";
+import emptyAddFriendImage from "../assets/empty-states/add-friend-empty.png";
 
 export const emptyStateImages = {
   myFoodList: emptyMyFoodListImage,
@@ -40,6 +48,14 @@ export const avatarOptions: string[] = [
   avatar10,
   avatar11,
   avatar12,
+  avatar13,
+  avatar14,
+  avatar15,
+  avatar16,
+  avatar17,
+  avatar18,
+  avatar19,
+  avatar20,
 ];
 
 export interface User {
