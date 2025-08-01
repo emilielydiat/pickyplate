@@ -10,11 +10,11 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { Check, Close } from "@mui/icons-material";
+import { Check, Close, ArrowForward } from "@mui/icons-material";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
-import { User } from "../data/mockData";
+import { User, emptyStateImages } from "../data/mockData";
 import {
   AllUserSessionsSummary,
   getAllMealSessionsForUser,
@@ -22,6 +22,7 @@ import {
   getCurrentUserFriends,
 } from "../api/api";
 import { usePageHeader } from "../hooks/usePageHeader";
+import { EmptyState } from "../components/EmptyState";
 
 export function Requests() {
   usePageHeader("Requests", false);
@@ -31,6 +32,7 @@ export function Requests() {
   >([]);
   const [userFriends, setUserFriends] = useState<User[]>([]);
   const { id } = useUserContext();
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchSessionsData() {
@@ -44,7 +46,7 @@ export function Requests() {
     fetchSessionsData();
   }, [id]);
 
-  const displaySessions = userMealSessions
+  const processedSessions = userMealSessions
     .map((session) => {
       const { friendId, initiatorId, status } = session;
       const friend = userFriends.find((friend) => friend.id === friendId);
@@ -59,6 +61,10 @@ export function Requests() {
       };
     })
     .sort((a, b) => a.friendUsername.localeCompare(b.friendUsername));
+
+  const displaySessions = processedSessions.filter(
+    (session) => !(session.status === "rejected" && !session.isInitiator)
+  );
 
   async function handleReject(initiatorId: string, receiverId: string) {
     await updateMealSession(initiatorId, receiverId, { status: "rejected" });
@@ -139,13 +145,25 @@ export function Requests() {
         >
           Decide what to eat together
         </Typography>
-        <List>
-          {displaySessions
-            .filter(
-              (session) =>
-                !(session.status === "rejected" && !session.isInitiator)
-            )
-            .map((session) => {
+
+        {displaySessions.length === 0 ? (
+          <EmptyState
+            image={emptyStateImages.mealRequests}
+            heading="You've got no meal plans… yet"
+            textContent="Time to make some plans?"
+            button={
+              <Button
+                startIcon={<ArrowForward />}
+                variant="contained"
+                onClick={() => navigate("/pick-friend")}
+              >
+                Eat together
+              </Button>
+            }
+          />
+        ) : (
+          <List>
+            {displaySessions.map((session) => {
               const buttonLabel = getButtonLabelForSession(session);
               const buttonDisabled = getButtonStateForSession(buttonLabel);
               const sessionPath = getPathForSession(buttonLabel);
@@ -214,7 +232,8 @@ export function Requests() {
                 </ListItem>
               );
             })}
-        </List>
+          </List>
+        )}
       </Stack>
     </Box>
   );

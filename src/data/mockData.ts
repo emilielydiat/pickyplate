@@ -24,6 +24,7 @@ import emptySharedFoodListImage from "../assets/empty-states/shared-food-list-em
 import emptyFriendsImage from "../assets/empty-states/friends-empty.png";
 import emptyPickAFriendImage from "../assets/empty-states/pick-a-friend-empty.png";
 import emptyAddFriendImage from "../assets/empty-states/add-friend-empty.png";
+import emptyMealRequestsImage from "../assets/empty-states/meal-requests-empty.png";
 
 export const emptyStateImages = {
   myFoodList: emptyMyFoodListImage,
@@ -31,6 +32,7 @@ export const emptyStateImages = {
   friends: emptyFriendsImage,
   pickAFriend: emptyPickAFriendImage,
   addFriend: emptyAddFriendImage,
+  mealRequests: emptyMealRequestsImage,
 } as const;
 
 export type emptyStateImagesKey = keyof typeof emptyStateImages;
