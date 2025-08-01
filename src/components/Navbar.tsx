@@ -11,6 +11,7 @@ import { NavbarMenu } from "./NavbarMenu";
 import { useUserContext } from "../context/UserContext";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { constructAvatarURL } from "../utils/supabase";
 
 export function Navbar() {
   const [open, setOpen] = useState<boolean>(false);
@@ -49,7 +50,14 @@ export function Navbar() {
           aria-label="Open user menu"
           aria-haspopup="menu"
           aria-expanded={open}
-          startIcon={<Avatar alt={`${user!.name}'s avatar`} />}
+          startIcon={
+            user!.avatar ? (
+              <Avatar
+                src={constructAvatarURL(user!.avatar)}
+                alt={`${user!.name}'s avatar`}
+              />
+            ) : undefined
+          }
           endIcon={
             <KeyboardArrowDown sx={{ display: { xs: "none", sm: "inline" } }} />
           }

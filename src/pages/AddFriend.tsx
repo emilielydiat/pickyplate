@@ -19,6 +19,7 @@ import { useFriendsContext } from "../context/FriendsContext";
 import { AppDialog } from "../components/AppDialog";
 import { usePageHeader } from "../hooks/usePageHeader";
 import { EmptyState } from "../components/EmptyState";
+import { constructAvatarURL } from "../utils/supabase";
 
 export function AddFriend() {
   usePageHeader("Add friend", true);
@@ -96,7 +97,7 @@ export function AddFriend() {
               >
                 <ListItemAvatar>
                   <Avatar
-                    src={user.avatar}
+                    src={constructAvatarURL(user.avatar)}
                     alt={`Avatar of ${user.username}`}
                   />
                 </ListItemAvatar>

@@ -10,9 +10,14 @@ type Props = {
 type Context = {
   id: string;
   user: User | null;
+  reload: () => Promise<void>;
 };
 
-const UserContext = createContext<Context | null>({ id: "", user: null });
+const UserContext = createContext<Context | null>({
+  id: "",
+  user: null,
+  reload: async () => {},
+});
 
 export function useUserContext() {
   const context = useContext(UserContext);
@@ -67,7 +72,9 @@ export function UserProvider({ children }: Props) {
   if (!isInitialised) return "Loading";
 
   return (
-    <UserContext.Provider value={{ id: userId, user }}>
+    <UserContext.Provider
+      value={{ id: userId, reload: fetchCurrentUser, user }}
+    >
       {children}
     </UserContext.Provider>
   );
