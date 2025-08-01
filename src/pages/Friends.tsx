@@ -10,23 +10,19 @@ import {
 import { Add } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import { emptyStateImages } from "../data/mockData";
-import { useFriendsContext } from "../context/FriendsContext";
 import { usePageHeader } from "../hooks/usePageHeader";
 import { EmptyState } from "../components/EmptyState";
 import { constructAvatarURL } from "../utils/supabase";
+import { useFriendsContext } from "../context/FriendsContext";
 
 export function Friends() {
   usePageHeader("Friends", false);
 
   const { friends } = useFriendsContext();
 
-  const sortedFriends = [...friends].sort((a, b) =>
-    a.username.toLowerCase().localeCompare(b.username.toLowerCase()),
-  );
-
   return (
     <Box component="section">
-      {sortedFriends.length === 0 ? (
+      {friends.length === 0 ? (
         <EmptyState
           image={emptyStateImages.friends}
           heading="Hungry for company?"
@@ -34,22 +30,22 @@ export function Friends() {
         />
       ) : (
         <List>
-          {sortedFriends.map((friend) => (
+          {friends.map((friend) => (
             <ListItem
               key={friend.id}
               component={Link}
               to={`/friend/${friend.id}`}
-              aria-label={`View profile of ${friend.username}`}
+              aria-label={`View profile of ${friend.name}`}
               sx={{ px: 0, textDecoration: "none", color: "inherit" }}
             >
               <ListItemAvatar>
                 <Avatar
                   src={constructAvatarURL(friend.avatar)}
-                  alt={`Avatar of ${friend.username}`}
+                  alt={`Avatar of ${friend.name}`}
                 />
               </ListItemAvatar>
               <ListItemText
-                primary={friend.username}
+                primary={friend.name}
                 sx={{ pr: 2, wordBreak: "break-word" }}
               />
             </ListItem>

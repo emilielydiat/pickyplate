@@ -5,14 +5,16 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { getCurrentUserFriends } from "../api/api";
-import { User } from "../data/mockData";
-import { useUserContext } from "../context/UserContext";
+import { getCurrentUserFriends, getFriendRequests } from "../api/api";
+import { FriendRequest, User } from "../types";
+import { useUserContext } from "./UserContext";
 
 type FriendsContextType = {
   friends: User[];
-  setFriends: React.Dispatch<React.SetStateAction<User[]>>;
-  updateFriends: () => Promise<void>;
+  requestUsers: User[];
+  requests: FriendRequest[];
+  isLoading: boolean;
+  reload: () => Promise<void>;
 };
 
 const FriendsContext = createContext<FriendsContextType | null>(null);
@@ -23,32 +25,48 @@ export function useFriendsContext() {
   if (!context) {
     throw new Error("useFriendsContext must be used within a FriendsProvider");
   }
+
   return context;
 }
 
 export function FriendsProvider({ children }: { children: ReactNode }) {
-  const [friends, setFriends] = useState<User[]>([]);
   const { id } = useUserContext();
 
-  useEffect(() => {
-    async function fetchFriends() {
-      if (id) {
-        const friendsList = await getCurrentUserFriends(id);
-        setFriends(friendsList);
-      }
-    }
-    fetchFriends();
-  }, [id]);
+  const [friends, setFriends] = useState<User[]>([]);
+  const [requests, setRequests] = useState<FriendRequest[]>([]);
+  const [requestUsers, setRequestUsers] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const updateFriends = async () => {
-    if (id) {
-      const friendList = await getCurrentUserFriends(id);
-      setFriends(friendList);
+  const fetchFriendsAndRequests = async () => {
+    try {
+      setIsLoading(true);
+      const _friends = await getCurrentUserFriends();
+      const { requests: _requests, users } = await getFriendRequests();
+      setFriends(_friends);
+      setRequests(_requests);
+      setRequestUsers(users);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  useEffect(() => {
+    if (!id) return;
+    void fetchFriendsAndRequests();
+  }, [id]);
+
   return (
-    <FriendsContext.Provider value={{ friends, setFriends, updateFriends }}>
+    <FriendsContext.Provider
+      value={{
+        friends,
+        requests,
+        requestUsers,
+        isLoading,
+        reload: fetchFriendsAndRequests,
+      }}
+    >
       {children}
     </FriendsContext.Provider>
   );
