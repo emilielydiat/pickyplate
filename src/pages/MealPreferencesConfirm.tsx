@@ -33,8 +33,8 @@ import { usePageHeader } from "../hooks/usePageHeader";
 type DialogConfig = {
   titleText: string;
   contentText: string | React.ReactNode;
-  confirmBtnLabel: string;
-  onConfirm: () => void;
+  primaryBtnLabel: string;
+  onPrimaryAction: () => void;
 };
 
 export function MealPreferencesConfirm() {
@@ -50,8 +50,8 @@ export function MealPreferencesConfirm() {
   const defaultDialogConfig: DialogConfig = {
     titleText: "",
     contentText: "",
-    confirmBtnLabel: "",
-    onConfirm: () => {},
+    primaryBtnLabel: "",
+    onPrimaryAction: () => {},
   };
   const [dialogConfig, setDialogConfig] =
     useState<DialogConfig>(defaultDialogConfig);
@@ -66,8 +66,8 @@ export function MealPreferencesConfirm() {
           Change your meal preferences and try again.
         </>
       ),
-      confirmBtnLabel: "Change meal preferences",
-      onConfirm: () => {
+      primaryBtnLabel: "Change meal preferences",
+      onPrimaryAction: () => {
         setDialogOpen(false);
         onNavigate();
       },
@@ -84,8 +84,8 @@ export function MealPreferencesConfirm() {
           Requests menu for updates.
         </>
       ),
-      confirmBtnLabel: "Go to requests menu",
-      onConfirm: () => {
+      primaryBtnLabel: "Go to requests menu",
+      onPrimaryAction: () => {
         setDialogOpen(false);
         onNavigate();
       },
@@ -258,9 +258,9 @@ export function MealPreferencesConfirm() {
         withTextField={false}
         titleText={dialogConfig.titleText}
         contentText={dialogConfig.contentText}
-        confirmBtnLabel={dialogConfig.confirmBtnLabel}
+        primaryBtnLabel={dialogConfig.primaryBtnLabel}
         onClose={handleDialogClose}
-        onConfirm={dialogConfig.onConfirm}
+        onPrimaryAction={dialogConfig.onPrimaryAction}
       />
     </Box>
   );

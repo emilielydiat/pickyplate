@@ -381,15 +381,15 @@ export function CreateFood() {
         open={dialogOpen}
         withTextField
         titleText="Add new cuisine"
-        confirmBtnLabel="Confirm"
-        cancelBtnLabel="Cancel"
+        primaryBtnLabel="Confirm"
+        secondaryBtnLabel="Cancel"
         textFieldLabel="Cuisine name"
         textFieldValue={newCuisine}
         textFieldError={!!newCuisineError}
         textFieldHelperText={newCuisineError}
         onClose={handleDialogClose}
-        onCancel={handleDialogClose}
-        onConfirm={handleDialogConfirm}
+        onSecondaryAction={handleDialogClose}
+        onPrimaryAction={handleDialogConfirm}
         onTextFieldChange={handleNewCuisineChange}
       />
     </Box>

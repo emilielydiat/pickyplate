@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  Fab,
-  Stack,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import { Box, Fab, Stack } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -32,9 +25,6 @@ export function SharedFoodList() {
     sharedFoodListContext?.sortedSharedFoodEntries ?? [];
   const { setDraft } = useFoodDraftContext();
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleDelete = async (foodEntry: FoodEntry) => {
     if (!sharedFoodListContext) {
@@ -85,66 +75,19 @@ export function SharedFoodList() {
       withTextField={false}
       titleText="Add food"
       contentText="What would you like to do?"
+      primaryBtnIcon={<Add />}
+      primaryBtnLabel="Add from existing food"
+      secondaryBtnIcon={<Edit />}
+      secondaryBtnLabel="Create new food"
       onClose={() => setDialogOpen(false)}
-      customActions={
-        isMobile ? (
-          <Stack sx={{ width: "100%", gap: 1 }}>
-            <Button
-              startIcon={<Add />}
-              variant="contained"
-              fullWidth
-              type="button"
-              onClick={() => {
-                setDialogOpen(false);
-                navigate(
-                  `/friend/${friend.id}/shared-food-list/add-existing-food`
-                );
-              }}
-            >
-              Add from existing food
-            </Button>
-            <Button
-              startIcon={<Edit />}
-              variant="outlined"
-              fullWidth
-              type="button"
-              onClick={() => {
-                setDialogOpen(false);
-                navigate(`/friend/${friend.id}/shared-food-list/create-food`);
-              }}
-            >
-              Create new food
-            </Button>
-          </Stack>
-        ) : (
-          <Stack sx={{ flexDirection: "row", width: "100%", gap: 1 }}>
-            <Button
-              startIcon={<Add />}
-              variant="contained"
-              type="button"
-              onClick={() => {
-                setDialogOpen(false);
-                navigate(
-                  `/friend/${friend.id}/shared-food-list/add-existing-food`
-                );
-              }}
-            >
-              Add from existing food
-            </Button>
-            <Button
-              startIcon={<Edit />}
-              variant="outlined"
-              type="button"
-              onClick={() => {
-                setDialogOpen(false);
-                navigate(`/friend/${friend.id}/shared-food-list/create-food`);
-              }}
-            >
-              Create new food
-            </Button>
-          </Stack>
-        )
-      }
+      onPrimaryAction={() => {
+        setDialogOpen(false);
+        navigate(`/friend/${friend.id}/shared-food-list/add-existing-food`);
+      }}
+      onSecondaryAction={() => {
+        setDialogOpen(false);
+        navigate(`/friend/${friend.id}/shared-food-list/create-food`);
+      }}
     />
   );
 

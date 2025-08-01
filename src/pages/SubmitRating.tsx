@@ -184,9 +184,9 @@ export function SubmitRating() {
             menu for updates.
           </>
         }
-        confirmBtnLabel="Done"
+        primaryBtnLabel="Done"
         onClose={() => setDialogOpen(false)}
-        onConfirm={() => {
+        onPrimaryAction={() => {
           setDialogOpen(false);
           navigate("/requests");
         }}

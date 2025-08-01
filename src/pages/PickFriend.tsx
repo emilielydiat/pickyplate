@@ -24,10 +24,10 @@ import { EmptyState } from "../components/EmptyState";
 type DialogConfig = {
   titleText: string;
   contentText: string | React.ReactNode;
-  confirmBtnLabel: string;
-  cancelBtnLabel: string;
-  onConfirm: () => void;
-  onCancel: () => void;
+  primaryBtnLabel: string;
+  secondaryBtnLabel: string;
+  onPrimaryAction: () => void;
+  onSecondaryAction: () => void;
 };
 
 export function PickFriend() {
@@ -42,10 +42,10 @@ export function PickFriend() {
   const defaultDialogConfig: DialogConfig = {
     titleText: "",
     contentText: "",
-    confirmBtnLabel: "",
-    cancelBtnLabel: "",
-    onConfirm: () => {},
-    onCancel: () => {},
+    primaryBtnLabel: "",
+    secondaryBtnLabel: "",
+    onPrimaryAction: () => {},
+    onSecondaryAction: () => {},
   };
   const [dialogConfig, setDialogConfig] =
     useState<DialogConfig>(defaultDialogConfig);
@@ -69,13 +69,13 @@ export function PickFriend() {
         titleText: "Oops, no shared food to pick from",
         contentText:
           "Your food list with this friend is empty! Add some food to explore your next meal together.",
-        confirmBtnLabel: "Add food",
-        cancelBtnLabel: "Close",
-        onConfirm: () => {
+        primaryBtnLabel: "Add food",
+        secondaryBtnLabel: "Close",
+        onPrimaryAction: () => {
           setDialogOpen(false);
           navigate(`/friend/${friend.id}/shared-food-list`);
         },
-        onCancel: handleDialogClose,
+        onSecondaryAction: handleDialogClose,
       });
       setDialogOpen(true);
       return;
@@ -100,13 +100,13 @@ export function PickFriend() {
               instead? Begin a new session if you’d like.
             </>
           ),
-          confirmBtnLabel: "Go to current",
-          cancelBtnLabel: "New session",
-          onConfirm: () => {
+          primaryBtnLabel: "Go to current",
+          secondaryBtnLabel: "New session",
+          onPrimaryAction: () => {
             setDialogOpen(false);
             navigate("/requests");
           },
-          onCancel: async () => {
+          onSecondaryAction: async () => {
             setDialogOpen(false);
             navigate(`/eat-together/${friend.id}/meal-preferences`);
           },
@@ -195,11 +195,11 @@ export function PickFriend() {
         withTextField={false}
         titleText={dialogConfig.titleText}
         contentText={dialogConfig.contentText}
-        confirmBtnLabel={dialogConfig.confirmBtnLabel}
-        cancelBtnLabel={dialogConfig.cancelBtnLabel}
+        primaryBtnLabel={dialogConfig.primaryBtnLabel}
+        secondaryBtnLabel={dialogConfig.secondaryBtnLabel}
         onClose={handleDialogClose}
-        onCancel={dialogConfig.onCancel}
-        onConfirm={dialogConfig.onConfirm}
+        onSecondaryAction={dialogConfig.onSecondaryAction}
+        onPrimaryAction={dialogConfig.onPrimaryAction}
       />
     </Box>
   );

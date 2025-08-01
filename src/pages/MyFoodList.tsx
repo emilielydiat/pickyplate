@@ -20,10 +20,10 @@ import { EmptyState } from "../components/EmptyState";
 type DialogConfig = {
   titleText: string;
   contentText: string | React.ReactNode;
-  confirmBtnLabel: string;
-  cancelBtnLabel?: string;
-  onConfirm: () => void;
-  onCancel?: () => void;
+  primaryBtnLabel: string;
+  secondaryBtnLabel?: string;
+  onPrimaryAction: () => void;
+  onSecondaryAction?: () => void;
   onClose: () => void;
 };
 
@@ -40,10 +40,10 @@ export function MyFoodList() {
   const defaultDialogConfig: DialogConfig = {
     titleText: "",
     contentText: "",
-    confirmBtnLabel: "",
-    cancelBtnLabel: "",
-    onConfirm: () => {},
-    onCancel: () => {},
+    primaryBtnLabel: "",
+    secondaryBtnLabel: "",
+    onPrimaryAction: () => {},
+    onSecondaryAction: () => {},
     onClose: () => {},
   };
   const [dialogConfig, setDialogConfig] =
@@ -78,8 +78,8 @@ export function MyFoodList() {
             take it off those lists first!
           </>
         ),
-        confirmBtnLabel: "Close",
-        onConfirm: () => {
+        primaryBtnLabel: "Close",
+        onPrimaryAction: () => {
           setDialogOpen(false);
         },
         onClose: () => setDialogOpen(false),
@@ -92,13 +92,13 @@ export function MyFoodList() {
         contentText: (
           <>Once removed, this item will no longer appear in your food list</>
         ),
-        confirmBtnLabel: "Delete",
-        cancelBtnLabel: "Cancel",
-        onConfirm: async () => {
+        primaryBtnLabel: "Delete",
+        secondaryBtnLabel: "Cancel",
+        onPrimaryAction: async () => {
           setDialogOpen(false);
           await deleteFoodEntryFromUserList(foodEntry);
         },
-        onCancel: () => setDialogOpen(false),
+        onSecondaryAction: () => setDialogOpen(false),
         onClose: () => setDialogOpen(false),
       });
       setDialogOpen(true);
@@ -165,11 +165,11 @@ export function MyFoodList() {
         withTextField={false}
         titleText={dialogConfig.titleText}
         contentText={dialogConfig.contentText}
-        confirmBtnLabel={dialogConfig.confirmBtnLabel}
-        cancelBtnLabel={dialogConfig.cancelBtnLabel}
+        primaryBtnLabel={dialogConfig.primaryBtnLabel}
+        secondaryBtnLabel={dialogConfig.secondaryBtnLabel}
         onClose={dialogConfig.onClose}
-        onCancel={dialogConfig.onCancel}
-        onConfirm={dialogConfig.onConfirm}
+        onSecondaryAction={dialogConfig.onSecondaryAction}
+        onPrimaryAction={dialogConfig.onPrimaryAction}
       />
     </Box>
   );

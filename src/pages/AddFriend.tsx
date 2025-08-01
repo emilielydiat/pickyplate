@@ -132,14 +132,14 @@ export function AddFriend() {
             easier later!
           </>
         }
-        confirmBtnLabel="Build my food list"
-        cancelBtnLabel="Not now"
+        primaryBtnLabel="Build my food list"
+        secondaryBtnLabel="Not now"
         onClose={() => setDialogOpen(false)}
-        onConfirm={() => {
+        onPrimaryAction={() => {
           setDialogOpen(false);
           navigate("/my-food-list");
         }}
-        onCancel={() => setDialogOpen(false)}
+        onSecondaryAction={() => setDialogOpen(false)}
       />
     </Box>
   );

@@ -13,10 +13,10 @@ import { usePageHeader } from "../hooks/usePageHeader";
 type DialogConfig = {
   titleText: string;
   contentText: string | React.ReactNode;
-  confirmBtnLabel: string;
-  cancelBtnLabel: string;
-  onConfirm: () => void;
-  onCancel: () => void;
+  primaryBtnLabel: string;
+  secondaryBtnLabel: string;
+  onPrimaryAction: () => void;
+  onSecondaryAction: () => void;
 };
 
 export function FriendProfile() {
@@ -31,10 +31,10 @@ export function FriendProfile() {
   const defaultDialogConfig: DialogConfig = {
     titleText: "",
     contentText: "",
-    confirmBtnLabel: "",
-    cancelBtnLabel: "",
-    onConfirm: () => {},
-    onCancel: () => {},
+    primaryBtnLabel: "",
+    secondaryBtnLabel: "",
+    onPrimaryAction: () => {},
+    onSecondaryAction: () => {},
   };
   const [dialogConfig, setDialogConfig] =
     useState<DialogConfig>(defaultDialogConfig);
@@ -58,13 +58,13 @@ export function FriendProfile() {
         titleText: "Oops, no shared food to pick from",
         contentText:
           "Your food list with this friend is empty! Add some food to explore your next meal together.",
-        confirmBtnLabel: "Add food",
-        cancelBtnLabel: "Close",
-        onConfirm: () => {
+        primaryBtnLabel: "Add food",
+        secondaryBtnLabel: "Close",
+        onPrimaryAction: () => {
           setDialogOpen(false);
           navigate(`/friend/${friend.id}/shared-food-list`);
         },
-        onCancel: handleDialogClose,
+        onSecondaryAction: handleDialogClose,
       });
       setDialogOpen(true);
       return;
@@ -89,13 +89,13 @@ export function FriendProfile() {
               instead? Begin a new session if you’d like.
             </>
           ),
-          confirmBtnLabel: "Go to current",
-          cancelBtnLabel: "New session",
-          onConfirm: () => {
+          primaryBtnLabel: "Go to current",
+          secondaryBtnLabel: "New session",
+          onPrimaryAction: () => {
             setDialogOpen(false);
             navigate("/requests");
           },
-          onCancel: async () => {
+          onSecondaryAction: async () => {
             setDialogOpen(false);
             navigate(`/eat-together/${friend.id}/meal-preferences`);
           },
@@ -116,9 +116,9 @@ export function FriendProfile() {
     setDialogConfig({
       titleText: "Remove friend?",
       contentText: `This will permanently remove ${friend.username} from your friend list`,
-      confirmBtnLabel: "Remove friend",
-      cancelBtnLabel: "Cancel",
-      onConfirm: async () => {
+      primaryBtnLabel: "Remove friend",
+      secondaryBtnLabel: "Cancel",
+      onPrimaryAction: async () => {
         setDialogOpen(false);
         try {
           await removeFriend(id, friend.id);
@@ -128,7 +128,7 @@ export function FriendProfile() {
           console.error("Failed to remove friend", error);
         }
       },
-      onCancel: handleDialogClose,
+      onSecondaryAction: handleDialogClose,
     });
     setDialogOpen(true);
     return;
@@ -210,11 +210,11 @@ export function FriendProfile() {
         withTextField={false}
         titleText={dialogConfig.titleText}
         contentText={dialogConfig.contentText}
-        confirmBtnLabel={dialogConfig.confirmBtnLabel}
-        cancelBtnLabel={dialogConfig.cancelBtnLabel}
+        primaryBtnLabel={dialogConfig.primaryBtnLabel}
+        secondaryBtnLabel={dialogConfig.secondaryBtnLabel}
         onClose={handleDialogClose}
-        onCancel={dialogConfig.onCancel}
-        onConfirm={dialogConfig.onConfirm}
+        onSecondaryAction={dialogConfig.onSecondaryAction}
+        onPrimaryAction={dialogConfig.onPrimaryAction}
       />
     </Box>
   );
