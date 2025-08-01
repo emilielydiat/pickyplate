@@ -32,7 +32,12 @@ export function NavbarMenu(props: NavbarMenuProps) {
         onClose={handleMenuClose}
       >
         <MenuItem>
-          <Button component={Link} to="/pick-friend" variant="contained">
+          <Button
+            component={Link}
+            to="/pick-friend"
+            variant="contained"
+            onClick={handleMenuClose}
+          >
             Eat together
           </Button>
         </MenuItem>
