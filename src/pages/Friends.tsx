@@ -13,6 +13,7 @@ import { emptyStateImages } from "../data/mockData";
 import { useFriendsContext } from "../context/FriendsContext";
 import { usePageHeader } from "../hooks/usePageHeader";
 import { EmptyState } from "../components/EmptyState";
+import { constructAvatarURL } from "../utils/supabase";
 
 export function Friends() {
   usePageHeader("Friends", false);
@@ -20,7 +21,7 @@ export function Friends() {
   const { friends } = useFriendsContext();
 
   const sortedFriends = [...friends].sort((a, b) =>
-    a.username.toLowerCase().localeCompare(b.username.toLowerCase())
+    a.username.toLowerCase().localeCompare(b.username.toLowerCase()),
   );
 
   return (
@@ -43,7 +44,7 @@ export function Friends() {
             >
               <ListItemAvatar>
                 <Avatar
-                  src={friend.avatar}
+                  src={constructAvatarURL(friend.avatar)}
                   alt={`Avatar of ${friend.username}`}
                 />
               </ListItemAvatar>

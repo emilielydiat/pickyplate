@@ -1,24 +1,3 @@
-import avatar1 from "../assets/avatars/avatar-1.png";
-import avatar2 from "../assets/avatars/avatar-2.png";
-import avatar3 from "../assets/avatars/avatar-3.png";
-import avatar4 from "../assets/avatars/avatar-4.png";
-import avatar5 from "../assets/avatars/avatar-5.png";
-import avatar6 from "../assets/avatars/avatar-6.png";
-import avatar7 from "../assets/avatars/avatar-7.png";
-import avatar8 from "../assets/avatars/avatar-8.png";
-import avatar9 from "../assets/avatars/avatar-9.png";
-import avatar10 from "../assets/avatars/avatar-10.png";
-import avatar11 from "../assets/avatars/avatar-11.png";
-import avatar12 from "../assets/avatars/avatar-12.png";
-import avatar13 from "../assets/avatars/avatar-13.png";
-import avatar14 from "../assets/avatars/avatar-14.png";
-import avatar15 from "../assets/avatars/avatar-15.png";
-import avatar16 from "../assets/avatars/avatar-16.png";
-import avatar17 from "../assets/avatars/avatar-17.png";
-import avatar18 from "../assets/avatars/avatar-18.png";
-import avatar19 from "../assets/avatars/avatar-19.png";
-import avatar20 from "../assets/avatars/avatar-20.png";
-
 import emptyMyFoodListImage from "../assets/empty-states/my-food-list-empty.png";
 import emptySharedFoodListImage from "../assets/empty-states/shared-food-list-empty.png";
 import emptyFriendsImage from "../assets/empty-states/friends-empty.png";
@@ -35,31 +14,6 @@ export const emptyStateImages = {
   mealRequests: emptyMealRequestsImage,
 } as const;
 
-export type emptyStateImagesKey = keyof typeof emptyStateImages;
-
-export const avatarOptions: string[] = [
-  avatar1,
-  avatar2,
-  avatar3,
-  avatar4,
-  avatar5,
-  avatar6,
-  avatar7,
-  avatar8,
-  avatar9,
-  avatar10,
-  avatar11,
-  avatar12,
-  avatar13,
-  avatar14,
-  avatar15,
-  avatar16,
-  avatar17,
-  avatar18,
-  avatar19,
-  avatar20,
-];
-
 export interface User {
   id: string;
   username: string;
@@ -67,126 +21,127 @@ export interface User {
   avatar: string;
 }
 
+// Avatar value must match the file path to the avatar image in the storage bucket.
 export const mockUsers: Record<string, User> = {
   user_1: {
     id: "user_1",
     username: "JohnDoe123",
     email: "john123doe@abc.def",
-    avatar: avatar7,
+    avatar: "avatar-7.png",
   },
   user_2: {
     id: "user_2",
     username: "MartinY",
     email: "mar95@abc.def",
-    avatar: avatar8,
+    avatar: "avatar-8.png",
   },
   user_3: {
     id: "user_3",
     username: "WendyNg",
     email: "wenweng@abc.def",
-    avatar: avatar11,
+    avatar: "avatar-11.png",
   },
   user_4: {
     id: "user_4",
     username: "alice",
     email: "alice31@abc.def",
-    avatar: avatar2,
+    avatar: "avatar-2.png",
   },
   user_5: {
     id: "user_5",
     username: "Kate18",
     email: "katewarren@abc.def",
-    avatar: avatar3,
+    avatar: "avatar-3.png",
   },
   user_6: {
     id: "user_6",
     username: "Nic",
     email: "nic123@abc.def",
-    avatar: avatar10,
+    avatar: "avatar-10.png",
   },
   user_7: {
     id: "user_7",
     username: "Merry321",
     email: "merry321@abc.def",
-    avatar: avatar6,
+    avatar: "avatar-6.png",
   },
   user_8: {
     id: "user_8",
     username: "Milly",
     email: "1mills@abc.def",
-    avatar: avatar5,
+    avatar: "avatar-5.png",
   },
   user_9: {
     id: "user_9",
     username: "berryKC",
     email: "berryyy@abc.def",
-    avatar: avatar1,
+    avatar: "avatar-1.png",
   },
   user_10: {
     id: "user_10",
     username: "PaulK",
     email: "kpaul@abc.def",
-    avatar: avatar12,
+    avatar: "avatar-12.png",
   },
   user_11: {
     id: "user_11",
     username: "Elvis",
     email: "elvisel@abc.def",
-    avatar: avatar9,
+    avatar: "avatar-9.png",
   },
   user_12: {
     id: "user_12",
     username: "James",
     email: "jam.es10@abc.def",
-    avatar: avatar4,
+    avatar: "avatar-4.png",
   },
   user_13: {
     id: "user_13",
     username: "Amy",
     email: "amyyy@abc.def",
-    avatar: avatar10,
+    avatar: "avatar-10.png",
   },
   user_14: {
     id: "user_14",
     username: "Jackie",
     email: "jack.ie@abc.def",
-    avatar: avatar6,
+    avatar: "avatar-6.png",
   },
   user_15: {
     id: "user_15",
     username: "Jenna",
     email: "najen@abc.def",
-    avatar: avatar5,
+    avatar: "avatar-5.png",
   },
   user_16: {
     id: "user_16",
     username: "Mar",
     email: "mar098@abc.def",
-    avatar: avatar1,
+    avatar: "avatar-1.png",
   },
   user_17: {
     id: "user_17",
     username: "PauLine",
     email: "pau.line@abc.def",
-    avatar: avatar12,
+    avatar: "avatar-12.png",
   },
   user_18: {
     id: "user_18",
     username: "Ava",
     email: "3ava@abc.def",
-    avatar: avatar9,
+    avatar: "avatar-9.png",
   },
   user_19: {
     id: "user_19",
     username: "Dave",
     email: "dave567@abc.def",
-    avatar: avatar4,
+    avatar: "avatar-4.png",
   },
   user_20: {
     id: "user_20",
     username: "Tim",
     email: "87tim@abc.def",
-    avatar: avatar4,
+    avatar: "avatar-4.png",
   },
 };
 
@@ -257,7 +212,7 @@ export type MealPrice = {
 };
 export type MealPriceWithAny = MealPrice;
 export const mealPriceLookup: Record<string, MealPrice> = Object.fromEntries(
-  mealPriceOptions.map((option) => [option.key, option])
+  mealPriceOptions.map((option) => [option.key, option]),
 );
 
 export const mealMaxTimeOptions = [

@@ -11,11 +11,12 @@ import { NavbarMenu } from "./NavbarMenu";
 import { useUserContext } from "../context/UserContext";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { constructAvatarURL } from "../utils/supabase";
 
 export function Navbar() {
   const [open, setOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const { avatar, username } = useUserContext();
+  const { user } = useUserContext();
 
   function handleMenuToggle(event: React.MouseEvent<HTMLElement>) {
     setOpen((prev) => !prev);
@@ -49,7 +50,14 @@ export function Navbar() {
           aria-label="Open user menu"
           aria-haspopup="menu"
           aria-expanded={open}
-          startIcon={<Avatar src={avatar} alt={`${username}'s avatar`} />}
+          startIcon={
+            user!.avatar ? (
+              <Avatar
+                src={constructAvatarURL(user!.avatar)}
+                alt={`${user!.name}'s avatar`}
+              />
+            ) : undefined
+          }
           endIcon={
             <KeyboardArrowDown sx={{ display: { xs: "none", sm: "inline" } }} />
           }
@@ -68,7 +76,7 @@ export function Navbar() {
           }}
         >
           <Typography sx={{ display: { xs: "none", sm: "inline" } }}>
-            {username}
+            {user!.name}
           </Typography>
         </Button>
       </Box>

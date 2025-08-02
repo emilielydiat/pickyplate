@@ -12,6 +12,8 @@ import {
 } from "../data/mockData";
 import { getSessionId } from "../utils/sessionUtils";
 import { v4 as uuidv4 } from "uuid";
+import supabase from "../supabase";
+import { type User as SupabaseUser } from "../types";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -45,15 +47,38 @@ export const getUserDataById = async (userId: string): Promise<User | null> => {
   return mockUsers[userId] || null;
 };
 
-export const getCurrentUser = async (): Promise<User | null> => {
-  try {
-    // later: get auth user
-    const userId = "user_1";
-    return await getUserDataById(userId);
-  } catch (error) {
-    console.error("Error fetching current user: ", error);
-    return null;
-  }
+// Similar to the one above. We will gradually replace the above with this one.
+export const getUserById = async (id: string): Promise<SupabaseUser | null> => {
+  const { data, error } = await supabase
+    .from("user_profile")
+    .select()
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+
+  return data[0] ?? null;
+};
+
+export const getAvailableAvatars = async () => {
+  const { data, error } = await supabase.storage.from("avatars").list("", {
+    sortBy: { column: "name", order: "asc" },
+  });
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};
+
+export const updateUserProfile = async (
+  id: string,
+  payload: { name?: string; avatar?: string },
+) => {
+  const { error } = await supabase
+    .from("user_profile")
+    .update(payload)
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
 };
 
 export const getCurrentUserFriends = async (

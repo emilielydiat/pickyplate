@@ -3,11 +3,12 @@ import { Edit } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
 import { usePageHeader } from "../hooks/usePageHeader";
+import { constructAvatarURL } from "../utils/supabase";
 
 export function Profile() {
   usePageHeader("Profile", false);
 
-  const { avatar, username, email } = useUserContext();
+  const { user } = useUserContext();
 
   return (
     <Box
@@ -22,7 +23,7 @@ export function Profile() {
     >
       <Box sx={{ position: "relative", mb: 3 }}>
         <Avatar
-          src={avatar}
+          src={constructAvatarURL(user!.avatar)}
           alt="Your avatar"
           sx={{
             height: 112,
@@ -51,10 +52,10 @@ export function Profile() {
         </IconButton>
       </Box>
       <Typography component="h2" variant="h6Branded">
-        {username}
+        {user!.name}
       </Typography>
       <Typography component="h3" variant="body2" color="grey.700">
-        {email}
+        {user!.email}
       </Typography>
     </Box>
   );

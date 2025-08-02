@@ -22,6 +22,7 @@ import {
   getCurrentUserFriends,
 } from "../api/api";
 import { usePageHeader } from "../hooks/usePageHeader";
+import { constructAvatarURL } from "../utils/supabase";
 import { EmptyState } from "../components/EmptyState";
 
 export function Requests() {
@@ -176,7 +177,7 @@ export function Requests() {
                 >
                   <ListItemAvatar>
                     <Avatar
-                      src={session.friendAvatar}
+                      src={constructAvatarURL(session.friendAvatar)}
                       alt={`Avatar of ${session.friendUsername}`}
                     />
                   </ListItemAvatar>

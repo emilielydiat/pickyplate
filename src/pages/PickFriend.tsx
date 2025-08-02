@@ -20,6 +20,7 @@ import { useUserContext } from "../context/UserContext";
 import { getSharedFoodList, getMealSession } from "../api/api";
 import { usePageHeader } from "../hooks/usePageHeader";
 import { EmptyState } from "../components/EmptyState";
+import { constructAvatarURL } from "../utils/supabase";
 
 type DialogConfig = {
   titleText: string;
@@ -54,7 +55,7 @@ export function PickFriend() {
     const input = searchInput.toLowerCase();
     if (input) {
       return friends.filter((friend) =>
-        friend.username.toLowerCase().includes(input)
+        friend.username.toLowerCase().includes(input),
       );
     } else {
       return [];
@@ -167,7 +168,7 @@ export function PickFriend() {
               >
                 <ListItemAvatar>
                   <Avatar
-                    src={friend.avatar}
+                    src={constructAvatarURL(friend.avatar)}
                     alt={`Avatar of ${friend.username}`}
                   />
                 </ListItemAvatar>

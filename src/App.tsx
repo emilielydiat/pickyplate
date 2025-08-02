@@ -32,97 +32,94 @@ import {
   Settings,
   SharedFoodList,
   Signup,
+  Login,
 } from "./pages";
-import { SupabaseProvider } from "./context/SupabaseContext.tsx";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <SupabaseProvider>
-        <CssBaseline />
-        <UserProvider>
-          <FriendsProvider>
-            <PageTitleProvider>
-              <Router>
-                <Routes>
-                  <Route element={<Layout />}>
-                    <Route index element={<Home />} />
-                    <Route path="signup" element={<Signup />} />
-                    <Route path="profile" element={<Profile />} />
-                    <Route path="friends" element={<Friends />} />
-                    <Route
-                      path="friend/:friendId"
-                      element={<FriendProfile />}
-                    />
-                    <Route path="friends/add-friend" element={<AddFriend />} />
-                    <Route path="pick-friend" element={<PickFriend />} />
+      <CssBaseline />
+      <UserProvider>
+        <FriendsProvider>
+          <PageTitleProvider>
+            <Router>
+              <Routes>
+                {/* Public routes */}
+                <Route path="login" element={<Login />} />
+                <Route path="signup" element={<Signup />} />
 
-                    <Route path="eat-together/:friendId">
-                      <Route element={<MealPreferencesFlowWrapper />}>
-                        <Route
-                          path="meal-preferences"
-                          element={<MealPreferences />}
-                        />
-                        <Route
-                          path="meal-preferences/confirm"
-                          element={<MealPreferencesConfirm />}
-                        />
-                      </Route>
+                {/* Protected routes */}
+                <Route element={<ProtectedRoute layout={<Layout />} />}>
+                  <Route index element={<Home />} />
+                  <Route path="profile" element={<Profile />} />
+                  <Route path="friends" element={<Friends />} />
+                  <Route path="friend/:friendId" element={<FriendProfile />} />
+                  <Route path="friends/add-friend" element={<AddFriend />} />
+                  <Route path="pick-friend" element={<PickFriend />} />
 
-                      <Route element={<MealRatingFlowWrapper />}>
-                        <Route
-                          path="submit-rating"
-                          element={<SubmitRating />}
-                        />
-                        <Route path="view-results" element={<ViewResults />} />
-                      </Route>
-                    </Route>
-
-                    <Route path="my-food-list" element={<FoodFlowWrapper />}>
-                      <Route index element={<MyFoodList />} />
-                      <Route path="edit-food/:foodId" element={<EditFood />} />
+                  <Route path="eat-together/:friendId">
+                    <Route element={<MealPreferencesFlowWrapper />}>
                       <Route
-                        path="edit-food/:foodId/confirm"
-                        element={<EditFoodConfirm />}
+                        path="meal-preferences"
+                        element={<MealPreferences />}
                       />
-                      <Route path="create-food" element={<CreateFood />} />
                       <Route
-                        path="create-food/confirm"
-                        element={<CreateFoodConfirm />}
+                        path="meal-preferences/confirm"
+                        element={<MealPreferencesConfirm />}
                       />
                     </Route>
 
-                    <Route
-                      path="friend/:friendId/shared-food-list"
-                      element={<FoodFlowWrapper />}
-                    >
-                      <Route index element={<SharedFoodList />} />
-                      <Route path="edit-food/:foodId" element={<EditFood />} />
-                      <Route
-                        path="edit-food/:foodId/confirm"
-                        element={<EditFoodConfirm />}
-                      />
-                      <Route path="create-food" element={<CreateFood />} />
-                      <Route
-                        path="create-food/confirm"
-                        element={<CreateFoodConfirm />}
-                      />
-                      <Route
-                        path="add-existing-food"
-                        element={<AddFromExistingFood />}
-                      />
+                    <Route element={<MealRatingFlowWrapper />}>
+                      <Route path="submit-rating" element={<SubmitRating />} />
+                      <Route path="view-results" element={<ViewResults />} />
                     </Route>
-
-                    <Route path="requests" element={<Requests />} />
-                    <Route path="settings" element={<Settings />} />
-                    <Route path="edit-avatar" element={<EditAvatar />} />
                   </Route>
-                </Routes>
-              </Router>
-            </PageTitleProvider>
-          </FriendsProvider>
-        </UserProvider>
-      </SupabaseProvider>
+
+                  <Route path="my-food-list" element={<FoodFlowWrapper />}>
+                    <Route index element={<MyFoodList />} />
+                    <Route path="edit-food/:foodId" element={<EditFood />} />
+                    <Route
+                      path="edit-food/:foodId/confirm"
+                      element={<EditFoodConfirm />}
+                    />
+                    <Route path="create-food" element={<CreateFood />} />
+                    <Route
+                      path="create-food/confirm"
+                      element={<CreateFoodConfirm />}
+                    />
+                  </Route>
+
+                  <Route
+                    path="friend/:friendId/shared-food-list"
+                    element={<FoodFlowWrapper />}
+                  >
+                    <Route index element={<SharedFoodList />} />
+                    <Route path="edit-food/:foodId" element={<EditFood />} />
+                    <Route
+                      path="edit-food/:foodId/confirm"
+                      element={<EditFoodConfirm />}
+                    />
+                    <Route path="create-food" element={<CreateFood />} />
+                    <Route
+                      path="create-food/confirm"
+                      element={<CreateFoodConfirm />}
+                    />
+                    <Route
+                      path="add-existing-food"
+                      element={<AddFromExistingFood />}
+                    />
+                  </Route>
+
+                  <Route path="requests" element={<Requests />} />
+                  <Route path="settings" element={<Settings />} />
+                  <Route path="edit-avatar" element={<EditAvatar />} />
+                </Route>
+              </Routes>
+            </Router>
+          </PageTitleProvider>
+        </FriendsProvider>
+      </UserProvider>
     </ThemeProvider>
   );
 }
