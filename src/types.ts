@@ -5,3 +5,8 @@ export type User = {
   email: string;
   avatar: string;
 };
+
+export type FriendRequest = {
+  initiator_id: string;
+  target_id: string;
+};

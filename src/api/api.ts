@@ -1,6 +1,5 @@
 import {
   mockUsers,
-  mockFriends,
   User,
   mockFoodEntries,
   mockUserFoodLists,
@@ -13,38 +12,53 @@ import {
 import { getSessionId } from "../utils/sessionUtils";
 import { v4 as uuidv4 } from "uuid";
 import supabase from "../supabase";
-import { type User as SupabaseUser } from "../types";
+import { FriendRequest, type User as SupabaseUser } from "../types";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-export const getAllUsers = async (): Promise<User[]> => {
-  try {
-    await delay(500);
-    return Object.values(mockUsers);
-  } catch (error) {
-    console.error("Error getting all user: ", error);
-    return [];
-  }
-};
-
-export const getUsersNotFriendsWith = async (
-  userId: string
-): Promise<User[]> => {
-  const [allUsers, currentFriends] = await Promise.all([
-    getAllUsers(),
-    getCurrentUserFriends(userId),
-  ]);
-  const friendIds = new Set(currentFriends.map((friend) => friend.id));
-
-  return allUsers.filter(
-    (user) => user.id !== userId && !friendIds.has(user.id)
-  );
-};
 
 export const getUserDataById = async (userId: string): Promise<User | null> => {
   await delay(500);
 
   return mockUsers[userId] || null;
+};
+
+export const getFriendRequests = async (): Promise<{
+  users: SupabaseUser[];
+  requests: FriendRequest[];
+}> => {
+  const { data, error } = await supabase.functions.invoke(
+    "get-friend-requests",
+  );
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};
+
+export const confirmFriendRequest = (
+  action: "accept" | "reject",
+  initiatorId: string,
+) => {
+  return supabase.functions.invoke("confirm-friend-request", {
+    body: { action, initiator_id: initiatorId },
+  });
+};
+
+export const removeFriend = (userId: string) => {
+  return supabase.functions.invoke("remove-friend", {
+    body: { target_id: userId },
+  });
+};
+
+export const searchUsers = async (name: string) => {
+  const { data, error } = await supabase
+    .from("user_profile")
+    .select()
+    .ilike("name", `${name}%`);
+
+  if (error) throw new Error(error.message);
+
+  return data;
 };
 
 // Similar to the one above. We will gradually replace the above with this one.
@@ -81,64 +95,22 @@ export const updateUserProfile = async (
   if (error) throw new Error(error.message);
 };
 
-export const getCurrentUserFriends = async (
-  userId: string
-): Promise<User[]> => {
-  try {
-    await delay(500);
+export const getCurrentUserFriends = async (): Promise<SupabaseUser[]> => {
+  const { data, error } = await supabase.functions.invoke("get-friends");
 
-    const friends = mockFriends[userId] || [];
-    return friends.map((id) => mockUsers[id]).filter(Boolean);
-  } catch (error) {
-    console.error(`Error fetching friends for user ${userId}: `, error);
-    return [];
-  }
+  if (error) throw new Error(error.message);
+
+  return data;
 };
 
-export const addFriend = async (
-  userId: string,
-  friendId: string
-): Promise<boolean> => {
-  try {
-    await delay(500);
+export const addFriend = async (userId: string) => {
+  const { error } = await supabase.functions.invoke("send-friend-request", {
+    body: {
+      target_id: userId,
+    },
+  });
 
-    if (!mockFriends[userId]) {
-      mockFriends[userId] = [];
-      // console.log(`Initialized empty friend list for user ${userId}`);
-    }
-    if (mockFriends[userId].includes(friendId)) {
-      // console.log(`${friendId} is already a friend of ${userId}`);
-      return true;
-    }
-
-    mockFriends[userId].push(friendId);
-    // console.log(`${friendId} added to friend list`);
-    return true;
-  } catch (error) {
-    console.error(`Error adding friend ${friendId}: `, error);
-    return false;
-  }
-};
-
-export const removeFriend = async (
-  userId: string,
-  friendId: string
-): Promise<boolean> => {
-  try {
-    await delay(500);
-
-    if (mockFriends[userId]) {
-      mockFriends[userId] = mockFriends[userId].filter((id) => id !== friendId);
-      // console.log(`Removed ${friendId} from friend list`);
-      return true;
-    } else {
-      // console.log("Current user has no friends defined yet");
-      return false;
-    }
-  } catch (error) {
-    console.error(`Could not remove ${friendId} from friend list`, error);
-    return false;
-  }
+  if (error) throw new Error(error.message);
 };
 
 export const updateFoodEntry = async (
