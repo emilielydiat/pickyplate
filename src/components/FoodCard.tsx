@@ -18,8 +18,13 @@ import {
   Add,
   Check,
 } from "@mui/icons-material";
-import { FoodEntry } from "../data/mockData";
+import { FoodEntry } from "../types";
 import { capitaliseWord } from "../utils/stringUtils";
+import {
+  mealLocationLabelMap,
+  mealMaxTimeLabelMap,
+  mealPriceRangeLabelMap,
+} from "../constants";
 
 type Variant =
   | "base"
@@ -74,7 +79,7 @@ function renderVariantContent(
   onToggleAdd?: (foodEntry: FoodEntry) => void,
   onDelete?: (foodEntry: FoodEntry) => void,
   onEdit?: (foodEntry: FoodEntry) => void,
-  onRatingChange?: (value: number) => void
+  onRatingChange?: (value: number) => void,
 ) {
   switch (variant) {
     case "toAdd": {
@@ -329,7 +334,7 @@ export function FoodCard({
               sx={{ mr: 1 }}
             />
             <Typography variant="body2" color="grey.700" textAlign="left">
-              {foodEntry.type.map(capitaliseWord).join(" | ")}
+              {foodEntry.meals.map(capitaliseWord).join(" | ")}
             </Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
@@ -339,7 +344,9 @@ export function FoodCard({
               sx={{ mr: 1 }}
             />
             <Typography variant="body2" color="grey.700" textAlign="left">
-              {foodEntry.location.map(capitaliseWord).join(" | ")}
+              {foodEntry.meal_locations
+                .map((l) => mealLocationLabelMap[l])
+                .join(" | ")}
             </Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
@@ -349,14 +356,13 @@ export function FoodCard({
               sx={{ mr: 1 }}
             />
             <Typography variant="body2" color="grey.700" textAlign="left">
-              {foodEntry.price?.label ? foodEntry.price.label : "Price not set"}{" "}
-              per person
+              {mealPriceRangeLabelMap[foodEntry.meal_price_range]} per person
             </Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
             <AccessTime aria-hidden="true" focusable="false" sx={{ mr: 1 }} />
             <Typography variant="body2" color="grey.700" textAlign="left">
-              {capitaliseWord(foodEntry.maxTime)}
+              {mealMaxTimeLabelMap[foodEntry.meal_max_time]}
             </Typography>
           </Box>
           <Box
@@ -367,7 +373,7 @@ export function FoodCard({
               gap: 1,
             }}
           >
-            {foodEntry.cuisine.map((cuisine) => (
+            {foodEntry.cuisines.map((cuisine) => (
               <Chip key={cuisine} label={capitaliseWord(cuisine)} />
             ))}
           </Box>
@@ -382,7 +388,7 @@ export function FoodCard({
             onToggleAdd,
             onDelete,
             onEdit,
-            onRatingChange
+            onRatingChange,
           )}
         </Stack>
       </CardContent>

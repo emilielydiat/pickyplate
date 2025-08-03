@@ -1,21 +1,16 @@
 import { Box, Fab, Stack } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
-import { useUserFoodListContext } from "../context/UserFoodListContext";
-import { useFoodDraftContext } from "../context/FoodDraftContext";
-import {
-  FoodEntry,
-  mockSharedFoodLists,
-  emptyStateImages,
-} from "../data/mockData";
-import { updateMyFoodList } from "../api/api";
+import { mockSharedFoodLists, emptyStateImages } from "../data/mockData";
+import { deleteFoodEntry, getFoodList } from "../api/api";
 import { FoodCard } from "../components/FoodCard";
 import { AppDialog } from "../components/AppDialog";
 import { isFoodEntryUsedInSharedLists } from "../utils/foodUtils";
 import { usePageHeader } from "../hooks/usePageHeader";
 import { EmptyState } from "../components/EmptyState";
+import { FoodEntry } from "../types";
 
 type DialogConfig = {
   titleText: string;
@@ -30,12 +25,12 @@ type DialogConfig = {
 export function MyFoodList() {
   usePageHeader("My food list", false);
 
-  const { id } = useUserContext();
   const navigate = useNavigate();
-  const { setDraft } = useFoodDraftContext();
-  const { userFoodEntries, setUserFoodEntries, sortedUserFoodEntries } =
-    useUserFoodListContext();
+
+  const { id } = useUserContext();
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+
+  const [foodEntries, setFoodEntries] = useState<FoodEntry[]>([]);
 
   const defaultDialogConfig: DialogConfig = {
     titleText: "",
@@ -49,23 +44,16 @@ export function MyFoodList() {
   const [dialogConfig, setDialogConfig] =
     useState<DialogConfig>(defaultDialogConfig);
 
-  async function deleteFoodEntryFromUserList(foodEntry: FoodEntry) {
-    const updatedList: FoodEntry[] = userFoodEntries.filter(
-      (entry) => entry.id !== foodEntry.id
-    );
-
-    setUserFoodEntries(updatedList);
-    await updateMyFoodList(
-      id,
-      updatedList.map((entry) => entry.id)
-    );
-  }
+  const fetchFootList = async () => {
+    const result = await getFoodList(id);
+    setFoodEntries(result);
+  };
 
   const handleDelete = async (foodEntry: FoodEntry) => {
     const isInUse = isFoodEntryUsedInSharedLists(
       id,
-      foodEntry.id,
-      mockSharedFoodLists
+      foodEntry.id!,
+      mockSharedFoodLists,
     );
 
     if (isInUse) {
@@ -95,8 +83,9 @@ export function MyFoodList() {
         primaryBtnLabel: "Delete",
         secondaryBtnLabel: "Cancel",
         onPrimaryAction: async () => {
+          await deleteFoodEntry(foodEntry.id!);
+          await fetchFootList();
           setDialogOpen(false);
-          await deleteFoodEntryFromUserList(foodEntry);
         },
         onSecondaryAction: () => setDialogOpen(false),
         onClose: () => setDialogOpen(false),
@@ -106,10 +95,12 @@ export function MyFoodList() {
   };
 
   const handleEdit = async (foodEntry: FoodEntry) => {
-    setDraft(foodEntry);
-    console.log("handleEdit ran");
     navigate(`/my-food-list/edit-food/${foodEntry.id}`);
   };
+
+  useEffect(() => {
+    void fetchFootList();
+  }, []);
 
   const AddFoodFab = (
     <Fab
@@ -133,7 +124,7 @@ export function MyFoodList() {
   );
 
   // TO DO: loading
-  if (userFoodEntries.length === 0) {
+  if (foodEntries.length === 0) {
     return (
       <Box component="section">
         <EmptyState
@@ -149,7 +140,7 @@ export function MyFoodList() {
   return (
     <Box component="section">
       <Stack spacing={5} sx={{ alignItems: "center", pb: { xs: 10, sm: 12 } }}>
-        {sortedUserFoodEntries.map((foodEntry) => (
+        {foodEntries.map((foodEntry) => (
           <FoodCard
             key={foodEntry.id}
             foodEntry={foodEntry}

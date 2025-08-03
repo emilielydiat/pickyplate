@@ -7,90 +7,77 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Link } from "react-router-dom";
-import { useMemo, useState } from "react";
-import { useUserFoodListContext } from "../context/UserFoodListContext";
-import { useFoodDraftContext } from "../context/FoodDraftContext";
-import {
-  FoodEntry,
-  mealTypeOptions,
-  mealLocationOptions,
-  mealPriceOptions,
-  mealMaxTimeOptions,
-} from "../data/mockData";
+import { useEffect, useState } from "react";
 import { capitaliseWord } from "../utils/stringUtils";
-import { useFriend } from "./MealPreferencesFlowWrapper";
 import { AppDialog } from "../components/AppDialog";
 import { usePageHeader } from "../hooks/usePageHeader";
+import {
+  mealLabelMap,
+  mealLocationLabelMap,
+  mealMaxTimeLabelMap,
+  mealPriceRangeLabelMap,
+} from "../constants";
+import {
+  FoodEntry,
+  Meal,
+  MealLocation,
+  MealMaxTime,
+  MealPriceRange,
+} from "../types";
+import {
+  addFoodEntry,
+  addFoodEntryToSharedList,
+  editFoodEntry,
+  getCuisines,
+  getFoodEntryById,
+} from "../api/api";
+import { useUserContext } from "../context/UserContext";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
-export function CreateFood() {
-  usePageHeader("Create new food", true);
+export function FoodEditor() {
+  const { foodId } = useParams();
 
-  const { draft, setDraft } = useFoodDraftContext();
-  const { userFoodEntries } = useUserFoodListContext();
-  const friendData = useFriend();
-  const friend = friendData?.friend;
+  const isEditing = foodId !== undefined;
+
+  usePageHeader(isEditing ? "Edit food" : "Create new food", true);
+
+  const { id } = useUserContext();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const [foodName, setFoodName] = useState("");
+  const [mealTypes, setMealTypes] = useState<Meal[]>([]);
+  const [mealLocations, setMealLocations] = useState<MealLocation[]>([]);
+  const [mealPriceRange, setMealPriceRange] = useState<MealPriceRange>(
+    MealPriceRange.OneToTen,
+  );
+  const [mealMaxTime, setMealMaxTime] = useState<MealMaxTime>(
+    MealMaxTime.OneHour,
+  );
+  const [cuisines, setCuisines] = useState<string[]>([]);
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [newCuisineError, setNewCuisineError] = useState<string>("");
   const [newCuisine, setNewCuisine] = useState<string>("");
-  const [additionalCuisines, setAdditionalCuisines] = useState<string[]>([]);
 
-  const updateDraft = (field: keyof FoodEntry, value: any) => {
-    setDraft((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+  const mealTypeOptions = Object.values(Meal).map<[string, Meal]>((value) => [
+    mealLabelMap[value],
+    value,
+  ]);
 
-  const toggleMultiSelect = (
-    field: keyof Pick<FoodEntry, "type" | "location" | "cuisine">,
-    value: string
-  ) => {
-    if (!draft) return;
+  const mealLocationOptions = Object.values(MealLocation).map<
+    [string, MealLocation]
+  >((value) => [mealLocationLabelMap[value], value]);
 
-    const current = (draft[field] ?? []) as string[];
+  const mealPriceOptions = Object.values(MealPriceRange).map<
+    [string, MealPriceRange]
+  >((value) => [mealPriceRangeLabelMap[value], value]);
 
-    if (value === "any") {
-      updateDraft(field, ["any"]);
-    } else {
-      const filtered = current.filter((v) => v !== "any");
-      const updated = current.includes(value)
-        ? filtered.filter((v) => v !== value)
-        : [...filtered, value];
-      updateDraft(field, updated);
-    }
-  };
+  const mealMaxTimeOptions = Object.values(MealMaxTime).map<
+    [string, MealMaxTime]
+  >((value) => [mealMaxTimeLabelMap[value], value]);
 
-  const isSelected = (field: keyof FoodEntry, value: string) => {
-    if (!draft) return false;
-    const selected = draft[field];
-    return Array.isArray(selected)
-      ? (selected as string[]).includes(value)
-      : selected === value;
-  };
-
-  const availableCuisines = useMemo(() => {
-    const userCuisines = userFoodEntries.flatMap((entry) => entry.cuisine);
-    const merged = Array.from(
-      new Set([...userCuisines, ...additionalCuisines])
-    );
-    return merged.sort((a, b) => a.localeCompare(b));
-  }, [userFoodEntries, additionalCuisines]);
-
-  const isFormComplete =
-    !!draft?.name &&
-    !!draft?.type &&
-    Array.isArray(draft.location) &&
-    draft.location.length > 0 &&
-    !!draft?.price &&
-    !!draft?.maxTime &&
-    Array.isArray(draft.cuisine) &&
-    draft.cuisine.length > 0;
-
-  const path = friend
-    ? `/friend/${friend.id}/shared-food-list/create-food/confirm`
-    : "/my-food-list/create-food/confirm";
+  const [availableCuisines, setAvailableCuisines] = useState<string[]>([]);
 
   const handleNewCuisineClick = () => {
     setNewCuisine("");
@@ -117,15 +104,66 @@ export function CreateFood() {
   };
 
   const handleDialogConfirm = () => {
-    // const trimmed = newCuisine.trim();
-    if (!newCuisine || newCuisineError) return;
-
-    setAdditionalCuisines((prev) => [...prev, newCuisine]);
-    toggleMultiSelect("cuisine", newCuisine);
+    setAvailableCuisines((prev) => [...new Set([...prev, newCuisine])]);
+    setCuisines((prev) => [...prev, newCuisine]);
     setNewCuisine("");
     setNewCuisineError("");
     setDialogOpen(false);
   };
+
+  const handleSubmit = async () => {
+    const shareWith = searchParams.get("share");
+
+    const entry: FoodEntry = {
+      name: foodName,
+      meals: mealTypes,
+      meal_locations: mealLocations,
+      meal_price_range: mealPriceRange,
+      meal_max_time: mealMaxTime,
+      cuisines,
+    };
+
+    // If foodId is provided, update the existing entry; otherwise, create a new one
+    if (isEditing) {
+      await editFoodEntry(foodId, entry);
+    } else {
+      const newEntry = await addFoodEntry(id, entry);
+
+      // If shareWith is provided, add the new entry to the shared list
+      if (shareWith) {
+        await addFoodEntryToSharedList(id, shareWith, newEntry.id!);
+      }
+    }
+
+    navigate(
+      shareWith ? `/friend/${shareWith}/shared-food-list` : "/my-food-list",
+    );
+  };
+
+  useEffect(() => {
+    // If foodId is provided, fetch the food entry details from the server
+    if (foodId) {
+      (async () => {
+        const result = await getFoodEntryById(foodId);
+        setFoodName(result.name);
+        setMealTypes(result.meals);
+        setMealLocations(result.meal_locations);
+        setMealPriceRange(result.meal_price_range);
+        setMealMaxTime(result.meal_max_time);
+        setCuisines(result.cuisines);
+        setAvailableCuisines((prev) => [
+          ...new Set([...prev, ...result.cuisines]),
+        ]);
+      })();
+    }
+  }, [foodId]);
+
+  useEffect(() => {
+    (async () => {
+      const result = await getCuisines();
+      setAvailableCuisines((prev) => [...new Set([...prev, ...result])]);
+    })();
+  }, []);
 
   return (
     <Box component="section">
@@ -153,8 +191,8 @@ export function CreateFood() {
             label="Food name"
             variant="outlined"
             fullWidth
-            value={draft?.name ?? ""}
-            onChange={(e) => updateDraft("name", e.target.value)}
+            value={foodName}
+            onChange={(e) => setFoodName(e.target.value)}
           ></TextField>
         </FormControl>
         <FormControl
@@ -181,14 +219,20 @@ export function CreateFood() {
             mt={1}
             flexWrap="wrap"
           >
-            {mealTypeOptions.map((option) => (
+            {mealTypeOptions.map(([label, value]) => (
               <Chip
-                key={option}
-                label={capitaliseWord(option)}
-                aria-pressed={isSelected("type", option)}
+                key={value}
+                label={capitaliseWord(label)}
+                aria-pressed={mealTypes.includes(value)}
                 clickable
-                color={isSelected("type", option) ? "primary" : "default"}
-                onClick={() => toggleMultiSelect("type", option)}
+                color={mealTypes.includes(value) ? "primary" : "default"}
+                onClick={() =>
+                  setMealTypes((prev) =>
+                    prev.includes(value)
+                      ? prev.filter((v) => v !== value)
+                      : [...prev, value],
+                  )
+                }
                 sx={{ m: 0.5 }}
               />
             ))}
@@ -219,14 +263,20 @@ export function CreateFood() {
             mt={1}
             flexWrap="wrap"
           >
-            {mealLocationOptions.map((option) => (
+            {mealLocationOptions.map(([label, value]) => (
               <Chip
-                key={option}
-                label={capitaliseWord(option)}
-                aria-pressed={isSelected("location", option)}
+                key={value}
+                label={capitaliseWord(label)}
+                aria-pressed={mealLocations.includes(value)}
                 clickable
-                color={isSelected("location", option) ? "primary" : "default"}
-                onClick={() => toggleMultiSelect("location", option)}
+                color={mealLocations.includes(value) ? "primary" : "default"}
+                onClick={() =>
+                  setMealLocations((prev) =>
+                    prev.includes(value)
+                      ? prev.filter((v) => v !== value)
+                      : [...prev, value],
+                  )
+                }
                 sx={{ m: 0.5 }}
               />
             ))}
@@ -259,17 +309,15 @@ export function CreateFood() {
             mt={1}
             flexWrap="wrap"
           >
-            {mealPriceOptions.map((option) => {
+            {mealPriceOptions.map(([label, value]) => {
               return (
                 <Chip
-                  key={option.key}
-                  label={option.label}
-                  aria-pressed={isSelected("price", option.key)}
+                  key={value}
+                  label={label}
+                  aria-pressed={mealPriceRange === value}
                   clickable
-                  color={
-                    isSelected("price", option.key) ? "primary" : "default"
-                  }
-                  onClick={() => updateDraft("price", option.key)}
+                  color={mealPriceRange === value ? "primary" : "default"}
+                  onClick={() => setMealPriceRange(value)}
                   sx={{ m: 0.5 }}
                 />
               );
@@ -303,14 +351,14 @@ export function CreateFood() {
             mt={1}
             flexWrap="wrap"
           >
-            {mealMaxTimeOptions.map((option) => (
+            {mealMaxTimeOptions.map(([label, value]) => (
               <Chip
-                key={option}
-                label={capitaliseWord(option)}
-                aria-pressed={isSelected("maxTime", option)}
+                key={value}
+                label={capitaliseWord(label)}
+                aria-pressed={mealMaxTime === value}
                 clickable
-                color={isSelected("maxTime", option) ? "primary" : "default"}
-                onClick={() => updateDraft("maxTime", option)}
+                color={mealMaxTime === value ? "primary" : "default"}
+                onClick={() => setMealMaxTime(value)}
                 sx={{ m: 0.5 }}
               />
             ))}
@@ -345,10 +393,16 @@ export function CreateFood() {
               <Chip
                 key={option}
                 label={capitaliseWord(option)}
-                aria-pressed={isSelected("cuisine", option)}
+                aria-pressed={cuisines.includes(option)}
                 clickable
-                color={isSelected("cuisine", option) ? "primary" : "default"}
-                onClick={() => toggleMultiSelect("cuisine", option)}
+                color={cuisines.includes(option) ? "primary" : "default"}
+                onClick={() =>
+                  setCuisines((prev) =>
+                    prev.includes(option)
+                      ? prev.filter((v) => v !== option)
+                      : [...prev, option],
+                  )
+                }
                 sx={{ m: 0.5 }}
               />
             ))}
@@ -365,12 +419,10 @@ export function CreateFood() {
 
       <Box display="flex" justifyContent="flex-end" sx={{ mt: 4 }}>
         <Button
-          component={Link}
-          to={path}
+          onClick={handleSubmit}
           variant="contained"
           color="primary"
           type="button"
-          disabled={!isFormComplete}
           sx={{ mb: 2 }}
         >
           Next
