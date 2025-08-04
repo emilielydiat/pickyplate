@@ -48,13 +48,18 @@ export function FoodEditor() {
   const [foodName, setFoodName] = useState("");
   const [mealTypes, setMealTypes] = useState<Meal[]>([]);
   const [mealLocations, setMealLocations] = useState<MealLocation[]>([]);
-  const [mealPriceRange, setMealPriceRange] = useState<MealPriceRange>(
-    MealPriceRange.OneToTen,
+  const [mealPriceRange, setMealPriceRange] = useState<MealPriceRange | null>(
+    null,
   );
-  const [mealMaxTime, setMealMaxTime] = useState<MealMaxTime>(
-    MealMaxTime.OneHour,
-  );
+  const [mealMaxTime, setMealMaxTime] = useState<MealMaxTime | null>(null);
   const [cuisines, setCuisines] = useState<string[]>([]);
+  const isValid =
+    Boolean(foodName) &&
+    Boolean(mealPriceRange) &&
+    Boolean(mealMaxTime) &&
+    mealTypes.length > 0 &&
+    mealLocations.length > 0 &&
+    cuisines.length > 0;
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [newCuisineError, setNewCuisineError] = useState<string>("");
@@ -118,8 +123,8 @@ export function FoodEditor() {
       name: foodName,
       meals: mealTypes,
       meal_locations: mealLocations,
-      meal_price_range: mealPriceRange,
-      meal_max_time: mealMaxTime,
+      meal_price_range: mealPriceRange!,
+      meal_max_time: mealMaxTime!,
       cuisines,
     };
 
@@ -424,6 +429,7 @@ export function FoodEditor() {
           color="primary"
           type="button"
           sx={{ mb: 2 }}
+          disabled={!isValid}
         >
           Next
         </Button>
