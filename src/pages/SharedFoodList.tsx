@@ -24,6 +24,7 @@ export function SharedFoodList() {
   const [sharedFoodEntries, setSharedFoodEntries] = useState<FoodEntry[]>([]);
   const [friend, setFriend] = useState<User | null>(null);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [foodIdToDelete, setFoodIdToDelete] = useState<string | null>(null);
 
   const fetchSharedFoodEntries = async () => {
     const foodEntries = await getSharedFoodList(friendId!);
@@ -37,6 +38,7 @@ export function SharedFoodList() {
   const handleRemove = async (foodId: string) => {
     await removeFoodEntryFromSharedList(id, friendId!, foodId);
     await fetchSharedFoodEntries();
+    setFoodIdToDelete(null);
   };
 
   useEffect(() => {
@@ -118,10 +120,23 @@ export function SharedFoodList() {
             foodEntry={foodEntry}
             variant={foodEntry.user_id === id ? "base" : "short"}
             onEdit={() => handleEdit(foodEntry.id!)}
-            onDelete={() => handleRemove(foodEntry.id!)}
+            onDelete={() => setFoodIdToDelete(foodEntry.id!)}
           />
         ))}
       </Stack>
+
+      <AppDialog
+        open={Boolean(foodIdToDelete)}
+        withTextField={false}
+        titleText="Delete food from shared food list?"
+        contentText="Once removed, this item will no longer appear in the shared food list with this user"
+        primaryBtnLabel="Delete"
+        secondaryBtnLabel="Cancel"
+        onClose={() => setFoodIdToDelete(null)}
+        onSecondaryAction={() => setFoodIdToDelete(null)}
+        onPrimaryAction={() => handleRemove(foodIdToDelete!)}
+      />
+
       {AddFoodFab}
       {CustomAppDialog}
     </Box>
