@@ -1,4 +1,14 @@
-import { Box, Fab, Stack } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Fab,
+  Stack,
+} from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -31,6 +41,9 @@ export function MyFoodList() {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const [foodEntries, setFoodEntries] = useState<FoodEntry[]>([]);
+
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [error, setError] = useState("");
 
   const defaultDialogConfig: DialogConfig = {
     titleText: "",
@@ -83,7 +96,14 @@ export function MyFoodList() {
         primaryBtnLabel: "Delete",
         secondaryBtnLabel: "Cancel",
         onPrimaryAction: async () => {
-          await deleteFoodEntry(foodEntry.id!);
+          try {
+            await deleteFoodEntry(foodEntry.id!);
+          } catch (e) {
+            setError((e as Error).message);
+            setShowErrorDialog(true);
+            setDialogOpen(false);
+            return;
+          }
           await fetchFootList();
           setDialogOpen(false);
         },
@@ -162,6 +182,15 @@ export function MyFoodList() {
         onSecondaryAction={dialogConfig.onSecondaryAction}
         onPrimaryAction={dialogConfig.onPrimaryAction}
       />
+      <Dialog open={showErrorDialog} onClose={() => setShowErrorDialog(false)}>
+        <DialogTitle>Error</DialogTitle>
+        <DialogContent>
+          <DialogContentText>{error}</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowErrorDialog(false)}>Okay</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
