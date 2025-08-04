@@ -64,7 +64,7 @@ export function PickFriend() {
   }, [searchInput, friends]);
 
   const handleEatTogetherClick = async (friend: User) => {
-    const sharedFoodList = await getSharedFoodList(id, friend.id);
+    const sharedFoodList = await getSharedFoodList(friend.id);
 
     if (sharedFoodList.length === 0) {
       setDialogConfig({

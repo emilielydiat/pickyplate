@@ -10,12 +10,8 @@ import { Layout } from "./components/Layout";
 import {
   AddFriend,
   AddFromExistingFood,
-  CreateFood,
-  CreateFoodConfirm,
-  FoodFlowWrapper,
+  FoodEditor,
   EditAvatar,
-  EditFood,
-  EditFoodConfirm,
   FriendProfile,
   Friends,
   Home,
@@ -76,40 +72,23 @@ function App() {
                     </Route>
                   </Route>
 
-                  <Route path="my-food-list" element={<FoodFlowWrapper />}>
-                    <Route index element={<MyFoodList />} />
-                    <Route path="edit-food/:foodId" element={<EditFood />} />
-                    <Route
-                      path="edit-food/:foodId/confirm"
-                      element={<EditFoodConfirm />}
-                    />
-                    <Route path="create-food" element={<CreateFood />} />
-                    <Route
-                      path="create-food/confirm"
-                      element={<CreateFoodConfirm />}
-                    />
-                  </Route>
-
+                  <Route path="my-food-list" element={<MyFoodList />} />
+                  <Route
+                    path="my-food-list/edit-food/:foodId"
+                    element={<FoodEditor />}
+                  />
+                  <Route
+                    path="my-food-list/create-food"
+                    element={<FoodEditor />}
+                  />
                   <Route
                     path="friend/:friendId/shared-food-list"
-                    element={<FoodFlowWrapper />}
-                  >
-                    <Route index element={<SharedFoodList />} />
-                    <Route path="edit-food/:foodId" element={<EditFood />} />
-                    <Route
-                      path="edit-food/:foodId/confirm"
-                      element={<EditFoodConfirm />}
-                    />
-                    <Route path="create-food" element={<CreateFood />} />
-                    <Route
-                      path="create-food/confirm"
-                      element={<CreateFoodConfirm />}
-                    />
-                    <Route
-                      path="add-existing-food"
-                      element={<AddFromExistingFood />}
-                    />
-                  </Route>
+                    element={<SharedFoodList />}
+                  />
+                  <Route
+                    path="friend/:friendId/shared-food-list/add-existing-food"
+                    element={<AddFromExistingFood />}
+                  />
 
                   <Route path="requests" element={<Requests />} />
                   <Route path="settings" element={<Settings />} />

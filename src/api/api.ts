@@ -12,7 +12,11 @@ import {
 import { getSessionId } from "../utils/sessionUtils";
 import { v4 as uuidv4 } from "uuid";
 import supabase from "../supabase";
-import { FriendRequest, type User as SupabaseUser } from "../types";
+import {
+  FriendRequest,
+  type User as SupabaseUser,
+  type FoodEntry as SupabaseFoodEntry,
+} from "../types";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -113,8 +117,74 @@ export const addFriend = async (userId: string) => {
   if (error) throw new Error(error.message);
 };
 
+export const getFoodList = async (
+  userId: string,
+): Promise<SupabaseFoodEntry[]> => {
+  const { data, error } = await supabase
+    .from("food_list")
+    .select()
+    .eq("user_id", userId);
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};
+
+export const getFoodEntryById = async (
+  id: string,
+): Promise<SupabaseFoodEntry> => {
+  const { error, data } = await supabase
+    .from("food_list")
+    .select()
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+
+  return data[0];
+};
+
+export const addFoodEntry = async (
+  userId: string,
+  entry: SupabaseFoodEntry,
+): Promise<SupabaseFoodEntry> => {
+  const { data, error } = await supabase
+    .from("food_list")
+    .insert({
+      ...entry,
+      user_id: userId,
+    })
+    .select();
+
+  if (error) throw new Error(error.message);
+
+  return data[0];
+};
+
+export const editFoodEntry = async (id: string, entry: SupabaseFoodEntry) => {
+  const { error } = await supabase
+    .from("food_list")
+    .update({ ...entry })
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+};
+
+export const deleteFoodEntry = async (id: string) => {
+  const { error } = await supabase.from("food_list").delete().eq("id", id);
+
+  if (error) throw new Error(error.message);
+};
+
+export const getCuisines = async (): Promise<string[]> => {
+  const { data, error } = await supabase.functions.invoke("get-cuisines");
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};
+
 export const updateFoodEntry = async (
-  draft: FoodEntry
+  draft: FoodEntry,
 ): Promise<FoodEntry | null> => {
   try {
     await delay(500);
@@ -136,7 +206,7 @@ export const updateFoodEntry = async (
 
 export const createFoodEntry = async (
   userId: string,
-  draft: Omit<FoodEntry, "id">
+  draft: Omit<FoodEntry, "id">,
 ): Promise<FoodEntry | null> => {
   try {
     await delay(500);
@@ -160,7 +230,7 @@ export const createFoodEntry = async (
   } catch (error) {
     console.error(
       `Error creating food entry for user ${userId} personal list: `,
-      error
+      error,
     );
     return null;
   }
@@ -169,7 +239,7 @@ export const createFoodEntry = async (
 export const createSharedFoodEntry = async (
   userId: string,
   friendId: string,
-  draft: Omit<FoodEntry, "id">
+  draft: Omit<FoodEntry, "id">,
 ): Promise<FoodEntry | null> => {
   try {
     await delay(500);
@@ -200,14 +270,14 @@ export const createSharedFoodEntry = async (
   } catch (error) {
     console.error(
       `Error creating food entry for user ${userId} personal list: `,
-      error
+      error,
     );
     return null;
   }
 };
 
 export const getCurrentUserFoodList = async (
-  userId: string
+  userId: string,
 ): Promise<FoodEntry[]> => {
   try {
     await delay(500);
@@ -215,7 +285,7 @@ export const getCurrentUserFoodList = async (
     return (mockUserFoodLists[userId] || [])
       .map((id) => mockFoodEntries[id])
       .filter(
-        (entry): entry is FoodEntry => entry !== undefined && entry !== null
+        (entry): entry is FoodEntry => entry !== undefined && entry !== null,
       );
   } catch (error) {
     console.error(`Error fetching food list for user ${userId}: `, error);
@@ -224,56 +294,50 @@ export const getCurrentUserFoodList = async (
 };
 
 export const getSharedFoodList = async (
-  userId: string,
-  friendId: string
-): Promise<FoodEntry[]> => {
-  try {
-    await delay(500);
+  friendId: string,
+): Promise<SupabaseFoodEntry[]> => {
+  const { data, error } = await supabase.functions.invoke(
+    "get-shared-food-list",
+    { body: { friendId } },
+  );
 
-    const key = `${userId}_${friendId}`;
-    const sharedFoodList = mockSharedFoodLists[key] || [];
-    return sharedFoodList.map((id) => mockFoodEntries[id]).filter(Boolean);
-  } catch (error) {
-    console.error(
-      `Error fetching shared food list between users ${userId} and ${friendId}: `,
-      error
-    );
-    return [];
-  }
+  if (error) throw new Error(error.message);
+
+  return data;
 };
 
-export const updateSharedFoodList = async (
+export const addFoodEntryToSharedList = async (
   userId: string,
   friendId: string,
-  updatedSharedList: string[]
-): Promise<void> => {
-  try {
-    await delay(500);
-    const key = `${userId}_${friendId}`;
-    mockSharedFoodLists[key] = updatedSharedList;
-  } catch (error) {
-    console.error(
-      `Error updating shared food list between users ${userId} and ${friendId}: `,
-      error
-    );
-  }
+  foodId: string,
+) => {
+  const { error } = await supabase.from("shared_food_list").insert({
+    sharer_id: userId,
+    user_id: friendId,
+    food_id: foodId,
+  });
+
+  if (error) throw new Error(error.message);
 };
 
-export const updateMyFoodList = async (
+export const removeFoodEntryFromSharedList = async (
   userId: string,
-  updatedList: string[]
+  friendId: string,
+  foodId: string,
 ): Promise<void> => {
-  try {
-    await delay(500);
-    mockUserFoodLists[userId] = updatedList;
-  } catch (error) {
-    console.error(`Error updating my food list`, error);
-  }
+  const { error } = await supabase
+    .from("shared_food_list")
+    .delete()
+    .eq("food_id", foodId)
+    .eq("sharer_id", userId)
+    .eq("user_id", friendId);
+
+  if (error) throw new Error(error.message);
 };
 
 export const getMealSession = async (
   userId1: string,
-  userId2: string
+  userId2: string,
 ): Promise<MealSession | null> => {
   try {
     await delay(500);
@@ -287,7 +351,7 @@ export const getMealSession = async (
   } catch (error) {
     console.error(
       `Error fetching session between users ${userId1} and ${userId2}: `,
-      error
+      error,
     );
     return null;
   }
@@ -299,7 +363,7 @@ export type AllUserSessionsSummary = {
   friendId: string;
 };
 export const getAllMealSessionsForUser = async (
-  userId: string
+  userId: string,
 ): Promise<AllUserSessionsSummary[]> => {
   try {
     await delay(500);
@@ -307,7 +371,7 @@ export const getAllMealSessionsForUser = async (
     const userSessions = allSessions
       .filter(
         (session) =>
-          session.initiatorId === userId || session.receiverId === userId
+          session.initiatorId === userId || session.receiverId === userId,
       )
       .map((session) => {
         const friendId =
@@ -330,7 +394,7 @@ export const getAllMealSessionsForUser = async (
 export const updateMealSession = async (
   initiatorId: string,
   receiverId: string,
-  updates: Partial<MealSession>
+  updates: Partial<MealSession>,
 ): Promise<void> => {
   try {
     await delay(500);
@@ -356,14 +420,14 @@ export const updateMealSession = async (
   } catch (error) {
     console.error(
       `Error creating/updating session between users ${initiatorId} and ${receiverId}: `,
-      error
+      error,
     );
   }
 };
 
 export const resetMealSession = async (
   initiatorId: string,
-  receiverId: string
+  receiverId: string,
 ): Promise<void> => {
   try {
     await updateMealSession(initiatorId, receiverId, {
@@ -381,7 +445,7 @@ export const resetMealSession = async (
   } catch (error) {
     console.error(
       `Error resetting session between users ${initiatorId} and ${receiverId}: `,
-      error
+      error,
     );
   }
 };

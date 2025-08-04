@@ -20,11 +20,10 @@ import { useFriend } from "./MealPreferencesFlowWrapper";
 import {
   getMealSession,
   updateMealSession,
-  getSharedFoodList,
   resetMealSession,
 } from "../api/api";
 import { useUserContext } from "../context/UserContext";
-import { MealPreferencesData } from "../data/mockData";
+import { FoodEntry, MealPreferencesData } from "../data/mockData";
 import { useNavigate } from "react-router-dom";
 import { matchFoodToPreferences } from "../utils/foodOptionUtils";
 import { AppDialog } from "../components/AppDialog";
@@ -96,11 +95,11 @@ export function MealPreferencesConfirm() {
 
   async function handleSubmitPreferences() {
     const sessionWithFriend = await getMealSession(id, friend.id);
-    const sharedFoodList = await getSharedFoodList(id, friend.id);
+    const sharedFoodList: FoodEntry[] = []; //await getSharedFoodList(friend.id);
 
     const foodOption = matchFoodToPreferences(
       sharedFoodList,
-      draft as MealPreferencesData
+      draft as MealPreferencesData,
     );
 
     if (!foodOption) {

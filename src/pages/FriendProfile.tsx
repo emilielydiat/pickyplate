@@ -2,13 +2,7 @@ import { Avatar, Box, Button, Stack, Typography } from "@mui/material";
 import { Mood, Restaurant, Delete } from "@mui/icons-material";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import {
-  getSharedFoodList,
-  getMealSession,
-  removeFriend,
-  getUserById,
-} from "../api/api";
-import { useUserContext } from "../context/UserContext";
+import { removeFriend, getUserById } from "../api/api";
 import { AppDialog } from "../components/AppDialog";
 import { usePageHeader } from "../hooks/usePageHeader";
 import { constructAvatarURL } from "../utils/supabase";
@@ -29,7 +23,7 @@ export function FriendProfile() {
 
   const { friendId } = useParams();
   const navigate = useNavigate();
-  const { id } = useUserContext();
+  // const { id } = useUserContext();
   const { reload } = useFriendsContext();
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
@@ -63,65 +57,65 @@ export function FriendProfile() {
     );
   }
 
-  const handleEatTogetherClick = async (friend: User) => {
-    if (!id) return;
-
-    const sharedFoodList = await getSharedFoodList(id, friend.id);
-
-    if (sharedFoodList.length === 0) {
-      setDialogConfig({
-        titleText: "Oops, no shared food to pick from",
-        contentText:
-          "Your food list with this friend is empty! Add some food to explore your next meal together.",
-        primaryBtnLabel: "Add food",
-        secondaryBtnLabel: "Close",
-        onPrimaryAction: () => {
-          setDialogOpen(false);
-          navigate(`/friend/${friend.id}/shared-food-list`);
-        },
-        onSecondaryAction: handleDialogClose,
-      });
-      setDialogOpen(true);
-      return;
-    }
-
-    const mealSession = await getMealSession(id, friend.id);
-
-    if (mealSession) {
-      if (
-        !(
-          mealSession.status === "everyone_rated" ||
-          mealSession.status === "cancelled" ||
-          mealSession.status === "rejected"
-        )
-      ) {
-        setDialogConfig({
-          titleText: "You’re already deciding what to eat together!",
-          contentText: (
-            <>
-              Find your current session in the “Decide what to eat together”
-              section in your Requests menu. <br /> <br /> Want to start fresh
-              instead? Begin a new session if you’d like.
-            </>
-          ),
-          primaryBtnLabel: "Go to current",
-          secondaryBtnLabel: "New session",
-          onPrimaryAction: () => {
-            setDialogOpen(false);
-            navigate("/requests");
-          },
-          onSecondaryAction: async () => {
-            setDialogOpen(false);
-            navigate(`/eat-together/${friend.id}/meal-preferences`);
-          },
-        });
-        setDialogOpen(true);
-        return;
-      }
-    }
-
-    navigate(`/eat-together/${friend.id}/meal-preferences`);
-  };
+  // const handleEatTogetherClick = () => {
+  // if (!id) return;
+  //
+  // const sharedFoodList = await getSharedFoodList(id, friend!.id);
+  //
+  // if (sharedFoodList.length === 0) {
+  //   setDialogConfig({
+  //     titleText: "Oops, no shared food to pick from",
+  //     contentText:
+  //       "Your food list with this friend is empty! Add some food to explore your next meal together.",
+  //     primaryBtnLabel: "Add food",
+  //     secondaryBtnLabel: "Close",
+  //     onPrimaryAction: () => {
+  //       setDialogOpen(false);
+  //       navigate(`/friend/${friend.id}/shared-food-list`);
+  //     },
+  //     onSecondaryAction: handleDialogClose,
+  //   });
+  //   setDialogOpen(true);
+  //   return;
+  // }
+  //
+  // const mealSession = await getMealSession(id, friend.id);
+  //
+  // if (mealSession) {
+  //   if (
+  //     !(
+  //       mealSession.status === "everyone_rated" ||
+  //       mealSession.status === "cancelled" ||
+  //       mealSession.status === "rejected"
+  //     )
+  //   ) {
+  //     setDialogConfig({
+  //       titleText: "You’re already deciding what to eat together!",
+  //       contentText: (
+  //         <>
+  //           Find your current session in the “Decide what to eat together”
+  //           section in your Requests menu. <br /> <br /> Want to start fresh
+  //           instead? Begin a new session if you’d like.
+  //         </>
+  //       ),
+  //       primaryBtnLabel: "Go to current",
+  //       secondaryBtnLabel: "New session",
+  //       onPrimaryAction: () => {
+  //         setDialogOpen(false);
+  //         navigate("/requests");
+  //       },
+  //       onSecondaryAction: async () => {
+  //         setDialogOpen(false);
+  //         navigate(`/eat-together/${friend.id}/meal-preferences`);
+  //       },
+  //     });
+  //     setDialogOpen(true);
+  //     return;
+  //   }
+  // }
+  //
+  // navigate(`/eat-together/${friend.id}/meal-preferences`);
+  // };
 
   const handleDialogClose = () => {
     setDialogOpen(false);
@@ -185,7 +179,6 @@ export function FriendProfile() {
             startIcon={<Mood />}
             variant="outlined"
             type="button"
-            onClick={() => handleEatTogetherClick(friend)}
             sx={{ width: "100%" }}
           >
             Eat together

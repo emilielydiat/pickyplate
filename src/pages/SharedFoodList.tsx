@@ -1,53 +1,57 @@
 import { Box, Fab, Stack } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useUserContext } from "../context/UserContext";
-import { useSharedFoodListContext } from "../context/SharedFoodListContext";
-import { useFoodDraftContext } from "../context/FoodDraftContext";
-import { useFriend } from "./FoodFlowWrapper";
-import { FoodEntry, emptyStateImages } from "../data/mockData";
-import { updateSharedFoodList } from "../api/api";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { emptyStateImages } from "../data/mockData";
 import { FoodCard } from "../components/FoodCard";
 import { AppDialog } from "../components/AppDialog";
-import { usePageHeader } from "../hooks/usePageHeader";
 import { EmptyState } from "../components/EmptyState";
+import { FoodEntry, User } from "../types";
+import {
+  getSharedFoodList,
+  getUserById,
+  removeFoodEntryFromSharedList,
+} from "../api/api";
+import { useUserContext } from "../context/UserContext";
+import { usePageTitleContext } from "../context/PageTitleContext";
 
 export function SharedFoodList() {
-  const { friend } = useFriend();
-  usePageHeader(`Shared food list with ${friend.username}`, true);
+  const { setPageTitle } = usePageTitleContext();
 
   const { id } = useUserContext();
+  const { friendId } = useParams();
   const navigate = useNavigate();
-  const sharedFoodListContext = useSharedFoodListContext();
-  const sharedFoodEntries = sharedFoodListContext?.sharedFoodEntries ?? [];
-  const sortedSharedFoodEntries =
-    sharedFoodListContext?.sortedSharedFoodEntries ?? [];
-  const { setDraft } = useFoodDraftContext();
+  const [sharedFoodEntries, setSharedFoodEntries] = useState<FoodEntry[]>([]);
+  const [friend, setFriend] = useState<User | null>(null);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [foodIdToDelete, setFoodIdToDelete] = useState<string | null>(null);
 
-  const handleDelete = async (foodEntry: FoodEntry) => {
-    if (!sharedFoodListContext) {
-      console.log("No SharedFoodListContext provider");
-      return;
-    }
-    const { setSharedFoodEntries } = sharedFoodListContext;
-    const updatedSharedList: FoodEntry[] = sharedFoodEntries.filter(
-      (entry: FoodEntry) => entry.id !== foodEntry.id
-    );
-
-    setSharedFoodEntries(updatedSharedList);
-    await updateSharedFoodList(
-      id,
-      friend.id,
-      updatedSharedList.map((entry) => entry.id)
-    );
+  const fetchSharedFoodEntries = async () => {
+    const foodEntries = await getSharedFoodList(friendId!);
+    setSharedFoodEntries(foodEntries);
   };
 
-  const handleEdit = async (foodEntry: FoodEntry) => {
-    setDraft(foodEntry);
-    navigate(`/friend/${friend.id}/shared-food-list/edit-food/${foodEntry.id}`);
+  const handleEdit = async (foodId: string) => {
+    navigate(`/my-food-list/edit-food/${foodId}?share=${friendId}`);
   };
+
+  const handleRemove = async (foodId: string) => {
+    await removeFoodEntryFromSharedList(id, friendId!, foodId);
+    await fetchSharedFoodEntries();
+    setFoodIdToDelete(null);
+  };
+
+  useEffect(() => {
+    (async () => {
+      const friend = await getUserById(friendId!);
+      setFriend(friend);
+      await fetchSharedFoodEntries();
+    })();
+  }, [friendId]);
+
+  useEffect(() => {
+    if (friend) setPageTitle(`Shared food list with ${friend?.name ?? ""}`);
+  }, [friend]);
 
   const AddFoodFab = (
     <Fab
@@ -82,11 +86,11 @@ export function SharedFoodList() {
       onClose={() => setDialogOpen(false)}
       onPrimaryAction={() => {
         setDialogOpen(false);
-        navigate(`/friend/${friend.id}/shared-food-list/add-existing-food`);
+        navigate(`/friend/${friendId}/shared-food-list/add-existing-food`);
       }}
       onSecondaryAction={() => {
         setDialogOpen(false);
-        navigate(`/friend/${friend.id}/shared-food-list/create-food`);
+        navigate(`/my-food-list/create-food?share=${friendId}`);
       }}
     />
   );
@@ -99,7 +103,7 @@ export function SharedFoodList() {
         <EmptyState
           image={emptyStateImages.sharedFoodList}
           heading="Start building your shared food list"
-          textContent={`Add some food you'd love to share with ${friend.username}, it'll make choosing together a breeze!`}
+          textContent={`Add some food you'd love to share with ${friend?.name}, it'll make choosing together a breeze!`}
         />
         {AddFoodFab}
         {CustomAppDialog}
@@ -110,16 +114,29 @@ export function SharedFoodList() {
   return (
     <Box>
       <Stack spacing={5} sx={{ alignItems: "center", pb: { xs: 10, sm: 12 } }}>
-        {sortedSharedFoodEntries.map((foodEntry: FoodEntry) => (
+        {sharedFoodEntries.map((foodEntry: FoodEntry) => (
           <FoodCard
             key={foodEntry.id}
             foodEntry={foodEntry}
-            variant="base"
-            onDelete={handleDelete}
-            onEdit={handleEdit}
+            variant={foodEntry.user_id === id ? "base" : "short"}
+            onEdit={() => handleEdit(foodEntry.id!)}
+            onDelete={() => setFoodIdToDelete(foodEntry.id!)}
           />
         ))}
       </Stack>
+
+      <AppDialog
+        open={Boolean(foodIdToDelete)}
+        withTextField={false}
+        titleText="Delete food from shared food list?"
+        contentText="Once removed, this item will no longer appear in the shared food list with this user"
+        primaryBtnLabel="Delete"
+        secondaryBtnLabel="Cancel"
+        onClose={() => setFoodIdToDelete(null)}
+        onSecondaryAction={() => setFoodIdToDelete(null)}
+        onPrimaryAction={() => handleRemove(foodIdToDelete!)}
+      />
+
       {AddFoodFab}
       {CustomAppDialog}
     </Box>
