@@ -1,52 +1,55 @@
 import { Box, Stack, Typography } from "@mui/material";
 import { useUserContext } from "../context/UserContext";
-import { useUserFoodListContext } from "../context/UserFoodListContext";
-import { useSharedFoodListContext } from "../context/SharedFoodListContext";
-import { useFriend } from "./FoodFlowWrapper";
-import { FoodEntry } from "../data/mockData";
-import { updateSharedFoodList } from "../api/api";
+import {
+  addFoodEntryToSharedList,
+  getFoodList,
+  getSharedFoodList,
+} from "../api/api";
 import { FoodCard } from "../components/FoodCard";
 import { usePageHeader } from "../hooks/usePageHeader";
+import { useEffect, useState } from "react";
+import { FoodEntry } from "../types";
+import { useParams } from "react-router-dom";
 
 export function AddFromExistingFood() {
   usePageHeader("Add from existing food", true);
 
   const { id } = useUserContext();
-  const { friend } = useFriend();
-  const { userFoodEntries, sortedUserFoodEntries } = useUserFoodListContext();
-  const sharedFoodListContext = useSharedFoodListContext();
-  const sharedFoodEntries = sharedFoodListContext?.sharedFoodEntries ?? [];
+  const { friendId } = useParams();
+  const [isLoading, setIsLoading] = useState(false);
+  const [foodEntries, setFoodEntries] = useState<FoodEntry[]>([]);
+  const [sharedFoodEntries, setSharedFoodEntries] = useState<FoodEntry[]>([]);
 
-  const handleToggleAdd = async (foodEntry: FoodEntry): Promise<void> => {
-    if (!sharedFoodListContext) {
-      console.log("No SharedFoodListContext provider");
-      return;
-    }
-
-    const { setSharedFoodEntries } = sharedFoodListContext;
-    const isAdded = sharedFoodEntries.some(
-      (entry: FoodEntry) => entry.id === foodEntry.id
-    );
-
-    let updatedSharedList: FoodEntry[] = [];
-
-    if (isAdded) {
-      updatedSharedList = sharedFoodEntries.filter(
-        (entry: FoodEntry) => entry.id !== foodEntry.id
-      );
-    } else {
-      updatedSharedList = [...sharedFoodEntries, foodEntry];
-    }
-
-    setSharedFoodEntries(updatedSharedList);
-    await updateSharedFoodList(
-      id,
-      friend.id,
-      updatedSharedList.map((entry: FoodEntry) => entry.id)
-    );
+  const fetchUserFoodList = async () => {
+    const _foodList = await getFoodList(id!);
+    setFoodEntries(_foodList);
   };
 
-  if (userFoodEntries.length === 0 && sharedFoodEntries.length === 0) {
+  const fetchSharedFoodEntries = async () => {
+    const _sharedFoodList = await getSharedFoodList(friendId!);
+    setSharedFoodEntries(_sharedFoodList);
+  };
+
+  const handleToggleAdd = async (foodId: string) => {
+    await addFoodEntryToSharedList(id, friendId!, foodId);
+    await fetchSharedFoodEntries();
+  };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setIsLoading(true);
+        await fetchUserFoodList();
+        await fetchSharedFoodEntries();
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, [id, friendId]);
+
+  if (isLoading) {
     return (
       <Box component="section">
         <Typography component="h2" variant="body1">
@@ -56,7 +59,7 @@ export function AddFromExistingFood() {
     );
   }
 
-  if (userFoodEntries.length === 0) {
+  if (!isLoading && foodEntries.length === 0) {
     return (
       <Box component="section">
         <Typography component="h2" variant="body1">
@@ -69,15 +72,15 @@ export function AddFromExistingFood() {
   return (
     <Box component="section">
       <Stack spacing={5} sx={{ alignItems: "center", pb: { xs: 10, sm: 12 } }}>
-        {sortedUserFoodEntries.map((foodEntry) => (
+        {foodEntries.map((e) => (
           <FoodCard
-            key={foodEntry.id}
-            foodEntry={foodEntry}
+            key={e.id}
+            foodEntry={e}
             variant="toAdd"
-            isAlreadyAdded={sharedFoodEntries.some(
-              (entry: FoodEntry) => entry.id === foodEntry.id
-            )}
-            onToggleAdd={handleToggleAdd}
+            isAlreadyAdded={
+              sharedFoodEntries.findIndex((sfe) => sfe.id === e.id) >= 0
+            }
+            onToggleAdd={() => handleToggleAdd(e.id!)}
           />
         ))}
       </Stack>

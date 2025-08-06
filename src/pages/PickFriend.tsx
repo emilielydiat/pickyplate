@@ -13,7 +13,7 @@ import {
 import { Add } from "@mui/icons-material";
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, emptyStateImages } from "../data/mockData";
+import { emptyStateImages } from "../data/mockData";
 import { AppDialog } from "../components/AppDialog";
 import { useFriendsContext } from "../context/FriendsContext";
 import { useUserContext } from "../context/UserContext";
@@ -21,6 +21,7 @@ import { getSharedFoodList, getMealSession } from "../api/api";
 import { usePageHeader } from "../hooks/usePageHeader";
 import { EmptyState } from "../components/EmptyState";
 import { constructAvatarURL } from "../utils/supabase";
+import { User } from "../types";
 
 type DialogConfig = {
   titleText: string;
@@ -55,7 +56,7 @@ export function PickFriend() {
     const input = searchInput.toLowerCase();
     if (input) {
       return friends.filter((friend) =>
-        friend.username.toLowerCase().includes(input),
+        friend.name.toLowerCase().includes(input),
       );
     } else {
       return [];
@@ -63,7 +64,7 @@ export function PickFriend() {
   }, [searchInput, friends]);
 
   const handleEatTogetherClick = async (friend: User) => {
-    const sharedFoodList = await getSharedFoodList(id, friend.id);
+    const sharedFoodList = await getSharedFoodList(friend.id);
 
     if (sharedFoodList.length === 0) {
       setDialogConfig({
@@ -169,15 +170,15 @@ export function PickFriend() {
                 <ListItemAvatar>
                   <Avatar
                     src={constructAvatarURL(friend.avatar)}
-                    alt={`Avatar of ${friend.username}`}
+                    alt={`Avatar of ${friend.name}`}
                   />
                 </ListItemAvatar>
                 <ListItemText
-                  primary={friend.username}
+                  primary={friend.name}
                   sx={{ pr: 2, wordBreak: "break-word" }}
                 />
                 <Button
-                  aria-label={`Eat together with ${friend.username}`}
+                  aria-label={`Eat together with ${friend.name}`}
                   variant="contained"
                   type="button"
                   onClick={() => handleEatTogetherClick(friend)}

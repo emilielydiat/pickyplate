@@ -1,5 +1,4 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
-import { FoodCard } from "../components/FoodCard";
 import { FoodEntry, Rating } from "../data/mockData";
 import { useUserContext } from "../context/UserContext";
 import { useMealSessionContext } from "../context/MealSessionContext";
@@ -67,25 +66,25 @@ export function ViewResults() {
         {sortWinnersFirst.map(
           ({
             key,
-            foodEntry,
-            averageRating,
-            userRating,
-            friendRating,
-            isWin,
+            // foodEntry,
+            // averageRating,
+            // userRating,
+            // friendRating,
+            // isWin,
           }) => (
             <Box
               key={key}
               sx={{ width: "100%", maxWidth: "360px", mx: "auto" }}
             >
-              <FoodCard
-                variant={isWin ? "ratedWon" : "ratedLost"}
-                foodEntry={foodEntry}
-                averageRating={averageRating}
-                userRating={userRating}
-                friendRating={friendRating}
-              />
+              {/*<FoodCard*/}
+              {/*  variant={isWin ? "ratedWon" : "ratedLost"}*/}
+              {/*  foodEntry={foodEntry}*/}
+              {/*  averageRating={averageRating}*/}
+              {/*  userRating={userRating}*/}
+              {/*  friendRating={friendRating}*/}
+              {/*/>*/}
             </Box>
-          )
+          ),
         )}
       </Stack>
       <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 5 }}>

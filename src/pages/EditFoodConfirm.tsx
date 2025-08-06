@@ -4,11 +4,11 @@ import { useFoodDraftContext } from "../context/FoodDraftContext";
 import { useUserFoodListContext } from "../context/UserFoodListContext";
 import { useSharedFoodListContext } from "../context/SharedFoodListContext";
 import { FoodEntry } from "../data/mockData";
-import { FoodCard } from "../components/FoodCard";
 import { updateFoodEntry } from "../api/api";
 import { useFriend } from "./FoodFlowWrapper";
 import { usePageHeader } from "../hooks/usePageHeader";
 
+// To be merged into FoodEditor component
 export function EditFoodConfirm() {
   usePageHeader("Review and save", true);
 
@@ -54,7 +54,7 @@ export function EditFoodConfirm() {
         minHeight: "calc(100vh - 176px)",
       }}
     >
-      <FoodCard foodEntry={draft as FoodEntry} variant="short" />
+      {/*<FoodCard foodEntry={draft as FoodEntry} variant="short" />*/}
       <Box width="100%" display="flex" justifyContent="flex-end">
         <Button
           variant="contained"

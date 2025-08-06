@@ -36,6 +36,10 @@ export function UserProvider({ children }: Props) {
 
   const fetchCurrentUser = async () => {
     try {
+      setIsInitialised(false);
+      setUser(null);
+      setUserId("");
+
       const {
         data: { user: authUser },
       } = await supabase.auth.getUser();
@@ -59,7 +63,8 @@ export function UserProvider({ children }: Props) {
       if (event === "SIGNED_OUT") {
         setUser(null);
       } else if (event === "SIGNED_IN") {
-        void fetchCurrentUser();
+        // Emitted each time a user session is confirmed or re-established, including on user sign in and **when refocusing a tab**.
+        if (!user) void fetchCurrentUser();
       }
     });
     return () => {

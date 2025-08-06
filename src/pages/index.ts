@@ -10,7 +10,7 @@ export { MealPreferencesConfirm } from "./MealPreferencesConfirm";
 export { MyFoodList } from "./MyFoodList";
 export { SharedFoodList } from "./SharedFoodList";
 export { FoodFlowWrapper } from "./FoodFlowWrapper";
-export { CreateFood } from "./CreateFood";
+export { FoodEditor } from "./FoodEditor";
 export { CreateFoodConfirm } from "./CreateFoodConfirm";
 export { AddFromExistingFood } from "./AddFromExistingFood";
 export { Requests } from "./Requests";

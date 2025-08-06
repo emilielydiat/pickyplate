@@ -1,7 +1,6 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { useState } from "react";
-import { FoodCard } from "../components/FoodCard";
-import { FoodEntry, MealSession, Rating } from "../data/mockData";
+import { MealSession, Rating } from "../data/mockData";
 import { useFriend } from "./MealRatingFlowWrapper";
 import { useUserContext } from "../context/UserContext";
 import { useMealSessionContext } from "../context/MealSessionContext";
@@ -17,7 +16,7 @@ export function SubmitRating() {
   const { id } = useUserContext();
   const { friend } = useFriend();
   const { mealSession, setMealSession } = useMealSessionContext();
-  const [ratingValue, setRatingValue] = useState<
+  const [ratingValue] = useState<
     Partial<{
       initiatorRating?: Partial<Rating>;
       receiverRating?: Partial<Rating>;
@@ -29,40 +28,40 @@ export function SubmitRating() {
 
   const isInitiator = mealSession.initiatorId === id;
   const sessionStatus = mealSession.status;
-  const userPick = isInitiator
-    ? (mealSession.initiatorOption as FoodEntry)
-    : (mealSession.receiverOption as FoodEntry);
-  const friendPick = isInitiator
-    ? (mealSession.receiverOption as FoodEntry)
-    : (mealSession.initiatorOption as FoodEntry);
+  // const userPick = isInitiator
+  //   ? (mealSession.initiatorOption as FoodEntry)
+  //   : (mealSession.receiverOption as FoodEntry);
+  // const friendPick = isInitiator
+  //   ? (mealSession.receiverOption as FoodEntry)
+  //   : (mealSession.initiatorOption as FoodEntry);
 
   const currentRating = isInitiator
     ? ratingValue.initiatorRating
     : ratingValue.receiverRating;
 
-  function handleRatingChange(
-    value: number,
-    optionKey: "initiatorOption" | "receiverOption"
-  ) {
-    setRatingValue((prev) => {
-      const updated = isInitiator
-        ? {
-            ...prev,
-            initiatorRating: {
-              ...prev.initiatorRating,
-              [optionKey]: value,
-            },
-          }
-        : {
-            ...prev,
-            receiverRating: {
-              ...prev.receiverRating,
-              [optionKey]: value,
-            },
-          };
-      return updated;
-    });
-  }
+  // function handleRatingChange(
+  //   value: number,
+  //   optionKey: "initiatorOption" | "receiverOption",
+  // ) {
+  //   setRatingValue((prev) => {
+  //     const updated = isInitiator
+  //       ? {
+  //           ...prev,
+  //           initiatorRating: {
+  //             ...prev.initiatorRating,
+  //             [optionKey]: value,
+  //           },
+  //         }
+  //       : {
+  //           ...prev,
+  //           receiverRating: {
+  //             ...prev.receiverRating,
+  //             [optionKey]: value,
+  //           },
+  //         };
+  //     return updated;
+  //   });
+  // }
 
   // HERE: add dialog -> only show if status === "everyone_preferences_set"
   const handleSubmit = async () => {
@@ -98,7 +97,7 @@ export function SubmitRating() {
     await updateMealSession(
       mealSession.initiatorId,
       mealSession.receiverId,
-      updates
+      updates,
     );
     setMealSession((prev) => ({
       ...prev!,
@@ -133,14 +132,14 @@ export function SubmitRating() {
           >
             Your pick
           </Typography>
-          <FoodCard
-            variant="unrated"
-            foodEntry={userPick}
-            ratingValue={currentRating?.initiatorOption}
-            onRatingChange={(value) =>
-              handleRatingChange(value, "initiatorOption")
-            }
-          />
+          {/*<FoodCard*/}
+          {/*  variant="unrated"*/}
+          {/*  foodEntry={userPick}*/}
+          {/*  ratingValue={currentRating?.initiatorOption}*/}
+          {/*  onRatingChange={(value) =>*/}
+          {/*    handleRatingChange(value, "initiatorOption")*/}
+          {/*  }*/}
+          {/*/>*/}
         </Box>
         <Box sx={{ width: "100%", maxWidth: "360px", mx: "auto" }}>
           <Typography
@@ -151,14 +150,14 @@ export function SubmitRating() {
           >
             Friend's pick
           </Typography>
-          <FoodCard
-            variant="unrated"
-            foodEntry={friendPick}
-            ratingValue={currentRating?.receiverOption}
-            onRatingChange={(value) =>
-              handleRatingChange(value, "receiverOption")
-            }
-          />
+          {/*<FoodCard*/}
+          {/*  variant="unrated"*/}
+          {/*  foodEntry={friendPick}*/}
+          {/*  ratingValue={currentRating?.receiverOption}*/}
+          {/*  onRatingChange={(value) =>*/}
+          {/*    handleRatingChange(value, "receiverOption")*/}
+          {/*  }*/}
+          {/*/>*/}
         </Box>
       </Stack>
       <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 5 }}>
