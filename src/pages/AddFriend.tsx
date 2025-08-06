@@ -10,7 +10,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { emptyStateImages } from "../data/mockData";
 import { addFriend, searchUsers } from "../api/api";
@@ -47,9 +47,15 @@ export function AddFriend() {
     }
   };
 
-  const isUserFriend = (userId: string) =>
-    friends.findIndex((f) => f.id === userId) >= 0 ||
-    requests.findIndex((r) => r.target_id === userId) >= 0;
+  const isUserPending = useCallback(
+    (userId: string) => requests.findIndex((r) => r.target_id === userId) >= 0,
+    [requests]
+  );
+
+  const isUserFriend = useCallback(
+    (userId: string) => friends.findIndex((f) => f.id === userId) >= 0,
+    [friends]
+  );
 
   useEffect(() => {
     // TODO: Implement debounce
@@ -60,9 +66,11 @@ export function AddFriend() {
 
     (async () => {
       const result = await searchUsers(searchInput);
-      setResults(result.filter((r) => r.id !== currentUserId));
+      setResults(
+        result.filter((r) => r.id !== currentUserId && !isUserFriend(r.id))
+      );
     })();
-  }, [searchInput]);
+  }, [searchInput, currentUserId, isUserFriend]);
 
   return (
     <Box component="section">
@@ -108,13 +116,17 @@ export function AddFriend() {
                   sx={{ pr: 2, wordBreak: "break-word" }}
                 />
                 <Button
-                  aria-label={`Add ${user.name} as friend`}
+                  aria-label={
+                    isUserPending(user.id)
+                      ? `${user.name} is pending approval`
+                      : `Add ${user.name} as friend`
+                  }
                   variant="contained"
-                  disabled={isUserFriend(user.id)}
+                  disabled={isUserPending(user.id)}
                   onClick={() => handleAddFriend(user.id)}
                   sx={{ cursor: "pointer" }}
                 >
-                  {isUserFriend(user.id) ? "Added" : "Add"}
+                  {isUserPending(user.id) ? "Pending" : "Add"}
                 </Button>
               </ListItem>
             ))}
