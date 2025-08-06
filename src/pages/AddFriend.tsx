@@ -41,7 +41,7 @@ export function AddFriend() {
     try {
       await addFriend(userId);
       await reloadFriendsAndRequests();
-      navigate("/requests");
+      setDialogOpen(true);
     } catch (e) {
       console.error("Failed to send friend request: ", e);
     }
@@ -124,23 +124,19 @@ export function AddFriend() {
       <AppDialog
         open={dialogOpen}
         withTextField={false}
-        titleText="Friend request sent"
+        titleText="Friend request sent!"
         contentText={
           <>
-            {/* TO DO (after friend request management set): */}
-            {/*Track it in Requests page. You’ll be able to decide what to eat
-            together once they accept.
-            <br /> <br />*/}
-            In the meantime, why not build your food list? It’ll make choosing
-            easier later!
+            Once they accept, you'll be able to start planning meals with your
+            friend
           </>
         }
-        primaryBtnLabel="Build my food list"
-        secondaryBtnLabel="Not now"
+        primaryBtnLabel="View in Requests"
+        secondaryBtnLabel="Close"
         onClose={() => setDialogOpen(false)}
         onPrimaryAction={() => {
           setDialogOpen(false);
-          navigate("/my-food-list");
+          navigate("/requests");
         }}
         onSecondaryAction={() => setDialogOpen(false)}
       />
