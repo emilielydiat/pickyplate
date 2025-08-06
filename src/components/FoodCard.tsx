@@ -32,7 +32,8 @@ type Variant =
   | "toAdd"
   | "unrated"
   | "ratedLost"
-  | "ratedWon";
+  | "ratedWon"
+  | "autoWon";
 
 interface FoodCardProps {
   foodEntry: FoodEntry;
@@ -49,10 +50,9 @@ interface FoodCardProps {
   onRatingChange?: (value: number) => void;
 }
 
-const WinnerBanner = () => (
+const WinnerBanner = ({ text }: { text: string }) => (
   <Box
     sx={(theme) => ({
-      width: "100%",
       height: "32px",
       display: "flex",
       alignItems: "center",
@@ -62,8 +62,11 @@ const WinnerBanner = () => (
       borderTopLeftRadius: "4px",
     })}
   >
-    <Typography variant="body2" sx={{ color: "#ffffff" }}>
-      WINNER
+    <Typography
+      variant="body2"
+      sx={{ color: "#ffffff", textTransform: "uppercase" }}
+    >
+      {text}
     </Typography>
   </Box>
 );
@@ -79,7 +82,7 @@ function renderVariantContent(
   onToggleAdd?: (foodEntry: FoodEntry) => void,
   onDelete?: (foodEntry: FoodEntry) => void,
   onEdit?: (foodEntry: FoodEntry) => void,
-  onRatingChange?: (value: number) => void,
+  onRatingChange?: (value: number) => void
 ) {
   switch (variant) {
     case "toAdd": {
@@ -313,8 +316,16 @@ export function FoodCard({
     return null;
   }
 
+  const bannerText =
+    variant === "ratedWon"
+      ? "Winner"
+      : variant === "autoWon"
+        ? "You both got the same result"
+        : null;
+
   const cardBody = (
     <Card sx={{ width: { xs: "100%", sm: 360 } }}>
+      {bannerText && <WinnerBanner text={bannerText} />}
       <CardContent
         sx={{
           p: 2,
@@ -388,21 +399,12 @@ export function FoodCard({
             onToggleAdd,
             onDelete,
             onEdit,
-            onRatingChange,
+            onRatingChange
           )}
         </Stack>
       </CardContent>
     </Card>
   );
-
-  if (variant === "ratedWon") {
-    return (
-      <Box>
-        <WinnerBanner />
-        {cardBody}
-      </Box>
-    );
-  }
 
   return cardBody;
 }
