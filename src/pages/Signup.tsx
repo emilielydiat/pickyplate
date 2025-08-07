@@ -1,4 +1,5 @@
 import { SyntheticEvent, useState } from "react";
+import { Link } from "react-router-dom";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import supabase from "../supabase";
 import logo from "../assets/logo-medium.svg";
@@ -85,9 +86,27 @@ export function Signup() {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <Button type="submit" disabled={isLoading}>
-          Submit
+        <Button
+          variant="contained"
+          type="submit"
+          disabled={isLoading}
+          sx={{ mt: 2 }}
+        >
+          Sign up
         </Button>
+        <Box mt={4}>
+          <Link to="/login">
+            <Typography
+              sx={{
+                textDecoration: "none",
+                color: "grey.700",
+                "&:hover": { textDecoration: "none", color: "grey.900" },
+              }}
+            >
+              Already have an account? Login
+            </Typography>
+          </Link>
+        </Box>
       </Box>
 
       {signupError && <Typography variant="body2">{signupError}</Typography>}
