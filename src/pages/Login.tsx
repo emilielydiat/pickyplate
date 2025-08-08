@@ -48,7 +48,7 @@ export function Login() {
         component="form"
         onSubmit={handleSubmit}
       >
-        <Box maxHeight={46}>
+        <Box maxHeight={46} sx={{ mb: 4 }}>
           <img src={logo} alt="PickyPlate" />
         </Box>
 
@@ -65,10 +65,27 @@ export function Login() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <Button type="submit" disabled={!email || !password || isLoading}>
+        <Button
+          variant="contained"
+          type="submit"
+          disabled={!email || !password || isLoading}
+          sx={{ mt: 2 }}
+        >
           Login
         </Button>
-        <Link to={"/signup"}>Click here to register</Link>
+        <Box mt={4}>
+          <Link to="/signup">
+            <Typography
+              sx={{
+                textDecoration: "none",
+                color: "grey.700",
+                "&:hover": { textDecoration: "none", color: "grey.900" },
+              }}
+            >
+              Don't have an account? Register
+            </Typography>
+          </Link>
+        </Box>
       </Box>
 
       {loginError && <Typography variant="body2">{loginError}</Typography>}
