@@ -68,7 +68,9 @@ export function AppDialog({
       <DialogTitle id={titleId}>{titleText}</DialogTitle>
       <DialogContent>
         {contentText && (
-          <DialogContentText id={contentId}>{contentText}</DialogContentText>
+          <DialogContentText id={contentId} sx={{ whiteSpace: "pre-line" }}>
+            {contentText}
+          </DialogContentText>
         )}
 
         {withTextField && (
