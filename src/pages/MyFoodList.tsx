@@ -27,7 +27,6 @@ export function MyFoodList() {
   const { id } = useUserContext();
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [foodEntries, setFoodEntries] = useState<FoodEntry[]>([]);
-  const [error, setError] = useState("");
 
   const defaultDialogConfig: DialogConfig = {
     titleText: "",
@@ -62,7 +61,6 @@ export function MyFoodList() {
             e instanceof Error
               ? e.message
               : "Something went wrong. Please try again.";
-          setError(message);
 
           setDialogConfig({
             titleText: "Error",
