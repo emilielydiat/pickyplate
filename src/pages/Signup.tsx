@@ -1,51 +1,59 @@
-import { SyntheticEvent, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import supabase from "../supabase";
 import logo from "../assets/logo-medium.svg";
+import { useForm } from "react-hook-form";
+
+type FormValues = {
+  name: string;
+  email: string;
+  password: string;
+};
+
+const emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const passwordStrength = /(?=.*\d)(?=.*[!@#$%^&*])/;
 
 export function Signup() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [success, setSuccess] = useState(false);
   const [signupError, setSignupError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<FormValues>({
+    mode: "onBlur",
+  });
 
-  const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const onSubmit = async (data: FormValues) => {
     setSuccess(false);
     setSignupError("");
-    setIsLoading(true);
 
     const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { name }, emailRedirectTo: location.origin },
+      email: data.email,
+      password: data.password,
+      options: { data: { name: data.name }, emailRedirectTo: location.origin },
     });
 
     if (error) {
       setSignupError(error.message);
     } else {
       setSuccess(true);
-      setEmail("");
-      setPassword("");
+      reset({ email: "", password: "", name: data.name });
     }
-
-    setIsLoading(false);
   };
 
   return (
     <>
       <Box
         component="form"
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
+        noValidate
         sx={{
           display: "flex",
           flexDirection: "column",
           maxWidth: "sm",
-          gap: 2,
           padding: 2,
           marginX: "auto",
         }}
@@ -54,57 +62,78 @@ export function Signup() {
           <img src={logo} alt="PickyPlate" />
         </Box>
 
-        <Typography component="h1" variant="body1">
+        <Typography component="h1" variant="body1" mb={5}>
           Create an account to enjoy meals together with friends!
         </Typography>
 
         <TextField
-          required
           label="Nickname"
-          name="name"
-          value={name}
-          disabled={isLoading}
-          onChange={(e) => setName(e.target.value)}
+          type="text"
+          {...register("name", {
+            required: "Nickname is required",
+            minLength: { value: 8, message: "Minimum 8 characters" },
+            maxLength: { value: 80, message: "Maximum 80 characters" },
+          })}
+          error={!!errors.name}
+          helperText={errors.name?.message || " "}
+          disabled={isSubmitting}
         />
 
         <TextField
-          required
           label="Email address"
-          name="email"
-          value={email}
-          disabled={isLoading}
-          onChange={(e) => setEmail(e.target.value)}
+          type="email"
+          {...register("email", {
+            required: "Email is required",
+            pattern: {
+              value: emailFormat,
+              message: "Enter a valid email",
+            },
+          })}
+          error={!!errors.email}
+          helperText={errors.email?.message || " "}
+          disabled={isSubmitting}
         />
 
         <TextField
-          required
-          type="password"
           label="Password"
-          name="password"
-          value={password}
-          disabled={isLoading}
-          onChange={(e) => setPassword(e.target.value)}
+          type="password"
+          {...register("password", {
+            required: "Password is required",
+            minLength: { value: 8, message: "Minimum 8 characters" },
+            maxLength: { value: 80, message: "Maximum 80 characters" },
+            pattern: {
+              value: passwordStrength,
+              message: "Include a number and a special character",
+            },
+          })}
+          error={!!errors.password}
+          helperText={errors.password?.message || " "}
+          disabled={isSubmitting}
         />
 
         <Button
           variant="contained"
           type="submit"
-          disabled={isLoading}
-          sx={{ mt: 2 }}
+          disabled={isSubmitting}
+          sx={{ mt: 3 }}
         >
-          Sign up
+          {isSubmitting ? "Signing up..." : "Sign up"}
         </Button>
       </Box>
 
-      {signupError && <Typography variant="body2">{signupError}</Typography>}
+      {signupError && (
+        <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+          {signupError}
+        </Typography>
+      )}
 
       {success && (
-        <Typography variant="body2">
+        <Typography variant="body2" sx={{ mt: 1 }}>
           Success! Please check your email to proceed.
         </Typography>
       )}
 
-      <Box mt={4}>
+      <Box mt={3}>
         <Link to="/login">
           <Typography
             sx={{
