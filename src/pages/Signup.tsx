@@ -39,6 +39,8 @@ export function Signup() {
   return (
     <>
       <Box
+        component="form"
+        onSubmit={handleSubmit}
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -47,8 +49,6 @@ export function Signup() {
           padding: 2,
           marginX: "auto",
         }}
-        component="form"
-        onSubmit={handleSubmit}
       >
         <Box maxHeight={46}>
           <img src={logo} alt="PickyPlate" />
@@ -94,19 +94,6 @@ export function Signup() {
         >
           Sign up
         </Button>
-        <Box mt={4}>
-          <Link to="/login">
-            <Typography
-              sx={{
-                textDecoration: "none",
-                color: "grey.700",
-                "&:hover": { textDecoration: "none", color: "grey.900" },
-              }}
-            >
-              Already have an account? Login
-            </Typography>
-          </Link>
-        </Box>
       </Box>
 
       {signupError && <Typography variant="body2">{signupError}</Typography>}
@@ -116,6 +103,20 @@ export function Signup() {
           Success! Please check your email to proceed.
         </Typography>
       )}
+
+      <Box mt={4}>
+        <Link to="/login">
+          <Typography
+            sx={{
+              textDecoration: "none",
+              color: "grey.700",
+              "&:hover": { textDecoration: "none", color: "grey.900" },
+            }}
+          >
+            Already have an account? Login
+          </Typography>
+        </Link>
+      </Box>
     </>
   );
 }
