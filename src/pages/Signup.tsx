@@ -11,8 +11,8 @@ type FormValues = {
   password: string;
 };
 
-const emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const passwordStrength = /(?=.*\d)(?=.*[!@#$%^&*])/;
+const emailFormat = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+const passwordStrength = /^(?=.*\d)(?=.*[!@#$%^&*])([^\s]*)$/;
 
 export function Signup() {
   const [success, setSuccess] = useState(false);
@@ -20,11 +20,20 @@ export function Signup() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<FormValues>({
     mode: "onBlur",
   });
+
+  const trimOnBlur =
+    (field: keyof FormValues) => (e: React.FocusEvent<HTMLInputElement>) => {
+      setValue(field, e.target.value.trim(), {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    };
 
   const onSubmit = async (data: FormValues) => {
     setSuccess(false);
@@ -67,13 +76,14 @@ export function Signup() {
         </Typography>
 
         <TextField
-          label="Nickname"
+          label="Display name"
           type="text"
           {...register("name", {
-            required: "Nickname is required",
-            minLength: { value: 8, message: "Minimum 8 characters" },
-            maxLength: { value: 80, message: "Maximum 80 characters" },
+            required: "Display name is required",
+            minLength: { value: 3, message: "Minimum 3 characters" },
+            maxLength: { value: 30, message: "Maximum 30 characters" },
           })}
+          onBlur={trimOnBlur("name")}
           error={!!errors.name}
           helperText={errors.name?.message || " "}
           disabled={isSubmitting}
@@ -89,6 +99,7 @@ export function Signup() {
               message: "Enter a valid email",
             },
           })}
+          onBlur={trimOnBlur("email")}
           error={!!errors.email}
           helperText={errors.email?.message || " "}
           disabled={isSubmitting}
@@ -103,7 +114,8 @@ export function Signup() {
             maxLength: { value: 80, message: "Maximum 80 characters" },
             pattern: {
               value: passwordStrength,
-              message: "Include a number and a special character",
+              message:
+                "No spaces allowed, include a number and a special character",
             },
           })}
           error={!!errors.password}
