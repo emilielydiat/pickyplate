@@ -16,7 +16,7 @@ const passwordStrength = /^(?=.*\d)(?=.*[!@#$%^&*])([^\s]*)$/;
 
 export function Signup() {
   const [success, setSuccess] = useState(false);
-  const [signupError, setSignupError] = useState("Error safasdsa");
+  const [signupError, setSignupError] = useState("");
   const {
     register,
     handleSubmit,
