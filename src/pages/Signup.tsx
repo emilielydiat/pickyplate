@@ -46,7 +46,10 @@ export function Signup() {
     });
 
     if (error) {
-      setSignupError(error.message);
+      setSignupError(
+        error.message ||
+          "Something went wrong when signing up. Please try again later."
+      );
     } else {
       setSuccess(true);
       reset({ email: "", password: "", name: data.name });

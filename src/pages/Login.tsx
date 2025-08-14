@@ -43,7 +43,10 @@ export function Login() {
     });
 
     if (error) {
-      setLoginError(error.message);
+      setLoginError(
+        error.message ||
+          "Something went wrong when logging in. Please try again later."
+      );
     } else {
       navigate("/");
     }
