@@ -4,6 +4,14 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import supabase from "../supabase";
 import logo from "../assets/logo-medium.svg";
 import { useUserContext } from "../context/UserContext";
+import { useForm } from "react-hook-form";
+
+type FormValues = {
+  email: string;
+  password: string;
+};
+
+const emailFormat = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
 export function Login() {
   const { user } = useUserContext();
@@ -13,16 +21,31 @@ export function Login() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<FormValues>({
+    mode: "onBlur",
+  });
 
-  const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const trimOnBlur =
+    (field: keyof FormValues) => (e: React.FocusEvent<HTMLInputElement>) => {
+      setValue(field, e.target.value.trim(), {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    };
 
+  const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
     setLoginError("");
 
     const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+      email: data.email,
+      password: data.password,
     });
 
     if (error) {
@@ -46,7 +69,7 @@ export function Login() {
           marginX: "auto",
         }}
         component="form"
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
       >
         <Box maxHeight={46} sx={{ mb: 4 }}>
           <img src={logo} alt="PickyPlate" />
@@ -54,24 +77,38 @@ export function Login() {
 
         <TextField
           label="Email address"
-          name="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="email"
+          {...register("email", {
+            required: "Email is required",
+            pattern: {
+              value: emailFormat,
+              message: "Enter a valid email",
+            },
+          })}
+          onBlur={trimOnBlur("email")}
+          error={!!errors.email}
+          helperText={errors.email?.message || " "}
+          disabled={isSubmitting}
         />
         <TextField
           type="password"
           label="Password"
-          name="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          {...register("password", {
+            required: "Password is required",
+            minLength: { value: 8, message: "Minimum 8 characters" },
+            maxLength: { value: 80, message: "Maximum 80 characters" },
+          })}
+          error={!!errors.password}
+          helperText={errors.password?.message || " "}
+          disabled={isSubmitting}
         />
         <Button
           variant="contained"
           type="submit"
-          disabled={!email || !password || isLoading}
+          disabled={isSubmitting}
           sx={{ mt: 2 }}
         >
-          Login
+          {isSubmitting ? "Logging in..." : "Login"}
         </Button>
         <Box mt={4}>
           <Link to="/signup">
