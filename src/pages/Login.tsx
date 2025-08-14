@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, Divider, TextField, Typography } from "@mui/material";
 import supabase from "../supabase";
 import logo from "../assets/logo-medium.svg";
 import { useUserContext } from "../context/UserContext";
@@ -114,20 +114,21 @@ export function Login() {
         >
           {isSubmitting ? "Logging in..." : "Login"}
         </Button>
-      </Box>
 
-      <Box mt={3}>
-        <Link to="/signup">
-          <Typography
-            sx={{
-              textDecoration: "none",
-              color: "grey.700",
-              "&:hover": { textDecoration: "none", color: "grey.900" },
-            }}
-          >
-            Don't have an account? Register
-          </Typography>
-        </Link>
+        <Divider sx={{ mt: 10, mb: 4 }} />
+        <Button
+          component={Link}
+          to="/signup"
+          variant="text"
+          sx={{
+            alignSelf: "center",
+            textTransform: "none",
+            color: "grey.700",
+            "&:hover": { color: "grey.900" },
+          }}
+        >
+          Don't have an account? Register
+        </Button>
       </Box>
     </>
   );

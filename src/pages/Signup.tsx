@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, Divider, TextField, Typography } from "@mui/material";
 import supabase from "../supabase";
 import logo from "../assets/logo-medium.svg";
 import { useForm } from "react-hook-form";
@@ -140,26 +140,28 @@ export function Signup() {
         >
           {isSubmitting ? "Signing up..." : "Sign up"}
         </Button>
-      </Box>
 
-      {success && (
-        <Typography variant="body2" sx={{ mt: 1 }}>
-          Success! Please check your email to proceed.
-        </Typography>
-      )}
-
-      <Box mt={3}>
-        <Link to="/login">
-          <Typography
-            sx={{
-              textDecoration: "none",
-              color: "grey.700",
-              "&:hover": { textDecoration: "none", color: "grey.900" },
-            }}
-          >
-            Already have an account? Login
+        {success && (
+          <Typography variant="body2" sx={{ mt: 1 }}>
+            Success! Please check your email to proceed.
           </Typography>
-        </Link>
+        )}
+
+        <Divider sx={{ mt: 10, mb: 4 }} />
+
+        <Button
+          component={Link}
+          to="/login"
+          variant="text"
+          sx={{
+            alignSelf: "center",
+            textTransform: "none",
+            color: "grey.700",
+            "&:hover": { color: "grey.900" },
+          }}
+        >
+          Already have an account? Login
+        </Button>
       </Box>
     </>
   );
