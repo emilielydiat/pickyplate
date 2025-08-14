@@ -23,7 +23,7 @@ export function Login() {
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
-    mode: "onBlur",
+    mode: "all",
   });
 
   const trimOnBlur =

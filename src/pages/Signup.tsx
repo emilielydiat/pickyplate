@@ -24,7 +24,7 @@ export function Signup() {
     formState: { errors, isSubmitting },
     reset,
   } = useForm<FormValues>({
-    mode: "onBlur",
+    mode: "all",
   });
 
   const trimOnBlur =
