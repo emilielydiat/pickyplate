@@ -4,6 +4,7 @@ import emptyFriendsImage from "../assets/empty-states/friends-empty.png";
 import emptyPickAFriendImage from "../assets/empty-states/pick-a-friend-empty.png";
 import emptyAddFriendImage from "../assets/empty-states/add-friend-empty.png";
 import emptyMealRequestsImage from "../assets/empty-states/meal-requests-empty.png";
+import emptyFriendRequestsImage from "../assets/empty-states/friend-requests-empty.png";
 
 export const emptyStateImages = {
   myFoodList: emptyMyFoodListImage,
@@ -12,6 +13,7 @@ export const emptyStateImages = {
   pickAFriend: emptyPickAFriendImage,
   addFriend: emptyAddFriendImage,
   mealRequests: emptyMealRequestsImage,
+  friendRequests: emptyFriendRequestsImage,
 } as const;
 
 export interface User {
@@ -212,7 +214,7 @@ export type MealPrice = {
 };
 export type MealPriceWithAny = MealPrice;
 export const mealPriceLookup: Record<string, MealPrice> = Object.fromEntries(
-  mealPriceOptions.map((option) => [option.key, option]),
+  mealPriceOptions.map((option) => [option.key, option])
 );
 
 export const mealMaxTimeOptions = [

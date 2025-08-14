@@ -3,7 +3,7 @@ import { Stack, Typography } from "@mui/material";
 interface EmptyStateProps {
   image: string;
   altText?: string;
-  heading: string;
+  heading?: string;
   textContent: string;
   button?: React.ReactNode;
 }
@@ -32,15 +32,17 @@ export function EmptyState({
         aria-hidden={true}
         style={{ width: "280px", display: "block" }}
       />
-      <Typography
-        id="empty-state-heading"
-        component="h3"
-        variant="h6Branded"
-        color="grey.700"
-        mt="8px"
-      >
-        {heading}
-      </Typography>
+      {heading && (
+        <Typography
+          id="empty-state-heading"
+          component="h3"
+          variant="h6Branded"
+          color="grey.700"
+          mt="8px"
+        >
+          {heading}
+        </Typography>
+      )}
       <Typography variant="body2" color="grey.700" mt="8px">
         {textContent}
       </Typography>

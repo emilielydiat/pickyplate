@@ -17,6 +17,8 @@ import { usePageHeader } from "../hooks/usePageHeader";
 import { constructAvatarURL } from "../utils/supabase";
 import { useFriendsContext } from "../context/FriendsContext";
 import { FriendRequest } from "../types";
+import { emptyStateImages } from "../data/mockData";
+import { EmptyState } from "../components/EmptyState";
 
 export function Requests() {
   usePageHeader("Requests", false);
@@ -32,7 +34,7 @@ export function Requests() {
 
   const confirmFriendRequest = async (
     action: "accept" | "reject",
-    userId: string,
+    userId: string
   ) => {
     await _confirmFriendRequest(action, userId);
     await reload();
@@ -153,6 +155,14 @@ export function Requests() {
         >
           Friend requests
         </Typography>
+
+        {requests.length === 0 && (
+          <EmptyState
+            image={emptyStateImages.friendRequests}
+            textContent="No friend requests at the moment. Enjoy the peace!"
+          />
+        )}
+
         <List>
           {requests.map((r) => (
             <ListItem
