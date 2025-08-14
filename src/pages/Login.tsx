@@ -1,4 +1,4 @@
-import { SyntheticEvent, useState } from "react";
+import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import supabase from "../supabase";
@@ -16,17 +16,12 @@ const emailFormat = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 export function Login() {
   const { user } = useUserContext();
   const navigate = useNavigate();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors, isSubmitting },
-    reset,
   } = useForm<FormValues>({
     mode: "onBlur",
   });
@@ -40,7 +35,6 @@ export function Login() {
     };
 
   const onSubmit = async (data: FormValues) => {
-    setIsLoading(true);
     setLoginError("");
 
     const { error } = await supabase.auth.signInWithPassword({
@@ -60,18 +54,18 @@ export function Login() {
   return (
     <>
       <Box
+        component="form"
+        onSubmit={handleSubmit(onSubmit)}
+        noValidate
         sx={{
           display: "flex",
           flexDirection: "column",
           maxWidth: "sm",
-          gap: 2,
           padding: 2,
           marginX: "auto",
         }}
-        component="form"
-        onSubmit={handleSubmit(onSubmit)}
       >
-        <Box maxHeight={46} sx={{ mb: 4 }}>
+        <Box maxHeight={46} mb={5}>
           <img src={logo} alt="PickyPlate" />
         </Box>
 
@@ -106,26 +100,31 @@ export function Login() {
           variant="contained"
           type="submit"
           disabled={isSubmitting}
-          sx={{ mt: 2 }}
+          sx={{ mt: 3 }}
         >
           {isSubmitting ? "Logging in..." : "Login"}
         </Button>
-        <Box mt={4}>
-          <Link to="/signup">
-            <Typography
-              sx={{
-                textDecoration: "none",
-                color: "grey.700",
-                "&:hover": { textDecoration: "none", color: "grey.900" },
-              }}
-            >
-              Don't have an account? Register
-            </Typography>
-          </Link>
-        </Box>
       </Box>
 
-      {loginError && <Typography variant="body2">{loginError}</Typography>}
+      {loginError && (
+        <Typography variant="body2" sx={{ mt: 1 }}>
+          {loginError}
+        </Typography>
+      )}
+
+      <Box mt={3}>
+        <Link to="/signup">
+          <Typography
+            sx={{
+              textDecoration: "none",
+              color: "grey.700",
+              "&:hover": { textDecoration: "none", color: "grey.900" },
+            }}
+          >
+            Don't have an account? Register
+          </Typography>
+        </Link>
+      </Box>
     </>
   );
 }
