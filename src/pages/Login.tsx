@@ -96,6 +96,13 @@ export function Login() {
           helperText={errors.password?.message || " "}
           disabled={isSubmitting}
         />
+
+        {loginError && (
+          <Typography variant="body2" color="error" sx={{ mt: 2 }}>
+            {loginError}
+          </Typography>
+        )}
+
         <Button
           variant="contained"
           type="submit"
@@ -105,12 +112,6 @@ export function Login() {
           {isSubmitting ? "Logging in..." : "Login"}
         </Button>
       </Box>
-
-      {loginError && (
-        <Typography variant="body2" sx={{ mt: 1 }}>
-          {loginError}
-        </Typography>
-      )}
 
       <Box mt={3}>
         <Link to="/signup">

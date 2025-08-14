@@ -16,7 +16,7 @@ const passwordStrength = /^(?=.*\d)(?=.*[!@#$%^&*])([^\s]*)$/;
 
 export function Signup() {
   const [success, setSuccess] = useState(false);
-  const [signupError, setSignupError] = useState("");
+  const [signupError, setSignupError] = useState("Error safasdsa");
   const {
     register,
     handleSubmit,
@@ -123,6 +123,12 @@ export function Signup() {
           disabled={isSubmitting}
         />
 
+        {signupError && (
+          <Typography variant="body2" color="error" sx={{ mt: 2 }}>
+            {signupError}
+          </Typography>
+        )}
+
         <Button
           variant="contained"
           type="submit"
@@ -132,12 +138,6 @@ export function Signup() {
           {isSubmitting ? "Signing up..." : "Sign up"}
         </Button>
       </Box>
-
-      {signupError && (
-        <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-          {signupError}
-        </Typography>
-      )}
 
       {success && (
         <Typography variant="body2" sx={{ mt: 1 }}>
