@@ -18,6 +18,7 @@ import {
   MealPreferences,
   MealPreferencesConfirm,
   MealPreferencesFlowWrapper,
+  MealPriorities,
   MyFoodList,
   PickFriend,
   Profile,
@@ -91,7 +92,14 @@ function App() {
                   />
 
                   <Route path="requests" element={<Requests />} />
-                  <Route path="settings" element={<Settings />} />
+                  <Route path="settings">
+                    <Route index element={<Settings />} />
+                    <Route
+                      path="set-meal-priorities"
+                      element={<MealPriorities />}
+                    />
+                  </Route>
+
                   <Route path="edit-avatar" element={<EditAvatar />} />
                 </Route>
               </Routes>

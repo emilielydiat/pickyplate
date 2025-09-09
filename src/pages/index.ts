@@ -7,6 +7,7 @@ export { PickFriend } from "./PickFriend";
 export { MealPreferencesFlowWrapper } from "./MealPreferencesFlowWrapper";
 export { MealPreferences } from "./MealPreferences";
 export { MealPreferencesConfirm } from "./MealPreferencesConfirm";
+export { MealPriorities } from "./MealPriorities";
 export { MyFoodList } from "./MyFoodList";
 export { SharedFoodList } from "./SharedFoodList";
 export { FoodFlowWrapper } from "./FoodFlowWrapper";
