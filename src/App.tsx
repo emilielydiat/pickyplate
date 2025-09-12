@@ -15,17 +15,12 @@ import {
   FriendProfile,
   Friends,
   Home,
-  MealPreferences,
-  MealPreferencesConfirm,
-  MealPreferencesFlowWrapper,
+  EatTogether,
   MealPriorities,
   MyFoodList,
   PickFriend,
   Profile,
   Requests,
-  SubmitRating,
-  MealRatingFlowWrapper,
-  ViewResults,
   Settings,
   SharedFoodList,
   Signup,
@@ -55,23 +50,10 @@ function App() {
                   <Route path="friends/add-friend" element={<AddFriend />} />
                   <Route path="pick-friend" element={<PickFriend />} />
 
-                  <Route path="eat-together/:friendId">
-                    <Route element={<MealPreferencesFlowWrapper />}>
-                      <Route
-                        path="meal-preferences"
-                        element={<MealPreferences />}
-                      />
-                      <Route
-                        path="meal-preferences/confirm"
-                        element={<MealPreferencesConfirm />}
-                      />
-                    </Route>
-
-                    <Route element={<MealRatingFlowWrapper />}>
-                      <Route path="submit-rating" element={<SubmitRating />} />
-                      <Route path="view-results" element={<ViewResults />} />
-                    </Route>
-                  </Route>
+                  <Route
+                    path="eat-together/:friendId"
+                    element={<EatTogether />}
+                  />
 
                   <Route path="my-food-list" element={<MyFoodList />} />
                   <Route

@@ -1,86 +1,296 @@
 import {
   Box,
   Button,
+  Card,
+  CardContent,
   Chip,
   FormControl,
   Stack,
   Typography,
 } from "@mui/material";
-import { Link } from "react-router-dom";
-import { useMemo } from "react";
-import { useMealPreferencesDraftContext } from "../context/MealPreferencesDraftContext";
-import { useSharedFoodListContext } from "../context/SharedFoodListContext";
-import {
-  mealTypeOptions,
-  mealLocationOptionsWithAny,
-  mealPriceOptionsWithAny,
-  mealMaxTimeOptionsWithAny,
-  MealPreferencesData,
-  FoodEntry,
-} from "../data/mockData";
-import { useFriend } from "./MealPreferencesFlowWrapper";
+import { useContext, useMemo, useState } from "react";
 import { capitaliseWord } from "../utils/stringUtils";
 import { usePageHeader } from "../hooks/usePageHeader";
+import {
+  Meal,
+  MealLocation,
+  MealMaxTime,
+  MealPriceRange,
+  MealSessionStage,
+  User,
+} from "../types";
+import {
+  mealLabelMap,
+  mealLocationLabelMap,
+  mealMaxTimeLabelMap,
+  mealPriceRangeLabelMap,
+} from "../constants";
+import {
+  AccessTime,
+  AccountBalanceWalletOutlined,
+  DiningOutlined,
+  PlaceOutlined,
+} from "@mui/icons-material";
+import { AppDialog } from "../components/AppDialog";
+import { useNavigate } from "react-router-dom";
+import { submitMealSessionPreferences } from "../api/api";
+import { EatTogetherContext } from "../context/EatTogetherContext";
+import { getMealSessionStage } from "../utils/mealSession";
+import { useUserContext } from "../context/UserContext";
+
+type DialogConfig = {
+  titleText: string;
+  contentText: string | React.ReactNode;
+  primaryBtnLabel: string;
+  onPrimaryAction: () => void;
+};
+
+function PreferencesReview(props: {
+  friend: User;
+  meal: Meal;
+  locations: MealLocation[] | "any";
+  priceRange: MealPriceRange | "any";
+  maxTime: MealMaxTime | "any";
+  cuisines: string[] | "any";
+  onSubmit: () => void;
+}) {
+  return (
+    <Box
+      component="section"
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "space-between",
+        minHeight: "calc(100vh - 176px)",
+      }}
+    >
+      <Card sx={{ width: { xs: "100%", sm: 360 } }}>
+        <CardContent
+          sx={{
+            p: 2,
+            "&:last-child": {
+              pb: 2,
+            },
+          }}
+        >
+          <Stack sx={{ flexDirection: "column", alignItems: "flex-start" }}>
+            <Typography component="h3" variant="h6Branded">
+              Your meal preferences
+            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", mt: 1, mb: 1 }}>
+              <DiningOutlined
+                aria-hidden="true"
+                focusable="false"
+                sx={{ mr: 1 }}
+              />
+              <Typography variant="body2" color="grey.700">
+                {capitaliseWord(props.meal)}
+              </Typography>
+            </Box>
+
+            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+              <PlaceOutlined
+                aria-hidden="true"
+                focusable="false"
+                sx={{ mr: 1 }}
+              />
+              <Typography variant="body2" color="grey.700">
+                {props.locations === "any"
+                  ? "Any"
+                  : props.locations
+                      .map((l) => mealLocationLabelMap[l])
+                      .join(" | ")}
+              </Typography>
+            </Box>
+
+            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+              <AccountBalanceWalletOutlined
+                aria-hidden="true"
+                focusable="false"
+                sx={{ mr: 1 }}
+              />
+              <Typography variant="body2" color="grey.700">
+                {props.priceRange === "any"
+                  ? "Any"
+                  : mealPriceRangeLabelMap[props.priceRange]}{" "}
+                per person
+              </Typography>
+            </Box>
+
+            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+              <AccessTime aria-hidden="true" focusable="false" sx={{ mr: 1 }} />
+              <Typography variant="body2" color="grey.700">
+                {props.maxTime === "any"
+                  ? "Any"
+                  : mealMaxTimeLabelMap[props.maxTime]}
+              </Typography>
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                justifyContent: "left",
+                gap: 1,
+              }}
+            >
+              {props.cuisines === "any"
+                ? "Any cuisine"
+                : props.cuisines.map((cuisine) => (
+                    <Chip key={cuisine} label={capitaliseWord(cuisine)} />
+                  ))}
+            </Box>
+          </Stack>
+        </CardContent>
+      </Card>
+      <Box width="100%" display="flex" justifyContent="flex-end">
+        <Button
+          aria-label={`Confirm your meal preferences for meal with ${props.friend.name}`}
+          variant="contained"
+          color="primary"
+          onClick={props.onSubmit}
+          sx={{ mb: 2 }}
+        >
+          Confirm and send
+        </Button>
+      </Box>
+    </Box>
+  );
+}
 
 export function MealPreferences() {
-  const { friend } = useFriend();
-  usePageHeader(`Meal preferences with ${friend.username}`, true);
+  const navigate = useNavigate();
 
-  const { draft, setDraft } = useMealPreferencesDraftContext();
-  const sharedFoodListContext = useSharedFoodListContext();
+  const { id } = useUserContext();
+  const { friend, sharedFoodList, reloadSession } =
+    useContext(EatTogetherContext)!;
 
-  const updateDraft = (field: keyof MealPreferencesData, value: any) => {
-    setDraft((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+  const [mealType, setMealType] = useState<Meal | null>(null);
+  const [mealLocations, setMealLocations] = useState<
+    MealLocation[] | "any" | null
+  >(null);
+  const [mealPriceRange, setMealPriceRange] = useState<
+    MealPriceRange | "any" | null
+  >(null);
+  const [mealMaxTime, setMealMaxTime] = useState<MealMaxTime | "any" | null>(
+    null,
+  );
+  const [mealCuisines, setMealCuisines] = useState<string[] | "any" | null>(
+    null,
+  );
+  const [isReviewing, setIsReviewing] = useState(false);
 
-  const toggleMultiSelect = (
-    field: keyof Pick<MealPreferencesData, "location" | "cuisine">,
-    value: string
-  ) => {
-    if (!draft) return;
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
-    const current = (draft[field] ?? []) as string[];
+  const [dialogConfig, setDialogConfig] = useState<DialogConfig>({
+    titleText: "",
+    contentText: "",
+    primaryBtnLabel: "",
+    onPrimaryAction: () => {},
+  });
 
-    if (value === "any") {
-      updateDraft(field, ["any"]);
+  usePageHeader(`Meal preferences with ${friend.name}`, true);
+
+  const mealTypeOptions = Object.values(Meal).map<[string, Meal]>((value) => [
+    mealLabelMap[value],
+    value,
+  ]);
+
+  const mealLocationOptions = Object.values(MealLocation).map<
+    [string, MealLocation]
+  >((value) => [mealLocationLabelMap[value], value]);
+
+  const mealPriceOptions = Object.values(MealPriceRange).map<
+    [string, MealPriceRange]
+  >((value) => [mealPriceRangeLabelMap[value], value]);
+
+  const mealMaxTimeOptions = Object.values(MealMaxTime).map<
+    [string, MealMaxTime]
+  >((value) => [mealMaxTimeLabelMap[value], value]);
+
+  const cuisineOptions = useMemo(() => {
+    const cuisineList = new Set<string>();
+
+    sharedFoodList.forEach((food) =>
+      food.cuisines.forEach((c) => cuisineList.add(c)),
+    );
+
+    return [...cuisineList];
+  }, [sharedFoodList]);
+
+  const isFormValid = useMemo(() => {
+    return (
+      mealType &&
+      mealMaxTime &&
+      mealPriceRange &&
+      (Array.isArray(mealLocations)
+        ? mealLocations.length > 0
+        : mealLocations === "any") &&
+      (Array.isArray(mealCuisines)
+        ? mealCuisines.length > 0
+        : mealCuisines === "any")
+    );
+  }, [mealType, mealLocations, mealPriceRange, mealMaxTime, mealCuisines]);
+
+  const handleSubmit = async () => {
+    const updatedSession = await submitMealSessionPreferences(friend.id, {
+      meal: mealType!,
+      meal_locations: mealLocations!,
+      meal_price_range: mealPriceRange!,
+      meal_max_time: mealMaxTime!,
+      cuisines: mealCuisines!,
+    });
+
+    const sessionStatus = getMealSessionStage(id, updatedSession);
+
+    if (sessionStatus === MealSessionStage.AwaitingPreferencesFromFriend) {
+      setDialogConfig({
+        titleText: "Meal invitation sent",
+        contentText: (
+          <>
+            Your friend will receive the invite to eat together. <br />
+            <br /> Check the “Decide what to eat together” section in your
+            Requests menu for updates.
+          </>
+        ),
+        primaryBtnLabel: "Go to requests menu",
+        onPrimaryAction: () => {
+          setDialogOpen(false);
+          navigate("/requests");
+        },
+      });
+      setDialogOpen(true);
     } else {
-      const filtered = current.filter((v) => v !== "any");
-      const updated = current.includes(value)
-        ? filtered.filter((v) => v !== value)
-        : [...filtered, value];
-      updateDraft(field, updated);
+      void reloadSession();
     }
   };
 
-  const isSelected = (field: keyof MealPreferencesData, value: any) => {
-    if (!draft) return false;
-    const selected = draft[field];
-    return Array.isArray(selected)
-      ? selected.includes(value)
-      : selected === value;
-  };
+  if (isReviewing) {
+    return (
+      <>
+        <PreferencesReview
+          friend={friend}
+          meal={mealType!}
+          locations={mealLocations!}
+          priceRange={mealPriceRange!}
+          maxTime={mealMaxTime!}
+          cuisines={mealCuisines!}
+          onSubmit={handleSubmit}
+        />
 
-  const availableCuisines = useMemo(() => {
-    const sharedFoodEntries = sharedFoodListContext?.sharedFoodEntries ?? [];
-
-    return Array.from(
-      new Set(sharedFoodEntries.flatMap((entry: FoodEntry) => entry.cuisine))
-    ).sort((a, b) => a.localeCompare(b));
-  }, [sharedFoodListContext?.sharedFoodEntries]);
-
-  const availableCuisinesWithAny = [...availableCuisines, "any"];
-
-  const isFormComplete =
-    !!draft?.type &&
-    Array.isArray(draft.location) &&
-    draft.location.length > 0 &&
-    !!draft?.price &&
-    !!draft?.maxTime &&
-    Array.isArray(draft.cuisine) &&
-    draft.cuisine.length > 0;
+        <AppDialog
+          open={dialogOpen}
+          withTextField={false}
+          titleText={dialogConfig.titleText}
+          contentText={dialogConfig.contentText}
+          primaryBtnLabel={dialogConfig.primaryBtnLabel}
+          onClose={dialogConfig.onPrimaryAction}
+          onPrimaryAction={dialogConfig.onPrimaryAction}
+        />
+      </>
+    );
+  }
 
   return (
     <Box component="section">
@@ -108,14 +318,14 @@ export function MealPreferences() {
             mt={1}
             flexWrap="wrap"
           >
-            {mealTypeOptions.map((option) => (
+            {mealTypeOptions.map(([label, value]) => (
               <Chip
-                key={option}
-                label={capitaliseWord(option)}
-                aria-pressed={isSelected("type", option)}
+                key={value}
+                label={capitaliseWord(label)}
+                aria-pressed={mealType === value}
                 clickable
-                color={isSelected("type", option) ? "primary" : "default"}
-                onClick={() => updateDraft("type", option)}
+                color={mealType === value ? "primary" : "default"}
+                onClick={() => setMealType(value)}
                 sx={{ m: 0.5 }}
               />
             ))}
@@ -146,17 +356,40 @@ export function MealPreferences() {
             mt={1}
             flexWrap="wrap"
           >
-            {mealLocationOptionsWithAny.map((option) => (
+            {mealLocationOptions.map(([label, value]) => (
               <Chip
-                key={option}
-                label={capitaliseWord(option)}
-                aria-pressed={isSelected("location", option)}
+                key={value}
+                label={capitaliseWord(label)}
+                aria-pressed={
+                  Array.isArray(mealLocations) && mealLocations.includes(value)
+                }
                 clickable
-                color={isSelected("location", option) ? "primary" : "default"}
-                onClick={() => toggleMultiSelect("location", option)}
+                color={
+                  Array.isArray(mealLocations) && mealLocations.includes(value)
+                    ? "primary"
+                    : "default"
+                }
+                onClick={() => {
+                  setMealLocations((prev) => {
+                    if (!Array.isArray(prev)) return [value];
+                    if (prev.includes(value)) {
+                      return prev.filter((c) => c !== value);
+                    } else {
+                      return [...prev, value];
+                    }
+                  });
+                }}
                 sx={{ m: 0.5 }}
               />
             ))}
+            <Chip
+              label="Any"
+              aria-pressed={mealLocations === "any"}
+              clickable
+              color={mealLocations === "any" ? "primary" : "default"}
+              onClick={() => setMealLocations("any")}
+              sx={{ m: 0.5 }}
+            />
           </Stack>
         </FormControl>
         {/* Price */}
@@ -186,19 +419,26 @@ export function MealPreferences() {
             mt={1}
             flexWrap="wrap"
           >
-            {mealPriceOptionsWithAny.map((option) => {
-              return (
-                <Chip
-                  key={option.key}
-                  label={option.label}
-                  aria-pressed={isSelected("price", option)}
-                  clickable
-                  color={isSelected("price", option) ? "primary" : "default"}
-                  onClick={() => updateDraft("price", option)}
-                  sx={{ m: 0.5 }}
-                />
-              );
-            })}
+            {mealPriceOptions.map(([label, value]) => (
+              <Chip
+                key={value}
+                label={capitaliseWord(label)}
+                aria-pressed={mealPriceRange === value}
+                clickable
+                color={mealPriceRange === value ? "primary" : "default"}
+                onClick={() => setMealPriceRange(value)}
+                sx={{ m: 0.5 }}
+              />
+            ))}
+
+            <Chip
+              label="Any"
+              aria-pressed={mealPriceRange === "any"}
+              clickable
+              color={mealPriceRange === "any" ? "primary" : "default"}
+              onClick={() => setMealPriceRange("any")}
+              sx={{ m: 0.5 }}
+            />
           </Stack>
         </FormControl>
         {/* Max time */}
@@ -228,17 +468,26 @@ export function MealPreferences() {
             mt={1}
             flexWrap="wrap"
           >
-            {mealMaxTimeOptionsWithAny.map((option) => (
+            {mealMaxTimeOptions.map(([label, value]) => (
               <Chip
-                key={option}
-                label={capitaliseWord(option)}
-                aria-pressed={isSelected("maxTime", option)}
+                key={value}
+                label={capitaliseWord(label)}
+                aria-pressed={mealMaxTime === value}
                 clickable
-                color={isSelected("maxTime", option) ? "primary" : "default"}
-                onClick={() => updateDraft("maxTime", option)}
+                color={mealMaxTime === value ? "primary" : "default"}
+                onClick={() => setMealMaxTime(value)}
                 sx={{ m: 0.5 }}
               />
             ))}
+
+            <Chip
+              label="Any"
+              aria-pressed={mealMaxTime === "any"}
+              clickable
+              color={mealMaxTime === "any" ? "primary" : "default"}
+              onClick={() => setMealMaxTime("any")}
+              sx={{ m: 0.5 }}
+            />
           </Stack>
         </FormControl>
         {/* Cuisines */}
@@ -266,35 +515,51 @@ export function MealPreferences() {
             mt={1}
             flexWrap="wrap"
           >
-            {availableCuisines.length === 0 ? (
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-                No cuisines found from your shared food list.
-              </Typography>
-            ) : (
-              availableCuisinesWithAny.map((option) => (
-                <Chip
-                  key={option}
-                  label={capitaliseWord(option)}
-                  aria-pressed={isSelected("cuisine", option)}
-                  clickable
-                  color={isSelected("cuisine", option) ? "primary" : "default"}
-                  onClick={() => toggleMultiSelect("cuisine", option)}
-                  sx={{ m: 0.5 }}
-                />
-              ))
-            )}
+            {cuisineOptions.map((cuisine) => (
+              <Chip
+                key={cuisine}
+                label={capitaliseWord(cuisine)}
+                aria-pressed={
+                  Array.isArray(mealCuisines) && mealCuisines.includes(cuisine)
+                }
+                clickable
+                color={
+                  Array.isArray(mealCuisines) && mealCuisines.includes(cuisine)
+                    ? "primary"
+                    : "default"
+                }
+                onClick={() => {
+                  setMealCuisines((prev) => {
+                    if (!Array.isArray(prev)) return [cuisine];
+                    if (prev.includes(cuisine)) {
+                      return prev.filter((c) => c !== cuisine);
+                    } else {
+                      return [...prev, cuisine];
+                    }
+                  });
+                }}
+                sx={{ m: 0.5 }}
+              />
+            ))}
+            <Chip
+              label="Any"
+              aria-pressed={mealCuisines === "any"}
+              clickable
+              color={mealCuisines === "any" ? "primary" : "default"}
+              onClick={() => setMealCuisines("any")}
+              sx={{ m: 0.5 }}
+            />
           </Stack>
         </FormControl>
       </Stack>
 
       <Box display="flex" justifyContent="flex-end" sx={{ mt: 4 }}>
         <Button
-          component={Link}
-          to={`/eat-together/${friend.id}/meal-preferences/confirm`}
           variant="contained"
           color="primary"
-          disabled={!isFormComplete || availableCuisines.length === 0}
+          disabled={!isFormValid}
           sx={{ mb: 2 }}
+          onClick={() => setIsReviewing(true)}
         >
           Next
         </Button>

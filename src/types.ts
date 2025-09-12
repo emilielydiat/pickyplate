@@ -24,6 +24,38 @@ export type FoodEntry = {
   cuisines: string[];
 };
 
+export type MealSessionPreferences = {
+  meal: Meal;
+  meal_locations: MealLocation[] | "any";
+  meal_price_range: MealPriceRange | "any";
+  meal_max_time: MealMaxTime | "any";
+  cuisines: string[] | "any";
+};
+
+export type MealSession = {
+  initiator_id: string;
+  friend_id: string;
+  preferences_1: MealSessionPreferences | null;
+  preferences_2: MealSessionPreferences | null;
+  food_1: string | null;
+  food_2: string | null;
+  rating_1_food_1: number | null;
+  rating_1_food_2: number | null;
+  rating_2_food_1: number | null;
+  rating_2_food_2: number | null;
+};
+
+export enum MealSessionStage {
+  NotStarted,
+  AwaitingPreferencesFromBoth,
+  AwaitingPreferencesFromCurrentUser,
+  AwaitingPreferencesFromFriend,
+  AwaitingRatingFromBoth,
+  AwaitingRatingFromCurrentUser,
+  AwaitingRatingFromFriend,
+  Completed,
+}
+
 // Must match the enums on Supabase
 export enum Meal {
   Breakfast = "breakfast",
