@@ -1,102 +1,141 @@
-import { Box, Button, Stack, Typography } from "@mui/material";
-import { FoodEntry, Rating } from "../data/mockData";
+import { Box, Button, Stack } from "@mui/material";
 import { useUserContext } from "../context/UserContext";
-import { useMealSessionContext } from "../context/MealSessionContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { usePageHeader } from "../hooks/usePageHeader";
+import { useContext, useMemo } from "react";
+import { EatTogetherContext } from "../context/EatTogetherContext";
+import { FoodCard } from "../components/FoodCard";
+import { determineIfUserIsInitiator } from "../utils/mealSession";
+import { deleteMealSession } from "../api/api";
 
 export function ViewResults() {
   usePageHeader("View results", true);
 
   const { id } = useUserContext();
-  const { mealSession } = useMealSessionContext();
+  const { friendId } = useParams();
+  const navigate = useNavigate();
+  const { sharedFoodList, session } = useContext(EatTogetherContext)!;
 
-  if (!mealSession) return <Typography>Loading...</Typography>;
+  const isUserInitiator = determineIfUserIsInitiator(id, session!);
 
-  const isInitiator = mealSession.initiatorId === id;
-  const ratings = {
-    initiator: mealSession.initiatorRating as Rating,
-    receiver: mealSession.receiverRating as Rating,
+  const food1 = useMemo(() => {
+    return sharedFoodList.find((food) => food.id === session!.food_1)!;
+  }, [sharedFoodList, session, id]);
+
+  const food2 = useMemo(() => {
+    return sharedFoodList.find((food) => food.id === session!.food_2)!;
+  }, [sharedFoodList, session, id]);
+
+  const food1Rating = useMemo(() => {
+    return (session!.rating_1_food_1! + session!.rating_2_food_1!) / 2;
+  }, [session]);
+
+  const food2Rating = useMemo(() => {
+    return (session!.rating_1_food_2! + session!.rating_2_food_2!) / 2;
+  }, [session]);
+
+  const isAutoWon = useMemo(
+    () => session!.food_1 === session!.food_2,
+    [session],
+  );
+
+  const isTie = useMemo(() => {
+    return food1Rating === food2Rating;
+  }, [food1Rating, food2Rating]);
+
+  const rankedFoods = useMemo(() => {
+    if (isTie) return [food1, food2];
+
+    return [
+      food1Rating > food2Rating ? food1 : food2,
+      food1Rating > food2Rating ? food2 : food1,
+    ];
+  }, [food1Rating, food2Rating, food1, food2, isTie]);
+
+  const food1UserRating = useMemo(() => {
+    return isUserInitiator
+      ? session!.rating_1_food_1!
+      : session!.rating_2_food_1!;
+  }, [isUserInitiator, session]);
+
+  const food1FriendRating = useMemo(() => {
+    return isUserInitiator
+      ? session!.rating_2_food_1!
+      : session!.rating_1_food_1!;
+  }, [isUserInitiator, session]);
+
+  const food2UserRating = useMemo(() => {
+    return isUserInitiator
+      ? session!.rating_1_food_2!
+      : session!.rating_2_food_2!;
+  }, [isUserInitiator, session]);
+
+  const food2FriendRating = useMemo(() => {
+    return isUserInitiator
+      ? session!.rating_2_food_2!
+      : session!.rating_1_food_2!;
+  }, [isUserInitiator, session]);
+
+  const handleClearSession = async () => {
+    await deleteMealSession(id, friendId!);
+    navigate("/requests");
   };
-
-  console.log("mealSession.initiatorRating", mealSession.initiatorRating);
-  console.log("mealSession.receiverRating", mealSession.receiverRating);
-
-  const foodOptions = [
-    {
-      key: "initiatorOption",
-      foodEntry: mealSession.initiatorOption as FoodEntry,
-      userRating: isInitiator
-        ? ratings.initiator.initiatorOption
-        : ratings.receiver.initiatorOption,
-      friendRating: isInitiator
-        ? ratings.receiver.initiatorOption
-        : ratings.initiator.initiatorOption,
-    },
-    {
-      key: "receiverOption",
-      foodEntry: mealSession.receiverOption as FoodEntry,
-      userRating: isInitiator
-        ? ratings.initiator.receiverOption
-        : ratings.receiver.receiverOption,
-      friendRating: isInitiator
-        ? ratings.receiver.receiverOption
-        : ratings.initiator.receiverOption,
-    },
-  ].map((option) => ({
-    ...option,
-    averageRating: (option.userRating + option.friendRating) / 2,
-  }));
-
-  const maxAverage = Math.max(...foodOptions.map((opt) => opt.averageRating));
-
-  const finalFoodOptions = foodOptions.map((option) => ({
-    ...option,
-    isWin: option.averageRating === maxAverage,
-  }));
-
-  const sortWinnersFirst = finalFoodOptions.sort((a, b) => {
-    if (a.isWin === b.isWin) return 0;
-    return a.isWin ? -1 : 1;
-  });
 
   return (
     <Box component="section">
       <Stack spacing={5} sx={{ alignItems: "center" }}>
-        {sortWinnersFirst.map(
-          ({
-            key,
-            // foodEntry,
-            // averageRating,
-            // userRating,
-            // friendRating,
-            // isWin,
-          }) => (
-            <Box
-              key={key}
-              sx={{ width: "100%", maxWidth: "360px", mx: "auto" }}
-            >
-              {/*<FoodCard*/}
-              {/*  variant={isWin ? "ratedWon" : "ratedLost"}*/}
-              {/*  foodEntry={foodEntry}*/}
-              {/*  averageRating={averageRating}*/}
-              {/*  userRating={userRating}*/}
-              {/*  friendRating={friendRating}*/}
-              {/*/>*/}
-            </Box>
-          ),
+        <Box sx={{ width: "100%", maxWidth: "360px", mx: "auto" }}>
+          <FoodCard
+            variant={isAutoWon ? "autoWon" : isTie ? "ratedWon" : "ratedWon"}
+            foodEntry={rankedFoods[0]}
+            averageRating={rankedFoods[0] === food1 ? food1Rating : food2Rating}
+            userRating={
+              rankedFoods[0] === food1 ? food1UserRating : food2UserRating
+            }
+            friendRating={
+              rankedFoods[0] === food1 ? food1FriendRating : food2FriendRating
+            }
+          />
+        </Box>
+        {!isAutoWon && (
+          <Box sx={{ width: "100%", maxWidth: "360px", mx: "auto" }}>
+            <FoodCard
+              variant={isTie ? "ratedWon" : "ratedLost"}
+              foodEntry={rankedFoods[1]}
+              averageRating={
+                rankedFoods[1] === food1 ? food1Rating : food2Rating
+              }
+              userRating={
+                rankedFoods[1] === food1 ? food1UserRating : food2UserRating
+              }
+              friendRating={
+                rankedFoods[1] === food1 ? food1FriendRating : food2FriendRating
+              }
+            />
+          </Box>
         )}
       </Stack>
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 5 }}>
-        <Button
-          component={Link}
-          to="/requests"
-          aria-label="Close and go back to requests page"
-          variant="contained"
+      <Stack sx={{ flexDirection: "row-reverse", width: "100%", gap: 1 }}>
+        <Box
+          sx={{ display: "flex", justifyContent: "flex-end", mt: 5, gap: 1 }}
         >
-          Done
-        </Button>
-      </Box>
+          <Button
+            aria-label="Clear session and go back to requests page"
+            variant="outlined"
+            onClick={handleClearSession}
+          >
+            Clear session
+          </Button>
+          <Button
+            component={Link}
+            to="/requests"
+            aria-label="Close and go back to requests page"
+            variant="contained"
+          >
+            Done
+          </Button>
+        </Box>
+      </Stack>
     </Box>
   );
 }
