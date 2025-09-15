@@ -120,6 +120,7 @@ export function MealPriorities() {
                 {...droppableProvider.droppableProps}
                 ref={droppableProvider.innerRef}
                 component={Stack}
+                role="list"
                 spacing={1}
                 sx={{ py: 2, px: 3, bgcolor: "primary.light" }}
               >
@@ -136,7 +137,10 @@ export function MealPriorities() {
                           ref={draggableProvider.innerRef}
                           {...draggableProvider.draggableProps}
                           {...draggableProvider.dragHandleProps}
-                          sx={{ bgcolor: "#FFFFFF" }}
+                          role="button"
+                          aria-roledescription="draggable"
+                          aria-label={`Priority: ${item.label}, position ${item.displayOrder}`}
+                          sx={{ cursor: "grab", bgcolor: "#FFFFFF" }}
                         >
                           <Box
                             sx={{
