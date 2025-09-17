@@ -58,7 +58,6 @@ export function MealPriorities() {
   const handleDragEnd = (result: any) => {
     const { source, destination } = result;
 
-    console.log(result);
     if (!destination || destination.index === source.index) return;
 
     const copy = Array.from(priorities);
@@ -72,8 +71,6 @@ export function MealPriorities() {
 
     setPriorities(updated);
   };
-
-  console.log("priorities on load: ", priorities);
 
   const handleSave = () => {
     const copy = Array.from(priorities);
