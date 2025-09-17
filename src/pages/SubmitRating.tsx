@@ -25,17 +25,15 @@ export function SubmitRating() {
   const [rating2, setRating2] = useState(0);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
+  const isUserInitiator = determineIfUserIsInitiator(id, session!);
+
   const userPick = useMemo(() => {
-    const foodId = determineIfUserIsInitiator(id, session!)
-      ? session!.food_1
-      : session!.food_2;
+    const foodId = isUserInitiator ? session!.food_1 : session!.food_2;
     return sharedFoodList.find((food) => food.id === foodId)!;
   }, [sharedFoodList, session, id]);
 
   const friendPick = useMemo(() => {
-    const foodId = determineIfUserIsInitiator(id, session!)
-      ? session!.food_2
-      : session!.food_1;
+    const foodId = isUserInitiator ? session!.food_2 : session!.food_1;
     return sharedFoodList.find((food) => food.id === foodId)!;
   }, [sharedFoodList, session, id]);
 
@@ -71,8 +69,8 @@ export function SubmitRating() {
           <FoodCard
             variant="unrated"
             foodEntry={userPick}
-            ratingValue={rating1}
-            onRatingChange={setRating1}
+            ratingValue={isUserInitiator ? rating1 : rating2}
+            onRatingChange={isUserInitiator ? setRating1 : setRating2}
           />
         </Box>
         <Box sx={{ width: "100%", maxWidth: "360px", mx: "auto" }}>
@@ -87,8 +85,8 @@ export function SubmitRating() {
           <FoodCard
             variant="unrated"
             foodEntry={friendPick}
-            ratingValue={rating2}
-            onRatingChange={setRating2}
+            ratingValue={isUserInitiator ? rating2 : rating1}
+            onRatingChange={isUserInitiator ? setRating2 : setRating1}
           />
         </Box>
       </Stack>
