@@ -63,7 +63,7 @@ Built to make meal decisions easier and more enjoyable, with an emphasis on:
 
 Requirements:
 
-- Node.js 18+
+- Node.js 18.18+ or 20.9+
 - Supabase environment variables (`.env.local`)
 
 Run locally:
