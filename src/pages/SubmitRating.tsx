@@ -1,124 +1,58 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
-import { useState } from "react";
-import { MealSession, Rating } from "../data/mockData";
-import { useFriend } from "./MealRatingFlowWrapper";
+import { useContext, useMemo, useState } from "react";
 import { useUserContext } from "../context/UserContext";
-import { useMealSessionContext } from "../context/MealSessionContext";
-import { updateMealSession } from "../api/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { AppDialog } from "../components/AppDialog";
 import { usePageHeader } from "../hooks/usePageHeader";
+import { EatTogetherContext } from "../context/EatTogetherContext";
+import { FoodCard } from "../components/FoodCard";
+import {
+  determineIfUserIsInitiator,
+  getMealSessionStage,
+} from "../utils/mealSession";
+import { submitMealSessionRating } from "../api/api";
+import { MealSessionStage } from "../types";
 
 export function SubmitRating() {
   usePageHeader("Submit rating", true);
 
   const navigate = useNavigate();
+  const { friendId } = useParams();
   const { id } = useUserContext();
-  const { friend } = useFriend();
-  const { mealSession, setMealSession } = useMealSessionContext();
-  const [ratingValue] = useState<
-    Partial<{
-      initiatorRating?: Partial<Rating>;
-      receiverRating?: Partial<Rating>;
-    }>
-  >({});
+  const { friend, sharedFoodList, session, reloadSession } =
+    useContext(EatTogetherContext)!;
+  const [rating1, setRating1] = useState(0);
+  const [rating2, setRating2] = useState(0);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
-  if (!mealSession) return <Typography>Loading...</Typography>;
+  const isUserInitiator = determineIfUserIsInitiator(id, session!);
 
-  const isInitiator = mealSession.initiatorId === id;
-  const sessionStatus = mealSession.status;
-  // const userPick = isInitiator
-  //   ? (mealSession.initiatorOption as FoodEntry)
-  //   : (mealSession.receiverOption as FoodEntry);
-  // const friendPick = isInitiator
-  //   ? (mealSession.receiverOption as FoodEntry)
-  //   : (mealSession.initiatorOption as FoodEntry);
+  const userPick = useMemo(() => {
+    const foodId = isUserInitiator ? session!.food_1 : session!.food_2;
+    return sharedFoodList.find((food) => food.id === foodId)!;
+  }, [sharedFoodList, session, id]);
 
-  const currentRating = isInitiator
-    ? ratingValue.initiatorRating
-    : ratingValue.receiverRating;
+  const friendPick = useMemo(() => {
+    const foodId = isUserInitiator ? session!.food_2 : session!.food_1;
+    return sharedFoodList.find((food) => food.id === foodId)!;
+  }, [sharedFoodList, session, id]);
 
-  // function handleRatingChange(
-  //   value: number,
-  //   optionKey: "initiatorOption" | "receiverOption",
-  // ) {
-  //   setRatingValue((prev) => {
-  //     const updated = isInitiator
-  //       ? {
-  //           ...prev,
-  //           initiatorRating: {
-  //             ...prev.initiatorRating,
-  //             [optionKey]: value,
-  //           },
-  //         }
-  //       : {
-  //           ...prev,
-  //           receiverRating: {
-  //             ...prev.receiverRating,
-  //             [optionKey]: value,
-  //           },
-  //         };
-  //     return updated;
-  //   });
-  // }
+  const isSubmitDisabled = rating1 === 0 || rating2 === 0;
 
-  // HERE: add dialog -> only show if status === "everyone_preferences_set"
   const handleSubmit = async () => {
-    if (!mealSession) return;
-    const updates: Partial<MealSession> = {};
-
-    if (
-      currentRating?.initiatorOption !== undefined &&
-      currentRating?.receiverOption !== undefined
-    ) {
-      if (isInitiator) {
-        updates.initiatorRating = {
-          initiatorOption: currentRating.initiatorOption,
-          receiverOption: currentRating.receiverOption,
-        };
-      } else {
-        updates.receiverRating = {
-          initiatorOption: currentRating.initiatorOption,
-          receiverOption: currentRating.receiverOption,
-        };
-      }
-    }
-
-    if (sessionStatus === "everyone_preferences_set") {
-      updates.status = isInitiator ? "initiator_rated" : "receiver_rated";
-    } else if (
-      (sessionStatus === "initiator_rated" && !isInitiator) ||
-      (sessionStatus === "receiver_rated" && isInitiator)
-    ) {
-      updates.status = "everyone_rated";
-    }
-
-    await updateMealSession(
-      mealSession.initiatorId,
-      mealSession.receiverId,
-      updates,
+    const updatedSession = await submitMealSessionRating(
+      friendId!,
+      rating1,
+      rating2,
     );
-    setMealSession((prev) => ({
-      ...prev!,
-      ...updates,
-    }));
+    const sessionStatus = getMealSessionStage(id, updatedSession);
 
-    if (
-      updates.status === "initiator_rated" ||
-      updates.status === "receiver_rated"
-    ) {
-      setDialogOpen(true);
-    } else if (updates.status === "everyone_rated") {
-      navigate(`/eat-together/${friend.id}/view-results`);
+    if (sessionStatus === MealSessionStage.AwaitingRatingFromFriend) {
+      navigate("/requests");
+    } else {
+      void reloadSession();
     }
   };
-
-  const isSubmitDisabled =
-    currentRating?.initiatorOption === undefined ||
-    currentRating?.initiatorOption === 0 ||
-    currentRating?.receiverOption === undefined ||
-    currentRating?.receiverOption === 0;
 
   return (
     <Box component="section">
@@ -132,14 +66,12 @@ export function SubmitRating() {
           >
             Your pick
           </Typography>
-          {/*<FoodCard*/}
-          {/*  variant="unrated"*/}
-          {/*  foodEntry={userPick}*/}
-          {/*  ratingValue={currentRating?.initiatorOption}*/}
-          {/*  onRatingChange={(value) =>*/}
-          {/*    handleRatingChange(value, "initiatorOption")*/}
-          {/*  }*/}
-          {/*/>*/}
+          <FoodCard
+            variant="unrated"
+            foodEntry={userPick}
+            ratingValue={isUserInitiator ? rating1 : rating2}
+            onRatingChange={isUserInitiator ? setRating1 : setRating2}
+          />
         </Box>
         <Box sx={{ width: "100%", maxWidth: "360px", mx: "auto" }}>
           <Typography
@@ -150,19 +82,17 @@ export function SubmitRating() {
           >
             Friend's pick
           </Typography>
-          {/*<FoodCard*/}
-          {/*  variant="unrated"*/}
-          {/*  foodEntry={friendPick}*/}
-          {/*  ratingValue={currentRating?.receiverOption}*/}
-          {/*  onRatingChange={(value) =>*/}
-          {/*    handleRatingChange(value, "receiverOption")*/}
-          {/*  }*/}
-          {/*/>*/}
+          <FoodCard
+            variant="unrated"
+            foodEntry={friendPick}
+            ratingValue={isUserInitiator ? rating2 : rating1}
+            onRatingChange={isUserInitiator ? setRating2 : setRating1}
+          />
         </Box>
       </Stack>
       <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 5 }}>
         <Button
-          aria-label={`Submit ratings of meal options to eat with ${friend.username}`}
+          aria-label={`Submit ratings of meal options to eat with ${friend.name}`}
           variant="contained"
           disabled={isSubmitDisabled}
           onClick={handleSubmit}

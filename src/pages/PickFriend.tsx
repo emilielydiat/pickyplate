@@ -14,43 +14,18 @@ import { Add } from "@mui/icons-material";
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { emptyStateImages } from "../data/mockData";
-import { AppDialog } from "../components/AppDialog";
 import { useFriendsContext } from "../context/FriendsContext";
-import { useUserContext } from "../context/UserContext";
-import { getSharedFoodList, getMealSession } from "../api/api";
 import { usePageHeader } from "../hooks/usePageHeader";
 import { EmptyState } from "../components/EmptyState";
 import { constructAvatarURL } from "../utils/supabase";
 import { User } from "../types";
 
-type DialogConfig = {
-  titleText: string;
-  contentText: string | React.ReactNode;
-  primaryBtnLabel: string;
-  secondaryBtnLabel: string;
-  onPrimaryAction: () => void;
-  onSecondaryAction: () => void;
-};
-
 export function PickFriend() {
   usePageHeader("Pick a friend", true);
 
   const navigate = useNavigate();
-  const { id } = useUserContext();
   const { friends } = useFriendsContext();
   const [searchInput, setSearchInput] = useState<string>("");
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-
-  const defaultDialogConfig: DialogConfig = {
-    titleText: "",
-    contentText: "",
-    primaryBtnLabel: "",
-    secondaryBtnLabel: "",
-    onPrimaryAction: () => {},
-    onSecondaryAction: () => {},
-  };
-  const [dialogConfig, setDialogConfig] =
-    useState<DialogConfig>(defaultDialogConfig);
 
   const filteredFriends: User[] = useMemo(() => {
     const input = searchInput.toLowerCase();
@@ -62,68 +37,6 @@ export function PickFriend() {
       return [];
     }
   }, [searchInput, friends]);
-
-  const handleEatTogetherClick = async (friend: User) => {
-    const sharedFoodList = await getSharedFoodList(friend.id);
-
-    if (sharedFoodList.length === 0) {
-      setDialogConfig({
-        titleText: "Oops, no shared food to pick from",
-        contentText:
-          "Your food list with this friend is empty! Add some food to explore your next meal together.",
-        primaryBtnLabel: "Add food",
-        secondaryBtnLabel: "Close",
-        onPrimaryAction: () => {
-          setDialogOpen(false);
-          navigate(`/friend/${friend.id}/shared-food-list`);
-        },
-        onSecondaryAction: handleDialogClose,
-      });
-      setDialogOpen(true);
-      return;
-    }
-
-    const mealSession = await getMealSession(id, friend.id);
-
-    if (mealSession) {
-      if (
-        !(
-          mealSession.status === "everyone_rated" ||
-          mealSession.status === "cancelled" ||
-          mealSession.status === "rejected"
-        )
-      ) {
-        setDialogConfig({
-          titleText: "You’re already deciding what to eat together!",
-          contentText: (
-            <>
-              Find your current session in the “Decide what to eat together”
-              section in your Requests menu. <br /> <br /> Want to start fresh
-              instead? Begin a new session if you’d like.
-            </>
-          ),
-          primaryBtnLabel: "Go to current",
-          secondaryBtnLabel: "New session",
-          onPrimaryAction: () => {
-            setDialogOpen(false);
-            navigate("/requests");
-          },
-          onSecondaryAction: async () => {
-            setDialogOpen(false);
-            navigate(`/eat-together/${friend.id}/meal-preferences`);
-          },
-        });
-        setDialogOpen(true);
-        return;
-      }
-    }
-
-    navigate(`/eat-together/${friend.id}/meal-preferences`);
-  };
-
-  const handleDialogClose = () => {
-    setDialogOpen(false);
-  };
 
   return (
     <Box component="section">
@@ -181,7 +94,7 @@ export function PickFriend() {
                   aria-label={`Eat together with ${friend.name}`}
                   variant="contained"
                   type="button"
-                  onClick={() => handleEatTogetherClick(friend)}
+                  onClick={() => navigate(`/eat-together/${friend.id}`)}
                   sx={{ cursor: "pointer" }}
                 >
                   Eat together
@@ -191,18 +104,6 @@ export function PickFriend() {
           </List>
         )}
       </Stack>
-
-      <AppDialog
-        open={dialogOpen}
-        withTextField={false}
-        titleText={dialogConfig.titleText}
-        contentText={dialogConfig.contentText}
-        primaryBtnLabel={dialogConfig.primaryBtnLabel}
-        secondaryBtnLabel={dialogConfig.secondaryBtnLabel}
-        onClose={handleDialogClose}
-        onSecondaryAction={dialogConfig.onSecondaryAction}
-        onPrimaryAction={dialogConfig.onPrimaryAction}
-      />
     </Box>
   );
 }
