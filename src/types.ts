@@ -30,6 +30,7 @@ export type MealSessionPreferences = {
   meal_price_range: MealPriceRange | "any";
   meal_max_time: MealMaxTime | "any";
   cuisines: string[] | "any";
+  meal_priorities_weights: MealPrioritiesWeights;
 };
 
 export type MealSession = {
@@ -89,3 +90,17 @@ export enum MealLocation {
   DeliveryOrTakeOut = "delivery_or_take_out",
   HomeCooked = "home_cooked",
 }
+
+export type PrioritiesType = {
+  name: string;
+  label: string;
+  displayOrder: number;
+  weight: number;
+};
+
+export type MealPrioritiesWeights = {
+  location: number;
+  price: number;
+  time: number;
+  cuisines: number;
+};

@@ -12,7 +12,7 @@ export const getFriendRequests = async (): Promise<{
   requests: FriendRequest[];
 }> => {
   const { data, error } = await supabase.functions.invoke(
-    "get-friend-requests",
+    "get-friend-requests"
   );
 
   if (error) throw new Error(error.message);
@@ -22,7 +22,7 @@ export const getFriendRequests = async (): Promise<{
 
 export const confirmFriendRequest = (
   action: "accept" | "reject",
-  initiatorId: string,
+  initiatorId: string
 ) => {
   return supabase.functions.invoke("confirm-friend-request", {
     body: { action, initiator_id: initiatorId },
@@ -70,7 +70,7 @@ export const getAvailableAvatars = async () => {
 
 export const updateUserProfile = async (
   id: string,
-  payload: { name?: string; avatar?: string },
+  payload: { name?: string; avatar?: string }
 ) => {
   const { error } = await supabase
     .from("user_profile")
@@ -122,7 +122,7 @@ export const getFoodEntryById = async (id: string): Promise<FoodEntry> => {
 
 export const addFoodEntry = async (
   userId: string,
-  entry: FoodEntry,
+  entry: FoodEntry
 ): Promise<FoodEntry> => {
   const { data, error } = await supabase
     .from("food_list")
@@ -161,11 +161,11 @@ export const getCuisines = async (): Promise<string[]> => {
 };
 
 export const getSharedFoodList = async (
-  friendId: string,
+  friendId: string
 ): Promise<FoodEntry[]> => {
   const { data, error } = await supabase.functions.invoke(
     "get-shared-food-list",
-    { body: { friendId } },
+    { body: { friendId } }
   );
 
   if (error) throw new Error(error.message);
@@ -176,7 +176,7 @@ export const getSharedFoodList = async (
 export const addFoodEntryToSharedList = async (
   userId: string,
   friendId: string,
-  foodId: string,
+  foodId: string
 ) => {
   const { error } = await supabase.from("shared_food_list").insert({
     sharer_id: userId,
@@ -190,7 +190,7 @@ export const addFoodEntryToSharedList = async (
 export const removeFoodEntryFromSharedList = async (
   userId: string,
   friendId: string,
-  foodId: string,
+  foodId: string
 ): Promise<void> => {
   const { error } = await supabase
     .from("shared_food_list")
@@ -203,7 +203,7 @@ export const removeFoodEntryFromSharedList = async (
 };
 
 export const getMealSessions = async (
-  userId: string,
+  userId: string
 ): Promise<MealSession[]> => {
   const { data, error } = await supabase
     .from("meal_sessions")
@@ -216,7 +216,7 @@ export const getMealSessions = async (
 };
 
 export const getMealSession = async (
-  friendId: string,
+  friendId: string
 ): Promise<MealSession | null> => {
   const { data, error } = await supabase.functions.invoke("get-meal-session", {
     body: { friend_id: friendId },
@@ -229,13 +229,13 @@ export const getMealSession = async (
 
 export const submitMealSessionPreferences = async (
   friendId: string,
-  preferences: MealSessionPreferences,
+  preferences: MealSessionPreferences
 ): Promise<MealSession> => {
   const { data, error } = await supabase.functions.invoke(
     "submit-meal-session-preferences",
     {
       body: { friend_id: friendId, preferences },
-    },
+    }
   );
 
   if (error) throw new Error(error.message);
@@ -246,7 +246,7 @@ export const submitMealSessionPreferences = async (
 export const submitMealSessionRating = async (
   friendId: string,
   food1Rating: number,
-  food2Rating: number,
+  food2Rating: number
 ): Promise<MealSession> => {
   const { data, error } = await supabase.functions.invoke(
     "submit-meal-session-rating",
@@ -256,7 +256,7 @@ export const submitMealSessionRating = async (
         food_rating1: food1Rating,
         food_rating2: food2Rating,
       },
-    },
+    }
   );
 
   if (error) throw new Error(error.message);
@@ -269,7 +269,7 @@ export const deleteMealSession = async (userId: string, friendId: string) => {
     .from("meal_sessions")
     .delete()
     .or(
-      `and(initiator_id.eq.${userId},friend_id.eq.${friendId}),and(friend_id.eq.${userId},initiator_id.eq.${friendId})`,
+      `and(initiator_id.eq.${userId},friend_id.eq.${friendId}),and(friend_id.eq.${userId},initiator_id.eq.${friendId})`
     );
 
   if (error) throw new Error(error.message);

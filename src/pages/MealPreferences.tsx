@@ -5,9 +5,14 @@ import {
   CardContent,
   Chip,
   FormControl,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
   Stack,
   Typography,
 } from "@mui/material";
+import { DragIndicator } from "@mui/icons-material";
 import { useContext, useMemo, useState } from "react";
 import { capitaliseWord } from "../utils/stringUtils";
 import { usePageHeader } from "../hooks/usePageHeader";
@@ -18,6 +23,8 @@ import {
   MealPriceRange,
   MealSessionStage,
   User,
+  PrioritiesType,
+  MealPrioritiesWeights,
 } from "../types";
 import {
   mealLabelMap,
@@ -37,6 +44,12 @@ import { submitMealSessionPreferences } from "../api/api";
 import { EatTogetherContext } from "../context/EatTogetherContext";
 import { getMealSessionStage } from "../utils/mealSession";
 import { useUserContext } from "../context/UserContext";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from "@hello-pangea/dnd";
 
 type DialogConfig = {
   titleText: string;
@@ -53,6 +66,7 @@ function PreferencesReview(props: {
   maxTime: MealMaxTime | "any";
   cuisines: string[] | "any";
   onSubmit: () => void;
+  setIsRankingPriorities: (value: boolean) => void;
 }) {
   return (
     <Box
@@ -144,7 +158,16 @@ function PreferencesReview(props: {
           </Stack>
         </CardContent>
       </Card>
-      <Box width="100%" display="flex" justifyContent="flex-end">
+      <Box width="100%" display="flex" justifyContent="flex-end" gap={1}>
+        <Button
+          aria-label="Go back"
+          variant="outlined"
+          color="primary"
+          onClick={() => props.setIsRankingPriorities(true)}
+          sx={{ mb: 2 }}
+        >
+          Back
+        </Button>
         <Button
           aria-label={`Confirm your meal preferences for meal with ${props.friend.name}`}
           variant="contained"
@@ -174,11 +197,50 @@ export function MealPreferences() {
     MealPriceRange | "any" | null
   >(null);
   const [mealMaxTime, setMealMaxTime] = useState<MealMaxTime | "any" | null>(
-    null,
+    null
   );
   const [mealCuisines, setMealCuisines] = useState<string[] | "any" | null>(
-    null,
+    null
   );
+
+  const [isRankingPriorities, setIsRankingPriorities] =
+    useState<boolean>(false);
+
+  const [priorities, setPriorities] = useState<PrioritiesType[]>([
+    {
+      name: "location",
+      label: "Location",
+      displayOrder: 1,
+      weight: 1,
+    },
+    {
+      name: "price",
+      label: "Price",
+      displayOrder: 2,
+      weight: 1,
+    },
+    {
+      name: "time",
+      label: "Time required",
+      displayOrder: 3,
+      weight: 1,
+    },
+    {
+      name: "cuisines",
+      label: "Cuisines type",
+      displayOrder: 4,
+      weight: 1,
+    },
+  ]);
+
+  const [mealPrioritiesWeight, setMealPrioritiesWeight] =
+    useState<MealPrioritiesWeights>({
+      location: 1,
+      price: 1,
+      time: 1,
+      cuisines: 1,
+    });
+
   const [isReviewing, setIsReviewing] = useState(false);
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -213,7 +275,7 @@ export function MealPreferences() {
     const cuisineList = new Set<string>();
 
     sharedFoodList.forEach((food) =>
-      food.cuisines.forEach((c) => cuisineList.add(c)),
+      food.cuisines.forEach((c) => cuisineList.add(c))
     );
 
     return [...cuisineList];
@@ -233,6 +295,50 @@ export function MealPreferences() {
     );
   }, [mealType, mealLocations, mealPriceRange, mealMaxTime, mealCuisines]);
 
+  const handleDragEnd = (result: DropResult) => {
+    const { source, destination } = result;
+
+    if (!destination || destination.index === source.index) return;
+
+    const copy = Array.from(priorities);
+    const [movedItem] = copy.splice(source.index, 1);
+    copy.splice(destination.index, 0, movedItem);
+
+    const updated = copy.map((item, index) => ({
+      ...item,
+      displayOrder: index + 1,
+    }));
+    setPriorities(updated);
+  };
+
+  const handleSave = () => {
+    const copy = Array.from(priorities);
+    const updated = copy.map((item) => ({
+      ...item,
+      weight: 5 - item.displayOrder,
+    }));
+
+    const weights = updated.reduce((acc, item: PrioritiesType) => {
+      acc[item.name as keyof MealPrioritiesWeights] = item.weight;
+      return acc;
+    }, mealPrioritiesWeight);
+    setMealPrioritiesWeight(weights);
+
+    setIsRankingPriorities(false);
+    setIsReviewing(true);
+  };
+
+  const handleSkip = () => {
+    setMealPrioritiesWeight({
+      location: 1,
+      price: 1,
+      time: 1,
+      cuisines: 1,
+    });
+    setIsRankingPriorities(false);
+    setIsReviewing(true);
+  };
+
   const handleSubmit = async () => {
     const updatedSession = await submitMealSessionPreferences(friend.id, {
       meal: mealType!,
@@ -240,6 +346,7 @@ export function MealPreferences() {
       meal_price_range: mealPriceRange!,
       meal_max_time: mealMaxTime!,
       cuisines: mealCuisines!,
+      meal_priorities_weights: mealPrioritiesWeight,
     });
 
     const sessionStatus = getMealSessionStage(id, updatedSession);
@@ -266,6 +373,100 @@ export function MealPreferences() {
     }
   };
 
+  if (isRankingPriorities) {
+    return (
+      <>
+        <Stack>
+          <Typography variant="body2" textAlign="left">
+            These are your default meal priorities. We'll use them to suggest
+            food you'll enjoy most.
+            <br /> <br /> If you set different priorities when deciding to eat
+            together, those will override this default.
+          </Typography>
+          <Typography variant="body2" textAlign="left" pt={5} pb={1}>
+            Drag to rank from most (1) to least (4) important:
+          </Typography>
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable droppableId="priorities">
+              {(droppableProvider) => (
+                <List
+                  {...droppableProvider.droppableProps}
+                  ref={droppableProvider.innerRef}
+                  component={Stack}
+                  role="list"
+                  spacing={1}
+                  sx={{ py: 2, px: 3, bgcolor: "primary.light" }}
+                >
+                  {[...priorities]
+                    .sort((a, b) => a.displayOrder - b.displayOrder)
+                    .map((item, index) => (
+                      <Draggable
+                        key={item.name}
+                        draggableId={item.name}
+                        index={index}
+                      >
+                        {(draggableProvider) => (
+                          <ListItem
+                            ref={draggableProvider.innerRef}
+                            {...draggableProvider.draggableProps}
+                            {...draggableProvider.dragHandleProps}
+                            role="button"
+                            aria-roledescription="draggable"
+                            aria-label={`Priority: ${item.label}, position ${item.displayOrder}`}
+                            sx={{ cursor: "grab", bgcolor: "#FFFFFF" }}
+                          >
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                borderRadius: "50%",
+                                height: "24px",
+                                width: "24px",
+                                mr: 1,
+                                bgcolor: "#F9DAD2",
+                              }}
+                            >
+                              {item.displayOrder}
+                            </Box>
+                            <ListItemText primary={item.label} />
+                            <ListItemIcon sx={{ minWidth: 3 }}>
+                              <DragIndicator />
+                            </ListItemIcon>
+                          </ListItem>
+                        )}
+                      </Draggable>
+                    ))}
+                  {droppableProvider.placeholder}
+                </List>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </Stack>
+
+        <Box display="flex" justifyContent="flex-end" sx={{ mt: 4 }} gap={1}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => handleSkip()}
+            sx={{ mb: 2 }}
+          >
+            Skip
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            // disabled={} if uer not interacted with ranking comp
+            onClick={() => handleSave()}
+            sx={{ mb: 2 }}
+          >
+            Save and continue
+          </Button>
+        </Box>
+      </>
+    );
+  }
+
   if (isReviewing) {
     return (
       <>
@@ -277,6 +478,7 @@ export function MealPreferences() {
           maxTime={mealMaxTime!}
           cuisines={mealCuisines!}
           onSubmit={handleSubmit}
+          setIsRankingPriorities={setIsRankingPriorities}
         />
 
         <AppDialog
@@ -559,7 +761,7 @@ export function MealPreferences() {
           color="primary"
           disabled={!isFormValid}
           sx={{ mb: 2 }}
-          onClick={() => setIsReviewing(true)}
+          onClick={() => setIsRankingPriorities(true)}
         >
           Next
         </Button>
