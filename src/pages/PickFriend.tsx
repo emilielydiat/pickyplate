@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { emptyStateImages } from "../data/mockData";
 import { useFriendsContext } from "../context/FriendsContext";
 import { usePageHeader } from "../hooks/usePageHeader";
@@ -31,7 +31,7 @@ export function PickFriend() {
     const input = searchInput.toLowerCase();
     if (input) {
       return friends.filter((friend) =>
-        friend.name.toLowerCase().includes(input),
+        friend.name.toLowerCase().includes(input)
       );
     } else {
       return [];
@@ -91,10 +91,12 @@ export function PickFriend() {
                   sx={{ pr: 2, wordBreak: "break-word" }}
                 />
                 <Button
+                  component={Link}
+                  to={`/eat-together/${friend.id}`}
+                  state={{ from: "/pick-friend" }}
                   aria-label={`Eat together with ${friend.name}`}
                   variant="contained"
                   type="button"
-                  onClick={() => navigate(`/eat-together/${friend.id}`)}
                   sx={{ cursor: "pointer" }}
                 >
                   Eat together

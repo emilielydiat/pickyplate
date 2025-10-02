@@ -104,3 +104,12 @@ export type MealPrioritiesWeights = {
   time: number;
   cuisines: number;
 };
+
+export type DialogConfig = {
+  titleText: string;
+  contentText: string | React.ReactNode;
+  primaryBtnLabel: string;
+  secondaryBtnLabel?: string;
+  onPrimaryAction: () => void;
+  onSecondaryAction?: () => void;
+};

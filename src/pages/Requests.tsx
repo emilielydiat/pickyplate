@@ -54,7 +54,7 @@ export function Requests() {
 
   const confirmFriendRequest = async (
     action: "accept" | "reject",
-    userId: string,
+    userId: string
   ) => {
     await _confirmFriendRequest(action, userId);
     await reload();
@@ -225,7 +225,7 @@ export function Requests() {
                   <ListItemAvatar>
                     <Avatar
                       src={constructAvatarURL(
-                        getUserByFriendId(friendId)!.avatar,
+                        getUserByFriendId(friendId)!.avatar
                       )}
                       alt={`Avatar of ${getUserByFriendId(friendId)!.name}`}
                     />
@@ -238,6 +238,7 @@ export function Requests() {
                   <Button
                     component={Link}
                     to={`/eat-together/${friendId}`}
+                    state={{ from: "/requests" }}
                     aria-label={`Open meal session with ${friendId}`}
                     variant="contained"
                     sx={{ cursor: "pointer" }}

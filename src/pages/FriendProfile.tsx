@@ -175,11 +175,13 @@ export function FriendProfile() {
       >
         <Stack spacing={2} sx={{ width: "100%" }}>
           <Button
+            component={Link}
+            to={`/eat-together/${friend.id}`}
+            state={{ from: "friend-profile" }}
             aria-label={`Eat together with ${friend.name}`}
             startIcon={<Mood />}
             variant="outlined"
             type="button"
-            onClick={() => navigate(`/eat-together/${friend.id}`)}
             sx={{ width: "100%" }}
           >
             Eat together
