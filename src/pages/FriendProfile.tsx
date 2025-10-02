@@ -179,6 +179,7 @@ export function FriendProfile() {
             startIcon={<Mood />}
             variant="outlined"
             type="button"
+            onClick={() => navigate(`/eat-together/${friend.id}`)}
             sx={{ width: "100%" }}
           >
             Eat together
