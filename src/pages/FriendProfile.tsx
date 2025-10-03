@@ -57,66 +57,6 @@ export function FriendProfile() {
     );
   }
 
-  // const handleEatTogetherClick = () => {
-  // if (!id) return;
-  //
-  // const sharedFoodList = await getSharedFoodList(id, friend!.id);
-  //
-  // if (sharedFoodList.length === 0) {
-  //   setDialogConfig({
-  //     titleText: "Oops, no shared food to pick from",
-  //     contentText:
-  //       "Your food list with this friend is empty! Add some food to explore your next meal together.",
-  //     primaryBtnLabel: "Add food",
-  //     secondaryBtnLabel: "Close",
-  //     onPrimaryAction: () => {
-  //       setDialogOpen(false);
-  //       navigate(`/friend/${friend.id}/shared-food-list`);
-  //     },
-  //     onSecondaryAction: handleDialogClose,
-  //   });
-  //   setDialogOpen(true);
-  //   return;
-  // }
-  //
-  // const mealSession = await getMealSession(id, friend.id);
-  //
-  // if (mealSession) {
-  //   if (
-  //     !(
-  //       mealSession.status === "everyone_rated" ||
-  //       mealSession.status === "cancelled" ||
-  //       mealSession.status === "rejected"
-  //     )
-  //   ) {
-  //     setDialogConfig({
-  //       titleText: "You’re already deciding what to eat together!",
-  //       contentText: (
-  //         <>
-  //           Find your current session in the “Decide what to eat together”
-  //           section in your Requests menu. <br /> <br /> Want to start fresh
-  //           instead? Begin a new session if you’d like.
-  //         </>
-  //       ),
-  //       primaryBtnLabel: "Go to current",
-  //       secondaryBtnLabel: "New session",
-  //       onPrimaryAction: () => {
-  //         setDialogOpen(false);
-  //         navigate("/requests");
-  //       },
-  //       onSecondaryAction: async () => {
-  //         setDialogOpen(false);
-  //         navigate(`/eat-together/${friend.id}/meal-preferences`);
-  //       },
-  //     });
-  //     setDialogOpen(true);
-  //     return;
-  //   }
-  // }
-  //
-  // navigate(`/eat-together/${friend.id}/meal-preferences`);
-  // };
-
   const handleDialogClose = () => {
     setDialogOpen(false);
   };
