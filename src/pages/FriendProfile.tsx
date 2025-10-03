@@ -68,7 +68,7 @@ export function FriendProfile() {
       primaryBtnLabel: "Remove friend",
       secondaryBtnLabel: "Cancel",
       onPrimaryAction: async () => {
-        setDialogOpen(false);
+        setDialogOpen(true);
         try {
           await removeFriend(friend.id);
           await reload();
