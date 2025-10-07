@@ -431,7 +431,7 @@ export function FoodEditor() {
           sx={{ mb: 2 }}
           disabled={!isValid}
         >
-          Next
+          Save
         </Button>
       </Box>
 
