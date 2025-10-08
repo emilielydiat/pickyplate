@@ -30,12 +30,12 @@ export function SubmitRating() {
   const userPick = useMemo(() => {
     const foodId = isUserInitiator ? session!.food_1 : session!.food_2;
     return sharedFoodList.find((food) => food.id === foodId)!;
-  }, [sharedFoodList, session, id]);
+  }, [isUserInitiator, sharedFoodList, session]);
 
   const friendPick = useMemo(() => {
     const foodId = isUserInitiator ? session!.food_2 : session!.food_1;
     return sharedFoodList.find((food) => food.id === foodId)!;
-  }, [sharedFoodList, session, id]);
+  }, [isUserInitiator, sharedFoodList, session]);
 
   const isSubmitDisabled = rating1 === 0 || rating2 === 0;
 
@@ -43,7 +43,7 @@ export function SubmitRating() {
     const updatedSession = await submitMealSessionRating(
       friendId!,
       rating1,
-      rating2,
+      rating2
     );
     const sessionStatus = getMealSessionStage(id, updatedSession);
 
