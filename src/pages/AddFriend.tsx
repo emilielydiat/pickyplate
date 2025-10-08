@@ -137,12 +137,7 @@ export function AddFriend() {
         open={dialogOpen}
         withTextField={false}
         titleText="Friend request sent!"
-        contentText={
-          <>
-            Once they accept, you'll be able to start planning meals with your
-            friend
-          </>
-        }
+        contentText="Once they accept, you'll be able to start planning meals with your friend"
         primaryBtnLabel="View in Requests"
         secondaryBtnLabel="Close"
         onClose={() => setDialogOpen(false)}

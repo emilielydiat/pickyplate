@@ -48,9 +48,8 @@ export function MyFoodList() {
   const handleDelete = async (foodEntry: FoodEntry) => {
     setDialogConfig({
       titleText: "Delete food?",
-      contentText: (
-        <>Once removed, this item will no longer appear in your food list</>
-      ),
+      contentText:
+        "Once removed, this item will no longer appear in your food list",
       primaryBtnLabel: "Delete",
       secondaryBtnLabel: "Cancel",
       onPrimaryAction: async () => {

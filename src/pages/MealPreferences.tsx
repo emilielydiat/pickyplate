@@ -354,13 +354,8 @@ export function MealPreferences() {
     if (sessionStatus === MealSessionStage.AwaitingPreferencesFromFriend) {
       setDialogConfig({
         titleText: "Meal invitation sent",
-        contentText: (
-          <>
-            Your friend will receive the invite to eat together. <br />
-            <br /> Check the “Decide what to eat together” section in your
-            Requests menu for updates.
-          </>
-        ),
+        contentText:
+          "Your friend will receive the invite to eat together.\n\nCheck the “Decide what to eat together” section in your Requests menu for updates.",
         primaryBtnLabel: "Go to requests menu",
         onPrimaryAction: () => {
           setDialogOpen(false);

@@ -107,7 +107,7 @@ export type MealPrioritiesWeights = {
 
 export type DialogConfig = {
   titleText: string;
-  contentText: string | React.ReactNode;
+  contentText: string;
   primaryBtnLabel: string;
   secondaryBtnLabel?: string;
   onPrimaryAction: () => void;

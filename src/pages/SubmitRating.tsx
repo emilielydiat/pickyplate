@@ -104,15 +104,7 @@ export function SubmitRating() {
         open={dialogOpen}
         withTextField={false}
         titleText="Ratings submitted"
-        contentText={
-          <>
-            Your ratings are in! We’re now waiting for your friend to submit
-            theirs.
-            <br /> <br />
-            Check the “Decide what to eat together” section in your Requests
-            menu for updates.
-          </>
-        }
+        contentText="Your ratings are in! We're now waiting for your friend to submit theirs.\n\nCheck the “Decide what to eat together” section in your Requests menu for updates."
         primaryBtnLabel="Done"
         onClose={() => setDialogOpen(false)}
         onPrimaryAction={() => {
