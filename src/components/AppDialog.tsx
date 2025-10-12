@@ -10,23 +10,18 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import { DialogConfig } from "../types";
 
-interface AppDialogProps {
+interface AppDialogProps extends DialogConfig {
   open: boolean;
   withTextField: boolean;
-  titleText: string;
-  contentText?: string | React.ReactNode;
   primaryBtnIcon?: React.ReactNode;
-  primaryBtnLabel?: string;
   secondaryBtnIcon?: React.ReactNode;
-  secondaryBtnLabel?: string;
   textFieldLabel?: string;
   textFieldValue?: string;
   textFieldError?: boolean;
   textFieldHelperText?: string;
   onClose: () => void;
-  onPrimaryAction?: () => void;
-  onSecondaryAction?: () => void;
   onTextFieldChange?: (value: string) => void;
 }
 
