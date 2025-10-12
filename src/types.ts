@@ -109,7 +109,7 @@ export type DialogConfig = {
   titleText: string;
   contentText: string;
   primaryBtnLabel: string;
-  secondaryBtnLabel?: string;
   onPrimaryAction: () => void;
+  secondaryBtnLabel?: string;
   onSecondaryAction?: () => void;
 };
