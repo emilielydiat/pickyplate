@@ -1,13 +1,7 @@
 import { Typography } from "@mui/material";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  FoodEntry,
-  MealSession,
-  MealSessionStage,
-  User,
-  DialogConfig,
-} from "../types";
+import { FoodEntry, MealSession, MealSessionStage, User } from "../types";
 import {
   getMealSession,
   getSharedFoodList,
@@ -21,15 +15,7 @@ import { MealPreferences } from "./MealPreferences";
 import { SubmitRating } from "./SubmitRating";
 import { ViewResults } from "./ViewResults";
 import { AppDialog } from "../components/AppDialog";
-
-const DEFAULT_DIALOG_CONFIG: DialogConfig = {
-  titleText: "",
-  contentText: "",
-  primaryBtnLabel: "",
-  secondaryBtnLabel: "",
-  onPrimaryAction: () => {},
-  onSecondaryAction: () => {},
-};
+import { useDialogManager } from "../hooks/useDialogManager";
 
 export function EatTogether() {
   const { friendId } = useParams();
@@ -53,29 +39,22 @@ export function EatTogether() {
     setSession(_session);
   }, [friendId]);
 
-  const [dialogConfig, setDialogConfig] = useState<DialogConfig>(
-    DEFAULT_DIALOG_CONFIG
-  );
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-
   const canGoBack = window.history.length > 1;
 
-  const resetDialog = useCallback(() => {
-    setDialogOpen(false);
-    setDialogConfig(DEFAULT_DIALOG_CONFIG);
-  }, []);
+  const { dialogOpen, dialogConfig, openDialog, closeDialog } =
+    useDialogManager();
+
   const handleDialogClose = useCallback(() => {
-    setDialogOpen(false);
-    setDialogConfig(DEFAULT_DIALOG_CONFIG);
+    closeDialog();
     if (canGoBack) {
       navigate(-1);
     } else {
       navigate("/");
     }
-  }, [canGoBack, navigate]);
+  }, [closeDialog, canGoBack, navigate]);
 
   const showEmptyListDialog = useCallback(() => {
-    setDialogConfig({
+    openDialog({
       titleText: "Oops, no shared food to pick from",
       contentText:
         "Your food list with this friend is empty! Add some food to explore your next meal together.",
@@ -86,48 +65,45 @@ export function EatTogether() {
       },
       onSecondaryAction: handleDialogClose,
     });
-    setDialogOpen(true);
-  }, [friendId, navigate, handleDialogClose]);
+  }, [openDialog, friendId, navigate, handleDialogClose]);
 
   const showRestrictedAccessDialog = useCallback(() => {
-    setDialogConfig({
+    openDialog({
       titleText: "You're all set for now",
       contentText:
         "You've already done your part. We're waiting on your friend to respond before you can continue.\n\nWant to see where things stand? Head to the Requests menu.",
       primaryBtnLabel: "Close",
       secondaryBtnLabel: "Open requests menu",
       onPrimaryAction: () => {
-        resetDialog();
+        closeDialog();
         navigate("/");
       },
       onSecondaryAction: () => {
-        resetDialog();
+        closeDialog();
         navigate("/requests");
       },
     });
-    setDialogOpen(true);
-  }, [resetDialog, navigate]);
+  }, [openDialog, closeDialog, navigate]);
 
   const showOngoingSessionDialog = useCallback(() => {
-    setDialogConfig({
+    openDialog({
       titleText: "You're already deciding what to eat together!",
       contentText:
         "Find your current session in the “Decide what to eat together” section in your Requests menu.\n\nWant to start fresh instead? Begin a new session if you'd like.",
       primaryBtnLabel: "Go to current",
       secondaryBtnLabel: "New session",
       onPrimaryAction: () => {
-        resetDialog();
+        closeDialog();
         navigate("/requests");
       },
       onSecondaryAction: async () => {
         await deleteMealSession(id, friendId!);
         await reloadSession();
-        resetDialog();
+        closeDialog();
         navigate(`/eat-together/${friendId}`);
       },
     });
-    setDialogOpen(true);
-  }, [id, friendId, navigate, resetDialog, reloadSession]);
+  }, [openDialog, id, friendId, navigate, closeDialog, reloadSession]);
 
   useEffect(() => {
     (async () => {
