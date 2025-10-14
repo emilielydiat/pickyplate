@@ -14,15 +14,7 @@ import { DialogConfig } from "../types";
 
 interface AppDialogProps extends DialogConfig {
   open: boolean;
-  withTextField: boolean;
-  primaryBtnIcon?: React.ReactNode;
-  secondaryBtnIcon?: React.ReactNode;
-  textFieldLabel?: string;
-  textFieldValue?: string;
-  textFieldError?: boolean;
-  textFieldHelperText?: string;
   onClose: () => void;
-  onTextFieldChange?: (value: string) => void;
 }
 
 export function AppDialog({
@@ -30,17 +22,17 @@ export function AppDialog({
   withTextField = false,
   titleText,
   contentText,
-  primaryBtnIcon,
+  onClose,
   primaryBtnLabel,
-  secondaryBtnIcon,
+  onPrimaryAction,
   secondaryBtnLabel,
+  onSecondaryAction,
+  primaryBtnIcon,
+  secondaryBtnIcon,
   textFieldLabel,
   textFieldValue = "",
   textFieldError,
   textFieldHelperText,
-  onClose,
-  onPrimaryAction,
-  onSecondaryAction,
   onTextFieldChange,
 }: AppDialogProps) {
   const isPrimaryActionDisabled =

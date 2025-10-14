@@ -14,13 +14,8 @@ import { usePageHeader } from "../hooks/usePageHeader";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Link, useNavigate } from "react-router-dom";
 import { AppDialog } from "../components/AppDialog";
-
-type PrioritiesType = {
-  name: string;
-  label: string;
-  displayOrder: number;
-  weight: number;
-};
+import type { DropResult } from "@hello-pangea/dnd";
+import { PrioritiesType } from "../types";
 
 export function MealPriorities() {
   usePageHeader("Set meal priorities", true);
@@ -55,7 +50,7 @@ export function MealPriorities() {
     },
   ]);
 
-  const handleDragEnd = (result: any) => {
+  const handleDragEnd = (result: DropResult) => {
     const { source, destination } = result;
 
     if (!destination || destination.index === source.index) return;
@@ -81,7 +76,6 @@ export function MealPriorities() {
 
     setDialogOpen(true);
     setPriorities(updated);
-    // TO DO: update DB
   };
 
   const handleDialogClose = () => {
@@ -182,7 +176,7 @@ export function MealPriorities() {
           aria-label="Confirm your default meal priorities"
           variant="contained"
           color="primary"
-          onClick={() => handleSave()}
+          onClick={handleSave}
           sx={{ mb: 2 }}
         >
           Save
@@ -190,7 +184,6 @@ export function MealPriorities() {
       </Box>
       <AppDialog
         open={dialogOpen}
-        withTextField={false}
         titleText="Meal priorities saved"
         contentText="We'll use these priorities next time you decide what to eat together. You can update them anytime!"
         primaryBtnLabel="Done"

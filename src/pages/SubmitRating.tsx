@@ -12,6 +12,7 @@ import {
 } from "../utils/mealSession";
 import { submitMealSessionRating } from "../api/api";
 import { MealSessionStage } from "../types";
+import { useDialogManager } from "../hooks/useDialogManager";
 
 export function SubmitRating() {
   usePageHeader("Submit rating", true);
@@ -23,7 +24,8 @@ export function SubmitRating() {
     useContext(EatTogetherContext)!;
   const [rating1, setRating1] = useState(0);
   const [rating2, setRating2] = useState(0);
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const { dialogOpen, dialogConfig, openDialog, closeDialog } =
+    useDialogManager();
 
   const isUserInitiator = determineIfUserIsInitiator(id, session!);
 
@@ -48,7 +50,17 @@ export function SubmitRating() {
     const sessionStatus = getMealSessionStage(id, updatedSession);
 
     if (sessionStatus === MealSessionStage.AwaitingRatingFromFriend) {
-      navigate("/requests");
+      openDialog({
+        withTextField: false,
+        titleText: "Ratings submitted",
+        contentText:
+          "We're now waiting for your friend to submit theirs.\n\nCheck the “Decide what to eat together” section in your Requests menu for updates.",
+        primaryBtnLabel: "Done",
+        onPrimaryAction: () => {
+          closeDialog();
+          navigate("/requests");
+        },
+      });
     } else {
       void reloadSession();
     }
@@ -102,15 +114,11 @@ export function SubmitRating() {
       </Box>
       <AppDialog
         open={dialogOpen}
-        withTextField={false}
-        titleText="Ratings submitted"
-        contentText="Your ratings are in! We're now waiting for your friend to submit theirs.\n\nCheck the “Decide what to eat together” section in your Requests menu for updates."
-        primaryBtnLabel="Done"
-        onClose={() => setDialogOpen(false)}
-        onPrimaryAction={() => {
-          setDialogOpen(false);
-          navigate("/requests");
-        }}
+        titleText={dialogConfig.titleText}
+        contentText={dialogConfig.contentText}
+        onClose={closeDialog}
+        primaryBtnLabel={dialogConfig.primaryBtnLabel}
+        onPrimaryAction={dialogConfig.onPrimaryAction}
       />
     </Box>
   );

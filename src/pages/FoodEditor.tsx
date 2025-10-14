@@ -33,6 +33,7 @@ import {
 } from "../api/api";
 import { useUserContext } from "../context/UserContext";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useDialogManager } from "../hooks/useDialogManager";
 
 export function FoodEditor() {
   const { foodId } = useParams();
@@ -45,11 +46,14 @@ export function FoodEditor() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
+  const { dialogOpen, dialogConfig, openDialog, closeDialog } =
+    useDialogManager();
+
   const [foodName, setFoodName] = useState("");
   const [mealTypes, setMealTypes] = useState<Meal[]>([]);
   const [mealLocations, setMealLocations] = useState<MealLocation[]>([]);
   const [mealPriceRange, setMealPriceRange] = useState<MealPriceRange | null>(
-    null,
+    null
   );
   const [mealMaxTime, setMealMaxTime] = useState<MealMaxTime | null>(null);
   const [cuisines, setCuisines] = useState<string[]>([]);
@@ -61,7 +65,6 @@ export function FoodEditor() {
     mealLocations.length > 0 &&
     cuisines.length > 0;
 
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [newCuisineError, setNewCuisineError] = useState<string>("");
   const [newCuisine, setNewCuisine] = useState<string>("");
 
@@ -87,13 +90,24 @@ export function FoodEditor() {
   const handleNewCuisineClick = () => {
     setNewCuisine("");
     setNewCuisineError("");
-    setDialogOpen(true);
+    openDialog({
+      titleText: "Add new cuisine",
+      primaryBtnLabel: "Confirm",
+      secondaryBtnLabel: "Cancel",
+      textFieldLabel: "Cuisine name",
+      textFieldValue: newCuisine,
+      textFieldError: !!newCuisineError,
+      textFieldHelperText: newCuisineError,
+      onSecondaryAction: handleDialogClose,
+      onPrimaryAction: handleDialogConfirm,
+      onTextFieldChange: handleNewCuisineChange,
+    });
   };
 
   const handleDialogClose = () => {
     setNewCuisine("");
     setNewCuisineError("");
-    setDialogOpen(false);
+    closeDialog();
   };
 
   const handleNewCuisineChange = (value: string) => {
@@ -113,7 +127,7 @@ export function FoodEditor() {
     setCuisines((prev) => [...prev, newCuisine]);
     setNewCuisine("");
     setNewCuisineError("");
-    setDialogOpen(false);
+    closeDialog();
   };
 
   const handleSubmit = async () => {
@@ -141,7 +155,7 @@ export function FoodEditor() {
     }
 
     navigate(
-      shareWith ? `/friend/${shareWith}/shared-food-list` : "/my-food-list",
+      shareWith ? `/friend/${shareWith}/shared-food-list` : "/my-food-list"
     );
   };
 
@@ -235,7 +249,7 @@ export function FoodEditor() {
                   setMealTypes((prev) =>
                     prev.includes(value)
                       ? prev.filter((v) => v !== value)
-                      : [...prev, value],
+                      : [...prev, value]
                   )
                 }
                 sx={{ m: 0.5 }}
@@ -279,7 +293,7 @@ export function FoodEditor() {
                   setMealLocations((prev) =>
                     prev.includes(value)
                       ? prev.filter((v) => v !== value)
-                      : [...prev, value],
+                      : [...prev, value]
                   )
                 }
                 sx={{ m: 0.5 }}
@@ -405,7 +419,7 @@ export function FoodEditor() {
                   setCuisines((prev) =>
                     prev.includes(option)
                       ? prev.filter((v) => v !== option)
-                      : [...prev, option],
+                      : [...prev, option]
                   )
                 }
                 sx={{ m: 0.5 }}
@@ -437,18 +451,19 @@ export function FoodEditor() {
 
       <AppDialog
         open={dialogOpen}
-        withTextField
-        titleText="Add new cuisine"
-        primaryBtnLabel="Confirm"
-        secondaryBtnLabel="Cancel"
-        textFieldLabel="Cuisine name"
-        textFieldValue={newCuisine}
-        textFieldError={!!newCuisineError}
-        textFieldHelperText={newCuisineError}
+        withTextField={true}
+        titleText={dialogConfig.titleText}
+        contentText={dialogConfig.contentText}
         onClose={handleDialogClose}
-        onSecondaryAction={handleDialogClose}
-        onPrimaryAction={handleDialogConfirm}
-        onTextFieldChange={handleNewCuisineChange}
+        primaryBtnLabel={dialogConfig.primaryBtnLabel}
+        onPrimaryAction={dialogConfig.onPrimaryAction}
+        secondaryBtnLabel={dialogConfig.secondaryBtnLabel}
+        onSecondaryAction={dialogConfig.onSecondaryAction}
+        textFieldLabel={dialogConfig.textFieldLabel}
+        textFieldValue={dialogConfig.textFieldValue}
+        textFieldError={dialogConfig.textFieldError}
+        textFieldHelperText={dialogConfig.textFieldHelperText}
+        onTextFieldChange={dialogConfig.onTextFieldChange}
       />
     </Box>
   );

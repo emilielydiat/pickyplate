@@ -5,8 +5,8 @@ export const DEFAULT_DIALOG_CONFIG: DialogConfig = {
   titleText: "",
   contentText: "",
   primaryBtnLabel: "",
-  secondaryBtnLabel: "",
   onPrimaryAction: () => {},
+  secondaryBtnLabel: "",
   onSecondaryAction: () => {},
 };
 

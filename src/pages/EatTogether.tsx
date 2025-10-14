@@ -188,14 +188,13 @@ export function EatTogether() {
 
       <AppDialog
         open={dialogOpen}
-        withTextField={false}
         titleText={dialogConfig.titleText}
         contentText={dialogConfig.contentText}
-        primaryBtnLabel={dialogConfig.primaryBtnLabel}
-        secondaryBtnLabel={dialogConfig.secondaryBtnLabel}
         onClose={handleDialogClose}
-        onSecondaryAction={dialogConfig.onSecondaryAction}
+        primaryBtnLabel={dialogConfig.primaryBtnLabel}
         onPrimaryAction={dialogConfig.onPrimaryAction}
+        secondaryBtnLabel={dialogConfig.secondaryBtnLabel}
+        onSecondaryAction={dialogConfig.onSecondaryAction}
       />
     </EatTogetherContext.Provider>
   );

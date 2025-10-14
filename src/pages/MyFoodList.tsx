@@ -1,6 +1,6 @@
 import { Box, Fab, Stack } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
 import { emptyStateImages } from "../data/mockData";
@@ -10,43 +10,24 @@ import { AppDialog } from "../components/AppDialog";
 import { usePageHeader } from "../hooks/usePageHeader";
 import { EmptyState } from "../components/EmptyState";
 import { FoodEntry } from "../types";
-
-type DialogConfig = {
-  titleText: string;
-  contentText: string | React.ReactNode;
-  primaryBtnLabel: string;
-  secondaryBtnLabel?: string;
-  onPrimaryAction: () => void;
-  onSecondaryAction?: () => void;
-  onClose: () => void;
-};
+import { useDialogManager } from "../hooks/useDialogManager";
 
 export function MyFoodList() {
   usePageHeader("My food list", false);
   const navigate = useNavigate();
   const { id } = useUserContext();
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [foodEntries, setFoodEntries] = useState<FoodEntry[]>([]);
 
-  const defaultDialogConfig: DialogConfig = {
-    titleText: "",
-    contentText: "",
-    primaryBtnLabel: "",
-    secondaryBtnLabel: "",
-    onPrimaryAction: () => {},
-    onSecondaryAction: () => {},
-    onClose: () => {},
-  };
-  const [dialogConfig, setDialogConfig] =
-    useState<DialogConfig>(defaultDialogConfig);
+  const { dialogOpen, dialogConfig, openDialog, closeDialog } =
+    useDialogManager();
 
-  const fetchFoodList = async () => {
+  const fetchFoodList = useCallback(async () => {
     const result = await getFoodList(id);
     setFoodEntries(result);
-  };
+  }, [id]);
 
   const handleDelete = async (foodEntry: FoodEntry) => {
-    setDialogConfig({
+    openDialog({
       titleText: "Delete food?",
       contentText:
         "Once removed, this item will no longer appear in your food list",
@@ -61,25 +42,19 @@ export function MyFoodList() {
               ? e.message
               : "Something went wrong. Please try again.";
 
-          setDialogConfig({
+          openDialog({
             titleText: "Error",
-            contentText: <>{message}</>,
+            contentText: message,
             primaryBtnLabel: "Okay",
-            onPrimaryAction: () => {
-              setDialogOpen(false);
-            },
-            onClose: () => setDialogOpen(false),
+            onPrimaryAction: closeDialog,
           });
-          setDialogOpen(true);
           return;
         }
         await fetchFoodList();
-        setDialogOpen(false);
+        closeDialog();
       },
-      onSecondaryAction: () => setDialogOpen(false),
-      onClose: () => setDialogOpen(false),
+      onSecondaryAction: closeDialog,
     });
-    setDialogOpen(true);
   };
 
   const handleEdit = async (foodEntry: FoodEntry) => {
@@ -88,7 +63,7 @@ export function MyFoodList() {
 
   useEffect(() => {
     void fetchFoodList();
-  }, []);
+  }, [fetchFoodList]);
 
   const AddFoodFab = (
     <Fab
@@ -141,12 +116,11 @@ export function MyFoodList() {
       {AddFoodFab}
       <AppDialog
         open={dialogOpen}
-        withTextField={false}
         titleText={dialogConfig.titleText}
         contentText={dialogConfig.contentText}
         primaryBtnLabel={dialogConfig.primaryBtnLabel}
         secondaryBtnLabel={dialogConfig.secondaryBtnLabel}
-        onClose={dialogConfig.onClose}
+        onClose={closeDialog}
         onSecondaryAction={dialogConfig.onSecondaryAction}
         onPrimaryAction={dialogConfig.onPrimaryAction}
       />

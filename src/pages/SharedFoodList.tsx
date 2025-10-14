@@ -1,6 +1,6 @@
 import { Box, Fab, Stack } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { emptyStateImages } from "../data/mockData";
 import { FoodCard } from "../components/FoodCard";
@@ -14,6 +14,7 @@ import {
 } from "../api/api";
 import { useUserContext } from "../context/UserContext";
 import { usePageTitleContext } from "../context/PageTitleContext";
+import { useDialogManager } from "../hooks/useDialogManager";
 
 export function SharedFoodList() {
   const { setPageTitle } = usePageTitleContext();
@@ -23,22 +24,36 @@ export function SharedFoodList() {
   const navigate = useNavigate();
   const [sharedFoodEntries, setSharedFoodEntries] = useState<FoodEntry[]>([]);
   const [friend, setFriend] = useState<User | null>(null);
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-  const [foodIdToDelete, setFoodIdToDelete] = useState<string | null>(null);
 
-  const fetchSharedFoodEntries = async () => {
+  const { dialogOpen, dialogConfig, openDialog, closeDialog } =
+    useDialogManager();
+
+  const fetchSharedFoodEntries = useCallback(async () => {
     const foodEntries = await getSharedFoodList(friendId!);
     setSharedFoodEntries(foodEntries);
-  };
+  }, [friendId]);
 
   const handleEdit = async (foodId: string) => {
+    closeDialog();
     navigate(`/my-food-list/edit-food/${foodId}?share=${friendId}`);
+  };
+
+  const handleDelete = async (foodId: string) => {
+    openDialog({
+      titleText: "Delete food from shared food list?",
+      contentText:
+        "Once removed, this item will no longer appear in the shared food list with this user",
+      primaryBtnLabel: "Delete",
+      secondaryBtnLabel: "Cancel",
+      onSecondaryAction: closeDialog,
+      onPrimaryAction: () => handleRemove(foodId!),
+    });
   };
 
   const handleRemove = async (foodId: string) => {
     await removeFoodEntryFromSharedList(id, friendId!, foodId);
     await fetchSharedFoodEntries();
-    setFoodIdToDelete(null);
+    closeDialog();
   };
 
   useEffect(() => {
@@ -47,15 +62,32 @@ export function SharedFoodList() {
       setFriend(friend);
       await fetchSharedFoodEntries();
     })();
-  }, [friendId]);
+  }, [friendId, fetchSharedFoodEntries]);
 
   useEffect(() => {
     if (friend) setPageTitle(`Shared food list with ${friend?.name ?? ""}`);
-  }, [friend]);
+  }, [friend, setPageTitle]);
 
   const AddFoodFab = (
     <Fab
-      onClick={() => setDialogOpen(true)}
+      onClick={() =>
+        openDialog({
+          titleText: "Add food",
+          contentText: "What would you like to do?",
+          primaryBtnIcon: <Add />,
+          primaryBtnLabel: "Add from existing food",
+          secondaryBtnIcon: <Edit />,
+          secondaryBtnLabel: "Create new food",
+          onPrimaryAction: () => {
+            closeDialog();
+            navigate(`/friend/${friendId}/shared-food-list/add-existing-food`);
+          },
+          onSecondaryAction: () => {
+            closeDialog();
+            navigate(`/my-food-list/create-food?share=${friendId}`);
+          },
+        })
+      }
       aria-label="Add food"
       variant="extended"
       size="medium"
@@ -73,72 +105,49 @@ export function SharedFoodList() {
     </Fab>
   );
 
-  const CustomAppDialog = (
-    <AppDialog
-      open={dialogOpen}
-      withTextField={false}
-      titleText="Add food"
-      contentText="What would you like to do?"
-      primaryBtnIcon={<Add />}
-      primaryBtnLabel="Add from existing food"
-      secondaryBtnIcon={<Edit />}
-      secondaryBtnLabel="Create new food"
-      onClose={() => setDialogOpen(false)}
-      onPrimaryAction={() => {
-        setDialogOpen(false);
-        navigate(`/friend/${friendId}/shared-food-list/add-existing-food`);
-      }}
-      onSecondaryAction={() => {
-        setDialogOpen(false);
-        navigate(`/my-food-list/create-food?share=${friendId}`);
-      }}
+  const emptyPage = (
+    <EmptyState
+      image={emptyStateImages.sharedFoodList}
+      heading="Start building your shared food list"
+      textContent={`Add some food you'd love to share with ${friend?.name}, it'll make choosing together a breeze!`}
     />
   );
 
   // TO DO: loading
 
-  if (sharedFoodEntries.length === 0) {
-    return (
-      <Box component="section">
-        <EmptyState
-          image={emptyStateImages.sharedFoodList}
-          heading="Start building your shared food list"
-          textContent={`Add some food you'd love to share with ${friend?.name}, it'll make choosing together a breeze!`}
-        />
-        {AddFoodFab}
-        {CustomAppDialog}
-      </Box>
-    );
-  }
-
   return (
-    <Box>
-      <Stack spacing={5} sx={{ alignItems: "center", pb: { xs: 10, sm: 12 } }}>
-        {sharedFoodEntries.map((foodEntry: FoodEntry) => (
-          <FoodCard
-            key={foodEntry.id}
-            foodEntry={foodEntry}
-            variant={foodEntry.user_id === id ? "base" : "short"}
-            onEdit={() => handleEdit(foodEntry.id!)}
-            onDelete={() => setFoodIdToDelete(foodEntry.id!)}
-          />
-        ))}
-      </Stack>
+    <Box component="section">
+      {sharedFoodEntries.length === 0 ? (
+        emptyPage
+      ) : (
+        <Stack
+          spacing={5}
+          sx={{ alignItems: "center", pb: { xs: 10, sm: 12 } }}
+        >
+          {sharedFoodEntries.map((foodEntry: FoodEntry) => (
+            <FoodCard
+              key={foodEntry.id}
+              foodEntry={foodEntry}
+              variant={foodEntry.user_id === id ? "base" : "short"}
+              onEdit={() => handleEdit(foodEntry.id!)}
+              onDelete={() => handleDelete(foodEntry.id!)}
+            />
+          ))}
+        </Stack>
+      )}
 
       <AppDialog
-        open={Boolean(foodIdToDelete)}
-        withTextField={false}
-        titleText="Delete food from shared food list?"
-        contentText="Once removed, this item will no longer appear in the shared food list with this user"
-        primaryBtnLabel="Delete"
-        secondaryBtnLabel="Cancel"
-        onClose={() => setFoodIdToDelete(null)}
-        onSecondaryAction={() => setFoodIdToDelete(null)}
-        onPrimaryAction={() => handleRemove(foodIdToDelete!)}
+        open={dialogOpen}
+        titleText={dialogConfig.titleText}
+        contentText={dialogConfig.contentText}
+        onClose={closeDialog}
+        primaryBtnLabel={dialogConfig.primaryBtnLabel}
+        onPrimaryAction={dialogConfig.onPrimaryAction}
+        secondaryBtnLabel={dialogConfig.secondaryBtnLabel}
+        onSecondaryAction={dialogConfig.onSecondaryAction}
       />
 
       {AddFoodFab}
-      {CustomAppDialog}
     </Box>
   );
 }

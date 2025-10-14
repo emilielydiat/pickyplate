@@ -21,6 +21,7 @@ import { constructAvatarURL } from "../utils/supabase";
 import { User } from "../types";
 import { useFriendsContext } from "../context/FriendsContext";
 import { useUserContext } from "../context/UserContext";
+import { useDialogManager } from "../hooks/useDialogManager";
 
 export function AddFriend() {
   usePageHeader("Add friend", true);
@@ -35,13 +36,25 @@ export function AddFriend() {
 
   const [searchInput, setSearchInput] = useState("");
   const [results, setResults] = useState<User[]>([]);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const { dialogOpen, dialogConfig, openDialog, closeDialog } =
+    useDialogManager();
 
   const handleAddFriend = async (userId: string) => {
     try {
       await addFriend(userId);
       await reloadFriendsAndRequests();
-      setDialogOpen(true);
+      openDialog({
+        titleText: "Friend request sent!",
+        contentText:
+          "Once they accept, you'll be able to start planning meals with your friend",
+        primaryBtnLabel: "View in Requests",
+        secondaryBtnLabel: "Close",
+        onPrimaryAction: () => {
+          closeDialog();
+          navigate("/requests");
+        },
+        onSecondaryAction: closeDialog,
+      });
     } catch (e) {
       console.error("Failed to send friend request: ", e);
     }
@@ -135,17 +148,13 @@ export function AddFriend() {
       </Stack>
       <AppDialog
         open={dialogOpen}
-        withTextField={false}
-        titleText="Friend request sent!"
-        contentText="Once they accept, you'll be able to start planning meals with your friend"
-        primaryBtnLabel="View in Requests"
-        secondaryBtnLabel="Close"
-        onClose={() => setDialogOpen(false)}
-        onPrimaryAction={() => {
-          setDialogOpen(false);
-          navigate("/requests");
-        }}
-        onSecondaryAction={() => setDialogOpen(false)}
+        titleText={dialogConfig.titleText}
+        contentText={dialogConfig.contentText}
+        onClose={closeDialog}
+        primaryBtnLabel={dialogConfig.primaryBtnLabel}
+        onPrimaryAction={dialogConfig.onPrimaryAction}
+        secondaryBtnLabel={dialogConfig.secondaryBtnLabel}
+        onSecondaryAction={dialogConfig.onSecondaryAction}
       />
     </Box>
   );

@@ -44,19 +44,13 @@ import { submitMealSessionPreferences } from "../api/api";
 import { EatTogetherContext } from "../context/EatTogetherContext";
 import { getMealSessionStage } from "../utils/mealSession";
 import { useUserContext } from "../context/UserContext";
+import { useDialogManager } from "../hooks/useDialogManager";
 import {
   DragDropContext,
   Droppable,
   Draggable,
   DropResult,
 } from "@hello-pangea/dnd";
-
-type DialogConfig = {
-  titleText: string;
-  contentText: string | React.ReactNode;
-  primaryBtnLabel: string;
-  onPrimaryAction: () => void;
-};
 
 function PreferencesReview(props: {
   friend: User;
@@ -243,14 +237,8 @@ export function MealPreferences() {
 
   const [isReviewing, setIsReviewing] = useState(false);
 
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-
-  const [dialogConfig, setDialogConfig] = useState<DialogConfig>({
-    titleText: "",
-    contentText: "",
-    primaryBtnLabel: "",
-    onPrimaryAction: () => {},
-  });
+  const { dialogOpen, dialogConfig, openDialog, closeDialog } =
+    useDialogManager();
 
   usePageHeader(`Meal preferences with ${friend.name}`, true);
 
@@ -352,17 +340,16 @@ export function MealPreferences() {
     const sessionStatus = getMealSessionStage(id, updatedSession);
 
     if (sessionStatus === MealSessionStage.AwaitingPreferencesFromFriend) {
-      setDialogConfig({
+      openDialog({
         titleText: "Meal invitation sent",
         contentText:
           "Your friend will receive the invite to eat together.\n\nCheck the “Decide what to eat together” section in your Requests menu for updates.",
         primaryBtnLabel: "Go to requests menu",
         onPrimaryAction: () => {
-          setDialogOpen(false);
+          closeDialog();
           navigate("/requests");
         },
       });
-      setDialogOpen(true);
     } else {
       void reloadSession();
     }
@@ -443,7 +430,7 @@ export function MealPreferences() {
           <Button
             variant="outlined"
             color="primary"
-            onClick={() => handleSkip()}
+            onClick={handleSkip}
             sx={{ mb: 2 }}
           >
             Skip
@@ -452,7 +439,7 @@ export function MealPreferences() {
             variant="contained"
             color="primary"
             // disabled={} if uer not interacted with ranking comp
-            onClick={() => handleSave()}
+            onClick={handleSave}
             sx={{ mb: 2 }}
           >
             Save and continue
@@ -478,11 +465,10 @@ export function MealPreferences() {
 
         <AppDialog
           open={dialogOpen}
-          withTextField={false}
           titleText={dialogConfig.titleText}
           contentText={dialogConfig.contentText}
-          primaryBtnLabel={dialogConfig.primaryBtnLabel}
           onClose={dialogConfig.onPrimaryAction}
+          primaryBtnLabel={dialogConfig.primaryBtnLabel}
           onPrimaryAction={dialogConfig.onPrimaryAction}
         />
       </>

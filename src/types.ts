@@ -112,4 +112,12 @@ export type DialogConfig = {
   onPrimaryAction: () => void;
   secondaryBtnLabel?: string;
   onSecondaryAction?: () => void;
+  primaryBtnIcon?: React.ReactNode;
+  secondaryBtnIcon?: React.ReactNode;
+  withTextField?: boolean;
+  textFieldLabel?: string;
+  textFieldValue?: string;
+  textFieldError?: boolean;
+  textFieldHelperText?: string;
+  onTextFieldChange?: (value: string) => void;
 };

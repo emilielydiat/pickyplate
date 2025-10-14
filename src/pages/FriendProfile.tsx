@@ -8,24 +8,14 @@ import { usePageHeader } from "../hooks/usePageHeader";
 import { constructAvatarURL } from "../utils/supabase";
 import { User } from "../types";
 import { useFriendsContext } from "../context/FriendsContext";
-
-type DialogConfig = {
-  titleText: string;
-  contentText: string | React.ReactNode;
-  primaryBtnLabel: string;
-  secondaryBtnLabel: string;
-  onPrimaryAction: () => void;
-  onSecondaryAction: () => void;
-};
+import { useDialogManager } from "../hooks/useDialogManager";
 
 export function FriendProfile() {
   usePageHeader("Friend's profile", true);
 
   const { friendId } = useParams();
   const navigate = useNavigate();
-  // const { id } = useUserContext();
   const { reload } = useFriendsContext();
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const [friend, setFriend] = useState<User | null>(null);
 
@@ -37,16 +27,8 @@ export function FriendProfile() {
     })();
   }, [friendId]);
 
-  const defaultDialogConfig: DialogConfig = {
-    titleText: "",
-    contentText: "",
-    primaryBtnLabel: "",
-    secondaryBtnLabel: "",
-    onPrimaryAction: () => {},
-    onSecondaryAction: () => {},
-  };
-  const [dialogConfig, setDialogConfig] =
-    useState<DialogConfig>(defaultDialogConfig);
+  const { dialogOpen, dialogConfig, openDialog, closeDialog } =
+    useDialogManager();
 
   // TO DO: loading
   if (!friend) {
@@ -57,30 +39,25 @@ export function FriendProfile() {
     );
   }
 
-  const handleDialogClose = () => {
-    setDialogOpen(false);
-  };
-
   const handleRemoveFriend = async () => {
-    setDialogConfig({
+    openDialog({
       titleText: "Remove friend?",
       contentText: `This will permanently remove ${friend.name} from your friend list`,
       primaryBtnLabel: "Remove friend",
       secondaryBtnLabel: "Cancel",
       onPrimaryAction: async () => {
-        setDialogOpen(true);
         try {
           await removeFriend(friend.id);
           await reload();
-          setDialogOpen(false);
+          closeDialog();
           navigate("/friends");
         } catch (error) {
           console.error("Failed to remove friend", error);
         }
       },
-      onSecondaryAction: handleDialogClose,
+      onSecondaryAction: closeDialog,
     });
-    setDialogOpen(true);
+
     return;
   };
 
@@ -159,14 +136,13 @@ export function FriendProfile() {
       </Box>
       <AppDialog
         open={dialogOpen}
-        withTextField={false}
         titleText={dialogConfig.titleText}
         contentText={dialogConfig.contentText}
+        onClose={closeDialog}
         primaryBtnLabel={dialogConfig.primaryBtnLabel}
-        secondaryBtnLabel={dialogConfig.secondaryBtnLabel}
-        onClose={handleDialogClose}
-        onSecondaryAction={dialogConfig.onSecondaryAction}
         onPrimaryAction={dialogConfig.onPrimaryAction}
+        secondaryBtnLabel={dialogConfig.secondaryBtnLabel}
+        onSecondaryAction={dialogConfig.onSecondaryAction}
       />
     </Box>
   );
