@@ -13,17 +13,17 @@ import {
   removeFoodEntryFromSharedList,
 } from "../api/api";
 import { useUserContext } from "../context/UserContext";
-import { usePageTitleContext } from "../context/PageTitleContext";
+import { usePageHeader } from "../hooks/usePageHeader";
 import { useDialogManager } from "../hooks/useDialogManager";
 
 export function SharedFoodList() {
-  const { setPageTitle } = usePageTitleContext();
-
   const { id } = useUserContext();
   const { friendId } = useParams();
   const navigate = useNavigate();
   const [sharedFoodEntries, setSharedFoodEntries] = useState<FoodEntry[]>([]);
   const [friend, setFriend] = useState<User | null>(null);
+
+  usePageHeader(`Shared food list with ${friend?.name ?? ""}`, true);
 
   const { dialogOpen, dialogConfig, openDialog, closeDialog } =
     useDialogManager();
@@ -63,10 +63,6 @@ export function SharedFoodList() {
       await fetchSharedFoodEntries();
     })();
   }, [friendId, fetchSharedFoodEntries]);
-
-  useEffect(() => {
-    if (friend) setPageTitle(`Shared food list with ${friend?.name ?? ""}`);
-  }, [friend, setPageTitle]);
 
   const AddFoodFab = (
     <Fab
