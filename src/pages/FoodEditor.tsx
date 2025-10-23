@@ -7,7 +7,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { capitaliseWord } from "../utils/stringUtils";
 import { AppDialog } from "../components/AppDialog";
 import { usePageHeader } from "../hooks/usePageHeader";
@@ -57,6 +57,7 @@ export function FoodEditor() {
   );
   const [mealMaxTime, setMealMaxTime] = useState<MealMaxTime | null>(null);
   const [cuisines, setCuisines] = useState<string[]>([]);
+
   const isValid =
     Boolean(foodName) &&
     Boolean(mealPriceRange) &&
@@ -67,6 +68,7 @@ export function FoodEditor() {
 
   const [newCuisineError, setNewCuisineError] = useState<string>("");
   const [newCuisine, setNewCuisine] = useState<string>("");
+  const newCuisineRef = useRef<string>("");
 
   const mealTypeOptions = Object.values(Meal).map<[string, Meal]>((value) => [
     mealLabelMap[value],
@@ -93,46 +95,36 @@ export function FoodEditor() {
     openDialog({
       titleText: "Add new cuisine",
       primaryBtnLabel: "Confirm",
-      secondaryBtnLabel: "Cancel",
-      textFieldLabel: "Cuisine name",
-      textFieldValue: newCuisine,
-      textFieldError: !!newCuisineError,
-      textFieldHelperText: newCuisineError,
-      onSecondaryAction: handleDialogClose,
       onPrimaryAction: handleDialogConfirm,
-      onTextFieldChange: handleNewCuisineChange,
+      secondaryBtnLabel: "Cancel",
+      onSecondaryAction: closeDialog,
     });
   };
 
-  const handleDialogClose = () => {
-    setNewCuisine("");
+  const handleNewCuisineChange = (value: string) => {
     setNewCuisineError("");
-    closeDialog();
+    setNewCuisine(value);
+    newCuisineRef.current = value;
   };
 
-  const handleNewCuisineChange = (value: string) => {
-    const trimmed = value.trim().toLowerCase();
-    setNewCuisine(trimmed);
+  const handleDialogConfirm = () => {
+    const cleaned = newCuisineRef.current.trim().toLowerCase();
 
-    if (availableCuisines.includes(trimmed)) {
+    if (availableCuisines.includes(cleaned)) {
       setNewCuisineError("Cuisine already exists");
       return;
     } else {
       setNewCuisineError("");
     }
-  };
 
-  const handleDialogConfirm = () => {
-    setAvailableCuisines((prev) => [...new Set([...prev, newCuisine])]);
-    setCuisines((prev) => [...prev, newCuisine]);
-    setNewCuisine("");
-    setNewCuisineError("");
+    setAvailableCuisines((prev) => [...new Set([...prev, cleaned])]);
+    setCuisines((prev) => [...prev, cleaned]);
+
     closeDialog();
   };
 
   const handleSubmit = async () => {
     const shareWith = searchParams.get("share");
-
     const entry: FoodEntry = {
       name: foodName,
       meals: mealTypes,
@@ -454,16 +446,16 @@ export function FoodEditor() {
         withTextField={true}
         titleText={dialogConfig.titleText}
         contentText={dialogConfig.contentText}
-        onClose={handleDialogClose}
+        onClose={closeDialog}
         primaryBtnLabel={dialogConfig.primaryBtnLabel}
         onPrimaryAction={dialogConfig.onPrimaryAction}
         secondaryBtnLabel={dialogConfig.secondaryBtnLabel}
         onSecondaryAction={dialogConfig.onSecondaryAction}
-        textFieldLabel={dialogConfig.textFieldLabel}
-        textFieldValue={dialogConfig.textFieldValue}
-        textFieldError={dialogConfig.textFieldError}
-        textFieldHelperText={dialogConfig.textFieldHelperText}
-        onTextFieldChange={dialogConfig.onTextFieldChange}
+        textFieldLabel="Cuisine name"
+        textFieldValue={newCuisine}
+        textFieldError={!!newCuisineError}
+        textFieldHelperText={newCuisineError}
+        onTextFieldChange={handleNewCuisineChange}
       />
     </Box>
   );
