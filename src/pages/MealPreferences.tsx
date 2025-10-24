@@ -235,8 +235,6 @@ export function MealPreferences() {
       cuisines: 1,
     });
 
-  const [hasDraggedItem, setHasDraggedItem] = useState(false);
-
   const [isReviewing, setIsReviewing] = useState(false);
 
   const { dialogOpen, dialogConfig, openDialog, closeDialog } =
@@ -299,7 +297,6 @@ export function MealPreferences() {
       displayOrder: index + 1,
     }));
     setPriorities(updated);
-    setHasDraggedItem(true);
   };
 
   const handleSave = () => {
