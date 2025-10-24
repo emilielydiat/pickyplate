@@ -235,6 +235,8 @@ export function MealPreferences() {
       cuisines: 1,
     });
 
+  const [hasDraggedItem, setHasDraggedItem] = useState(false);
+
   const [isReviewing, setIsReviewing] = useState(false);
 
   const { dialogOpen, dialogConfig, openDialog, closeDialog } =
@@ -297,6 +299,7 @@ export function MealPreferences() {
       displayOrder: index + 1,
     }));
     setPriorities(updated);
+    setHasDraggedItem(true);
   };
 
   const handleSave = () => {
@@ -360,10 +363,14 @@ export function MealPreferences() {
       <>
         <Stack>
           <Typography variant="body2" textAlign="left">
-            These are your default meal priorities. We'll use them to suggest
-            food you'll enjoy most.
-            <br /> <br /> If you set different priorities when deciding to eat
-            together, those will override this default.
+            These are your meal priorities. We use them to suggest food that
+            best suit your needs.
+            <br /> <br />
+            If you skip, all priorities will be treated equally.
+            <br />
+            If you click Save, your current ranking will be applied to this meal
+            session.
+            <br />
           </Typography>
           <Typography variant="body2" textAlign="left" pt={5} pb={1}>
             Drag to rank from most (1) to least (4) important:
@@ -438,7 +445,6 @@ export function MealPreferences() {
           <Button
             variant="contained"
             color="primary"
-            // disabled={} if uer not interacted with ranking comp
             onClick={handleSave}
             sx={{ mb: 2 }}
           >
