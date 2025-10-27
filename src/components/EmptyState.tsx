@@ -1,7 +1,7 @@
 import { Stack, Typography } from "@mui/material";
 
 interface EmptyStateProps {
-  image: string;
+  image?: string;
   altText?: string;
   heading?: string;
   textContent: string;
@@ -19,19 +19,22 @@ export function EmptyState({
     <Stack
       role="region"
       aria-labelledby="empty-state-heading"
+      mt={image ? "80px" : "0"}
+      mb={image ? "0" : "24px"}
       sx={{
         width: "100%",
         alignItems: "center",
         justifyContent: "center",
-        mt: 10,
       }}
     >
-      <img
-        src={image}
-        alt={altText || "Empty state illustration"}
-        aria-hidden={true}
-        style={{ width: "280px", display: "block" }}
-      />
+      {image && (
+        <img
+          src={image}
+          alt={altText || "Empty state illustration"}
+          aria-hidden={true}
+          style={{ width: "280px", display: "block" }}
+        />
+      )}
       {heading && (
         <Typography
           id="empty-state-heading"

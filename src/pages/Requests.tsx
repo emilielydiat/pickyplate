@@ -10,7 +10,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { ArrowForward, Check, Close } from "@mui/icons-material";
+import { Add, ArrowForward, Check, Close } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
 import {
@@ -21,7 +21,6 @@ import { usePageHeader } from "../hooks/usePageHeader";
 import { constructAvatarURL } from "../utils/supabase";
 import { useFriendsContext } from "../context/FriendsContext";
 import { FriendRequest, MealSession, MealSessionStage } from "../types";
-import { emptyStateImages } from "../data/mockData";
 import { EmptyState } from "../components/EmptyState";
 import { useEffect, useState } from "react";
 import {
@@ -121,8 +120,16 @@ export function Requests() {
 
         {requests.length === 0 && (
           <EmptyState
-            image={emptyStateImages.friendRequests}
             textContent="No friend requests at the moment. Enjoy the peace!"
+            button={
+              <Button
+                startIcon={<Add />}
+                variant="contained"
+                onClick={() => navigate("/friends/add-friend")}
+              >
+                Add friend
+              </Button>
+            }
           />
         )}
 
@@ -198,9 +205,7 @@ export function Requests() {
 
         {sessions.length === 0 ? (
           <EmptyState
-            image={emptyStateImages.mealRequests}
-            heading="You've got no meal plans… yet"
-            textContent="Time to make some plans?"
+            textContent="You've got no meal plans… yet. Time to make some plans?"
             button={
               <Button
                 startIcon={<ArrowForward />}
