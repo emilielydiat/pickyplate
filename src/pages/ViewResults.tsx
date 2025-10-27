@@ -20,11 +20,11 @@ export function ViewResults() {
 
   const food1 = useMemo(() => {
     return sharedFoodList.find((food) => food.id === session!.food_1)!;
-  }, [sharedFoodList, session, id]);
+  }, [sharedFoodList, session]);
 
   const food2 = useMemo(() => {
     return sharedFoodList.find((food) => food.id === session!.food_2)!;
-  }, [sharedFoodList, session, id]);
+  }, [sharedFoodList, session]);
 
   const food1Rating = useMemo(() => {
     return (session!.rating_1_food_1! + session!.rating_2_food_1!) / 2;
@@ -36,7 +36,7 @@ export function ViewResults() {
 
   const isAutoWon = useMemo(
     () => session!.food_1 === session!.food_2,
-    [session],
+    [session]
   );
 
   const isTie = useMemo(() => {
