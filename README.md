@@ -57,6 +57,14 @@ Built to make meal decisions easier and more enjoyable, with an emphasis on:
 - **Supabase Storage** for avatar assets
 - **Supabase Auth with Row-Level Security (RLS)**
 
+<div align="center">
+  <img 
+    src="docs/system-design.png" 
+    alt="System design diagram" 
+    style="width:100%; max-width:1000px;" 
+  />
+</div>
+
 <br>
 
 ## 🚀 Getting started
