@@ -22,6 +22,7 @@ import { User } from "../types";
 import { useFriendsContext } from "../context/FriendsContext";
 import { useUserContext } from "../context/UserContext";
 import { useDialogManager } from "../hooks/useDialogManager";
+import { Send } from "@mui/icons-material";
 
 export function AddFriend() {
   usePageHeader("Add friend", true);
@@ -38,6 +39,10 @@ export function AddFriend() {
   const [results, setResults] = useState<User[]>([]);
   const { dialogOpen, dialogConfig, openDialog, closeDialog } =
     useDialogManager();
+  const [inviteEmail, setInviteEmail] = useState<string>("");
+  const [inviteError, setInviteError] = useState<boolean>(false);
+
+  const emailFormat = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
   const handleAddFriend = async (userId: string) => {
     try {
@@ -58,6 +63,37 @@ export function AddFriend() {
     } catch (e) {
       console.error("Failed to send friend request: ", e);
     }
+  };
+
+  const handleInviteFriend = () => {
+    openDialog({
+      titleText: "Invite a friend",
+      contentText: "We'll send your friend an email invite to join PickyPlate",
+      primaryBtnLabel: "Send invite",
+      secondaryBtnLabel: "Cancel",
+      onPrimaryAction: handleDialogConfirm,
+      onSecondaryAction: closeDialog,
+    });
+  };
+
+  const handleInviteEmailChange = (value: string) => {
+    setInviteEmail(value);
+    const cleaned = value.trim().toLowerCase();
+
+    setInviteError(!emailFormat.test(cleaned));
+  };
+
+  const handleDialogConfirm = () => {
+    setInviteEmail((inviteEmail) => inviteEmail.trim().toLowerCase());
+    console.log("inviteEmail: ", inviteEmail);
+
+    if (inviteError === false) {
+      setInviteError(false);
+      console.log("send successful to email: ", inviteEmail);
+      closeDialog();
+      // TODO: Set up email sending
+    }
+    // TODO: Show error on UI
   };
 
   const isUserPending = useCallback(
@@ -108,6 +144,15 @@ export function AddFriend() {
             image={emptyStateImages.addFriend}
             heading="Hmm... didn't find anyone"
             textContent="Are they registered yet? If not, invite them!"
+            button={
+              <Button
+                startIcon={<Send />}
+                variant="contained"
+                onClick={handleInviteFriend}
+              >
+                Invite a friend
+              </Button>
+            }
           />
         )}
 
@@ -155,6 +200,12 @@ export function AddFriend() {
         onPrimaryAction={dialogConfig.onPrimaryAction}
         secondaryBtnLabel={dialogConfig.secondaryBtnLabel}
         onSecondaryAction={dialogConfig.onSecondaryAction}
+        withTextField={true}
+        textFieldLabel="Friend's email"
+        textFieldValue={inviteEmail}
+        textFieldError={inviteError}
+        textFieldHelperText={inviteError ? "Type in a valid email" : ""}
+        onTextFieldChange={handleInviteEmailChange}
       />
     </Box>
   );
