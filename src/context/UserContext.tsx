@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { User } from "../types";
 import supabase from "../supabase";
 import { getUserById } from "../api/api";
@@ -34,6 +40,8 @@ export function UserProvider({ children }: Props) {
   const [user, setUser] = useState<User | null>(null);
   const [isInitialised, setIsInitialised] = useState(false);
 
+  const prevToken = useRef<string | null>(null);
+
   const fetchCurrentUser = async () => {
     try {
       setIsInitialised(false);
@@ -59,7 +67,13 @@ export function UserProvider({ children }: Props) {
 
   // Subscribe to auth state changes
   useEffect(() => {
-    const { data } = supabase.auth.onAuthStateChange((event) => {
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      // This is triggered every time the tab is focused due to supabase's implementation.
+      // To prevent this from being triggered multiple times and firing unnecessary requests, we compare the access token.
+      // https://github.com/supabase/auth-js/issues/579
+      if (prevToken.current === session?.access_token) return;
+      prevToken.current = session?.access_token || null;
+
       if (event === "SIGNED_OUT") {
         setUser(null);
       } else if (event === "SIGNED_IN") {
