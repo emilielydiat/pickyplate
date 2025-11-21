@@ -274,3 +274,13 @@ export const deleteMealSession = async (userId: string, friendId: string) => {
 
   if (error) throw new Error(error.message);
 };
+
+export const inviteUser = async (friendEmail: string, fromName: string) => {
+  const { error } = await supabase.functions.invoke("invite-user", {
+    body: {
+      friend_email: friendEmail,
+      from_name: fromName,
+    },
+  });
+  if (error) throw new Error(error.message);
+};

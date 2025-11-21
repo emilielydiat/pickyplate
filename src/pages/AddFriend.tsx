@@ -10,10 +10,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { emptyStateImages } from "../data/mockData";
-import { addFriend, searchUsers } from "../api/api";
+import { addFriend, searchUsers, inviteUser } from "../api/api";
 import { AppDialog } from "../components/AppDialog";
 import { usePageHeader } from "../hooks/usePageHeader";
 import { EmptyState } from "../components/EmptyState";
@@ -28,7 +28,8 @@ export function AddFriend() {
   usePageHeader("Add friend", true);
 
   const navigate = useNavigate();
-  const { id: currentUserId } = useUserContext();
+  const { id: currentUserId, user } = useUserContext();
+
   const {
     friends,
     requests,
@@ -39,8 +40,11 @@ export function AddFriend() {
   const [results, setResults] = useState<User[]>([]);
   const { dialogOpen, dialogConfig, openDialog, closeDialog } =
     useDialogManager();
-  const [inviteEmail, setInviteEmail] = useState<string>("");
+
   const [inviteError, setInviteError] = useState<boolean>(false);
+  const [inviteEmail, setInviteEmail] = useState<string>("");
+  const inviteEmailRef = useRef<string>("");
+  // const [cleanedInviteEmail, setCleanedInviteEmail] = useState<string>("");
 
   const emailFormat = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
@@ -78,22 +82,27 @@ export function AddFriend() {
 
   const handleInviteEmailChange = (value: string) => {
     setInviteEmail(value);
-    const cleaned = value.trim().toLowerCase();
+    inviteEmailRef.current = value;
 
+    const cleaned = value.trim().toLowerCase();
     setInviteError(!emailFormat.test(cleaned));
   };
 
-  const handleDialogConfirm = () => {
-    setInviteEmail((inviteEmail) => inviteEmail.trim().toLowerCase());
-    console.log("inviteEmail: ", inviteEmail);
+  const handleDialogConfirm = async () => {
+    const cleanedEmail = inviteEmailRef.current.trim().toLowerCase();
+    setInviteError(!emailFormat.test(cleanedEmail));
 
-    if (inviteError === false) {
-      setInviteError(false);
-      console.log("send successful to email: ", inviteEmail);
-      closeDialog();
-      // TODO: Set up email sending
+    if (inviteError === true || !cleanedEmail || !user) {
+      return;
     }
-    // TODO: Show error on UI
+
+    try {
+      await inviteUser(cleanedEmail, user.name);
+      closeDialog();
+    } catch (e) {
+      console.error("Failed to send invitation: ", e);
+    }
+    // TODO: Display error on UI
   };
 
   const isUserPending = useCallback(
