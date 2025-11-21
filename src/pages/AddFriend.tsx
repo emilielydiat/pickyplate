@@ -44,7 +44,6 @@ export function AddFriend() {
   const [inviteError, setInviteError] = useState<boolean>(false);
   const [inviteEmail, setInviteEmail] = useState<string>("");
   const inviteEmailRef = useRef<string>("");
-  // const [cleanedInviteEmail, setCleanedInviteEmail] = useState<string>("");
 
   const emailFormat = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
