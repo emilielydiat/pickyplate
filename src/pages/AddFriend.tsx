@@ -47,6 +47,12 @@ export function AddFriend() {
 
   const emailFormat = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
+  const handleInviteDialogClose = () => {
+    setInviteEmail("");
+    setInviteError(false);
+    closeDialog();
+  };
+
   const handleAddFriend = async (userId: string) => {
     try {
       await addFriend(userId);
@@ -62,6 +68,7 @@ export function AddFriend() {
           navigate("/requests");
         },
         onSecondaryAction: closeDialog,
+        withTextField: false,
       });
     } catch (e) {
       console.error("Failed to send friend request: ", e);
@@ -75,7 +82,8 @@ export function AddFriend() {
       primaryBtnLabel: "Send invite",
       secondaryBtnLabel: "Cancel",
       onPrimaryAction: handleDialogConfirm,
-      onSecondaryAction: closeDialog,
+      onSecondaryAction: handleInviteDialogClose,
+      withTextField: true,
     });
   };
 
@@ -98,6 +106,13 @@ export function AddFriend() {
     try {
       await inviteUser(cleanedEmail, user.name);
       closeDialog();
+      openDialog({
+        titleText: "You're all set!",
+        contentText: "We've emailed your friend an invite to join PickyPlate",
+        primaryBtnLabel: "Done",
+        onPrimaryAction: handleInviteDialogClose,
+        withTextField: false,
+      });
     } catch (e) {
       console.error("Failed to send invitation: ", e);
     }
@@ -203,17 +218,23 @@ export function AddFriend() {
         open={dialogOpen}
         titleText={dialogConfig.titleText}
         contentText={dialogConfig.contentText}
-        onClose={closeDialog}
+        onClose={
+          dialogConfig.withTextField ? handleInviteDialogClose : closeDialog
+        }
         primaryBtnLabel={dialogConfig.primaryBtnLabel}
         onPrimaryAction={dialogConfig.onPrimaryAction}
         secondaryBtnLabel={dialogConfig.secondaryBtnLabel}
         onSecondaryAction={dialogConfig.onSecondaryAction}
-        withTextField={true}
-        textFieldLabel="Friend's email"
-        textFieldValue={inviteEmail}
-        textFieldError={inviteError}
-        textFieldHelperText={inviteError ? "Type in a valid email" : ""}
-        onTextFieldChange={handleInviteEmailChange}
+        withTextField={dialogConfig.withTextField}
+        {...(dialogConfig.withTextField
+          ? {
+              textFieldLabel: "Friend's email",
+              textFieldValue: inviteEmail,
+              textFieldError: inviteError,
+              textFieldHelperText: inviteError ? "Type in a valid email" : "",
+              onTextFieldChange: handleInviteEmailChange,
+            }
+          : {})}
       />
     </Box>
   );

@@ -18,8 +18,13 @@ export function useDialogManager() {
   );
 
   const openDialog = useCallback((config: Partial<DialogConfig>) => {
-    setDialogConfig({ ...DEFAULT_DIALOG_CONFIG, ...config });
-    setDialogOpen(true);
+    setDialogConfig(() => {
+      const newConfig = { ...DEFAULT_DIALOG_CONFIG, ...config };
+
+      setDialogOpen(true);
+
+      return newConfig;
+    });
   }, []);
 
   const closeDialog = useCallback(() => {
