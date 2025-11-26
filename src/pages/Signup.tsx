@@ -56,6 +56,53 @@ export function Signup() {
     }
   };
 
+  if (success) {
+    return (
+      <Box
+        component="form"
+        onSubmit={handleSubmit(onSubmit)}
+        noValidate
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          maxWidth: "sm",
+          padding: 2,
+          marginX: "auto",
+        }}
+      >
+        <Box maxHeight={46}>
+          <img src={logo} alt="PickyPlate" />
+        </Box>
+
+        <Typography component="h1" variant="h6" mt={5}>
+          Check your email to activate your account
+        </Typography>
+        <Typography variant="body2" mt={2}>
+          Click the link in the email, and start planning meals with your
+          favourite people!
+          <br />
+          Didn't receive the email? Check other folders like promotions or
+          updates, just in case.
+        </Typography>
+        <Divider sx={{ mt: 10, mb: 4 }} />
+
+        <Button
+          component={Link}
+          to="/login"
+          variant="text"
+          sx={{
+            alignSelf: "center",
+            textTransform: "none",
+            color: "grey.700",
+            "&:hover": { color: "grey.900" },
+          }}
+        >
+          Already activated your account? Login
+        </Button>
+      </Box>
+    );
+  }
+
   return (
     <>
       <Box
@@ -140,12 +187,6 @@ export function Signup() {
         >
           {isSubmitting ? "Signing up..." : "Sign up"}
         </Button>
-
-        {success && (
-          <Typography variant="body2" sx={{ mt: 1 }}>
-            Success! Please check your email to proceed.
-          </Typography>
-        )}
 
         <Divider sx={{ mt: 10, mb: 4 }} />
 
