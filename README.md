@@ -1,10 +1,10 @@
 # 🥗 PickyPlate - Decide What to Eat, Together
 
-A meal planning web app that helps couples and friends solve the everyday “what should we eat?” dilemma - together.
+A meal planning web app that helps couples and friends solve the everyday “what should we eat?” dilemma.
 
-**Live demo: https://pickyplate.vercel.app/**  
+**Try it live: https://app.pickyplate.app/**  
 
-*Status: MVP - actively evolving. Parts of Supabase backend under development; UX improvements underway.*
+*Status: MVP - actively evolving. Frontend & UX improvements underway.*
 
 <br>
 
