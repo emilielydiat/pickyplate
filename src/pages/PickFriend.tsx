@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { emptyStateImages } from "../data/mockData";
 import { useFriendsContext } from "../context/FriendsContext";
@@ -19,11 +19,25 @@ import { usePageHeader } from "../hooks/usePageHeader";
 import { EmptyState } from "../components/EmptyState";
 import { constructAvatarURL } from "../utils/supabase";
 import { User } from "../types";
+import { AppDialog } from "../components/AppDialog";
+import { useDialogManager } from "../hooks/useDialogManager";
 
 export function PickFriend() {
   usePageHeader("Pick a friend", true);
-
+  const { dialogOpen, dialogConfig, openDialog, closeDialog } =
+    useDialogManager();
   const navigate = useNavigate();
+  const canGoBack = window.history.length > 1;
+
+  const handleDialogClose = useCallback(() => {
+    closeDialog();
+    if (canGoBack) {
+      navigate(-1);
+    } else {
+      navigate("/");
+    }
+  }, [closeDialog, canGoBack, navigate]);
+
   const { friends } = useFriendsContext();
   const [searchInput, setSearchInput] = useState<string>("");
 
@@ -37,6 +51,23 @@ export function PickFriend() {
       return [];
     }
   }, [searchInput, friends]);
+
+  useEffect(() => {
+    if (friends.length === 0) {
+      openDialog({
+        titleText: "Oops, no friends to eat with",
+        contentText:
+          "Your friend list is empty!\nAdd a friend to explore your next meal together.",
+        primaryBtnLabel: "Add a friend",
+        secondaryBtnLabel: "Close",
+        onPrimaryAction: () => {
+          closeDialog();
+          navigate("/friends/add-friend");
+        },
+        onSecondaryAction: handleDialogClose,
+      });
+    }
+  }, [friends, closeDialog, handleDialogClose, navigate, openDialog]);
 
   return (
     <Box component="section">
@@ -106,6 +137,16 @@ export function PickFriend() {
           </List>
         )}
       </Stack>
+      <AppDialog
+        open={dialogOpen}
+        titleText={dialogConfig.titleText}
+        contentText={dialogConfig.contentText}
+        onClose={handleDialogClose}
+        primaryBtnLabel={dialogConfig.primaryBtnLabel}
+        secondaryBtnLabel={dialogConfig.secondaryBtnLabel}
+        onSecondaryAction={dialogConfig.onSecondaryAction}
+        onPrimaryAction={dialogConfig.onPrimaryAction}
+      />
     </Box>
   );
 }
