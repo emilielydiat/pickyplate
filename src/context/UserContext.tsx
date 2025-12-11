@@ -19,17 +19,13 @@ type Context = {
   reload: () => Promise<void>;
 };
 
-const UserContext = createContext<Context | null>({
-  id: "",
-  user: null,
-  reload: async () => {},
-});
+const UserContext = createContext<Context | null>(null);
 
 export function useUserContext() {
   const context = useContext(UserContext);
 
   if (!context) {
-    throw new Error("No context found");
+    throw new Error("useUserContext must be used within a UserProvider");
   }
 
   return context;
