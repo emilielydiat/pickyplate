@@ -61,6 +61,7 @@ function PreferencesReview(props: {
   cuisines: string[] | "any";
   onSubmit: () => void;
   setIsRankingPriorities: (value: boolean) => void;
+  isSending: boolean;
 }) {
   return (
     <Box
@@ -166,10 +167,11 @@ function PreferencesReview(props: {
           aria-label={`Confirm your meal preferences for meal with ${props.friend.name}`}
           variant="contained"
           color="primary"
+          disabled={props.isSending}
           onClick={props.onSubmit}
           sx={{ mb: 2 }}
         >
-          Confirm and send
+          {props.isSending ? "Sending..." : "Confirm and send"}
         </Button>
       </Box>
     </Box>
@@ -196,6 +198,8 @@ export function MealPreferences() {
   const [mealCuisines, setMealCuisines] = useState<string[] | "any" | null>(
     null
   );
+
+  const [isSending, setIsSending] = useState<boolean>(false);
 
   const [isRankingPriorities, setIsRankingPriorities] =
     useState<boolean>(false);
@@ -328,30 +332,38 @@ export function MealPreferences() {
   };
 
   const handleSubmit = async () => {
-    const updatedSession = await submitMealSessionPreferences(friend.id, {
-      meal: mealType!,
-      meal_locations: mealLocations!,
-      meal_price_range: mealPriceRange!,
-      meal_max_time: mealMaxTime!,
-      cuisines: mealCuisines!,
-      meal_priorities_weights: mealPrioritiesWeight,
-    });
+    setIsSending(true);
 
-    const sessionStatus = getMealSessionStage(id, updatedSession);
-
-    if (sessionStatus === MealSessionStage.AwaitingPreferencesFromFriend) {
-      openDialog({
-        titleText: "Meal invitation sent",
-        contentText:
-          "Your friend will receive the invite to eat together.\n\nCheck the “Decide what to eat together” section in your Requests menu for updates.",
-        primaryBtnLabel: "Go to requests menu",
-        onPrimaryAction: () => {
-          closeDialog();
-          navigate("/requests");
-        },
+    try {
+      const updatedSession = await submitMealSessionPreferences(friend.id, {
+        meal: mealType!,
+        meal_locations: mealLocations!,
+        meal_price_range: mealPriceRange!,
+        meal_max_time: mealMaxTime!,
+        cuisines: mealCuisines!,
+        meal_priorities_weights: mealPrioritiesWeight,
       });
-    } else {
-      void reloadSession();
+
+      const sessionStatus = getMealSessionStage(id, updatedSession);
+
+      if (sessionStatus === MealSessionStage.AwaitingPreferencesFromFriend) {
+        openDialog({
+          titleText: "Meal invitation sent",
+          contentText:
+            "Your friend will receive the invite to eat together.\n\nCheck the “Decide what to eat together” section in your Requests menu for updates.",
+          primaryBtnLabel: "Go to requests menu",
+          onPrimaryAction: () => {
+            closeDialog();
+            navigate("/requests");
+          },
+        });
+      } else {
+        void reloadSession();
+      }
+    } catch (error) {
+      console.error("Failed to submit meal session preferences", error);
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -464,6 +476,7 @@ export function MealPreferences() {
           cuisines={mealCuisines!}
           onSubmit={handleSubmit}
           setIsRankingPriorities={setIsRankingPriorities}
+          isSending={isSending}
         />
 
         <AppDialog
