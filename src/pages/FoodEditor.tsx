@@ -39,6 +39,7 @@ export function FoodEditor() {
   const { foodId } = useParams();
 
   const isEditing = foodId !== undefined;
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
   usePageHeader(isEditing ? "Edit food" : "Create new food", true);
 
@@ -124,6 +125,8 @@ export function FoodEditor() {
   };
 
   const handleSubmit = async () => {
+    setIsSaving(true);
+
     const shareWith = searchParams.get("share");
     const entry: FoodEntry = {
       name: foodName,
@@ -134,45 +137,59 @@ export function FoodEditor() {
       cuisines,
     };
 
-    // If foodId is provided, update the existing entry; otherwise, create a new one
-    if (isEditing) {
-      await editFoodEntry(foodId, entry);
-    } else {
-      const newEntry = await addFoodEntry(id, entry);
+    try {
+      // If foodId is provided, update the existing entry; otherwise, create a new one
+      if (isEditing) {
+        await editFoodEntry(foodId, entry);
+      } else {
+        const newEntry = await addFoodEntry(id, entry);
 
-      // If shareWith is provided, add the new entry to the shared list
-      if (shareWith) {
-        await addFoodEntryToSharedList(id, shareWith, newEntry.id!);
+        // If shareWith is provided, add the new entry to the shared list
+        if (shareWith) {
+          await addFoodEntryToSharedList(id, shareWith, newEntry.id!);
+        }
       }
-    }
 
-    navigate(
-      shareWith ? `/friend/${shareWith}/shared-food-list` : "/my-food-list"
-    );
+      navigate(
+        shareWith ? `/friend/${shareWith}/shared-food-list` : "/my-food-list"
+      );
+    } catch (error) {
+      console.error("Failed to save food entry", error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   useEffect(() => {
     // If foodId is provided, fetch the food entry details from the server
     if (foodId) {
       (async () => {
-        const result = await getFoodEntryById(foodId);
-        setFoodName(result.name);
-        setMealTypes(result.meals);
-        setMealLocations(result.meal_locations);
-        setMealPriceRange(result.meal_price_range);
-        setMealMaxTime(result.meal_max_time);
-        setCuisines(result.cuisines);
-        setAvailableCuisines((prev) => [
-          ...new Set([...prev, ...result.cuisines]),
-        ]);
+        try {
+          const result = await getFoodEntryById(foodId);
+          setFoodName(result.name);
+          setMealTypes(result.meals);
+          setMealLocations(result.meal_locations);
+          setMealPriceRange(result.meal_price_range);
+          setMealMaxTime(result.meal_max_time);
+          setCuisines(result.cuisines);
+          setAvailableCuisines((prev) => [
+            ...new Set([...prev, ...result.cuisines]),
+          ]);
+        } catch (error) {
+          console.error("Failed to load food entry", error);
+        }
       })();
     }
   }, [foodId]);
 
   useEffect(() => {
     (async () => {
-      const result = await getCuisines();
-      setAvailableCuisines((prev) => [...new Set([...prev, ...result])]);
+      try {
+        const result = await getCuisines();
+        setAvailableCuisines((prev) => [...new Set([...prev, ...result])]);
+      } catch (error) {
+        console.error("Failed to load cuisines", error);
+      }
     })();
   }, []);
 
@@ -435,9 +452,9 @@ export function FoodEditor() {
           color="primary"
           type="button"
           sx={{ mb: 2 }}
-          disabled={!isValid}
+          disabled={!isValid || isSaving}
         >
-          Save
+          {isSaving ? "Saving..." : "Save"}
         </Button>
       </Box>
 
