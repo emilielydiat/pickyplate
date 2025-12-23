@@ -31,8 +31,21 @@ export function AddFromExistingFood() {
   };
 
   const handleToggleAdd = async (foodId: string) => {
-    await addFoodEntryToSharedList(id, friendId!, foodId);
-    await fetchSharedFoodEntries();
+    try {
+      await addFoodEntryToSharedList(id, friendId!, foodId);
+    } catch (error) {
+      console.error(
+        "Failed to add or remove food entry from shared list",
+        error
+      );
+      return;
+    }
+
+    try {
+      await fetchSharedFoodEntries();
+    } catch (error) {
+      console.error("Failed to fetch shared food list", error);
+    }
   };
 
   useEffect(() => {
@@ -41,8 +54,11 @@ export function AddFromExistingFood() {
         setIsLoading(true);
         await fetchUserFoodList();
         await fetchSharedFoodEntries();
-      } catch (e) {
-        console.error(e);
+      } catch (error) {
+        console.error(
+          "Failed to fetch user food list and shared food list",
+          error
+        );
       } finally {
         setIsLoading(false);
       }
