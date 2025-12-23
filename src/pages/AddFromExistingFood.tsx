@@ -30,7 +30,9 @@ export function AddFromExistingFood() {
     setSharedFoodEntries(_sharedFoodList);
   };
 
-  const handleToggleAdd = async (foodId: string) => {
+  const handleAdd = async (foodId: string) => {
+    // check if entry already in shared food list
+
     try {
       await addFoodEntryToSharedList(id, friendId!, foodId);
     } catch (error) {
@@ -96,7 +98,7 @@ export function AddFromExistingFood() {
             isAlreadyAdded={
               sharedFoodEntries.findIndex((sfe) => sfe.id === e.id) >= 0
             }
-            onToggleAdd={() => handleToggleAdd(e.id!)}
+            onAdd={() => handleAdd(e.id!)}
           />
         ))}
       </Stack>

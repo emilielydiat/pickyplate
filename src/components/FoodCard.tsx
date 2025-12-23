@@ -44,7 +44,7 @@ interface FoodCardProps {
   friendRating?: number;
   averageRating?: number;
 
-  onToggleAdd?: (foodEntry: FoodEntry) => void;
+  onAdd?: (foodEntry: FoodEntry) => void;
   onDelete?: (foodEntry: FoodEntry) => void;
   onEdit?: (foodEntry: FoodEntry) => void;
   onRatingChange?: (value: number) => void;
@@ -79,7 +79,7 @@ function renderVariantContent(
   userRating?: number,
   friendRating?: number,
   averageRating?: number,
-  onToggleAdd?: (foodEntry: FoodEntry) => void,
+  onAdd?: (foodEntry: FoodEntry) => void,
   onDelete?: (foodEntry: FoodEntry) => void,
   onEdit?: (foodEntry: FoodEntry) => void,
   onRatingChange?: (value: number) => void
@@ -93,7 +93,7 @@ function renderVariantContent(
             aria-pressed={false}
             startIcon={<Add />}
             variant="outlined"
-            onClick={() => onToggleAdd?.(foodEntry)}
+            onClick={() => onAdd?.(foodEntry)}
             sx={{ width: "100%", mt: 3 }}
           >
             Add
@@ -106,7 +106,7 @@ function renderVariantContent(
             aria-pressed={true}
             startIcon={<Check />}
             variant="outlined"
-            onClick={() => onToggleAdd?.(foodEntry)}
+            disabled
             sx={{
               width: "100%",
               color: "grey.600",
@@ -304,7 +304,7 @@ export function FoodCard({
   userRating,
   friendRating,
   averageRating,
-  onToggleAdd,
+  onAdd,
   onDelete,
   onEdit,
   onRatingChange,
@@ -396,7 +396,7 @@ export function FoodCard({
             userRating,
             friendRating,
             averageRating,
-            onToggleAdd,
+            onAdd,
             onDelete,
             onEdit,
             onRatingChange
