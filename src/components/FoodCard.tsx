@@ -90,7 +90,6 @@ function renderVariantContent(
         return (
           <Button
             aria-label={`Add ${foodEntry.name} to shared list`}
-            aria-pressed={false}
             startIcon={<Add />}
             variant="outlined"
             onClick={() => onAdd?.(foodEntry)}
@@ -102,18 +101,11 @@ function renderVariantContent(
       } else {
         return (
           <Button
-            aria-label={`Remove ${foodEntry.name} from shared list`}
-            aria-pressed={true}
+            aria-label={`${foodEntry.name} is already in the shared list`}
             startIcon={<Check />}
             variant="outlined"
             disabled
-            sx={{
-              width: "100%",
-              color: "grey.600",
-              borderColor: "grey.400",
-              "&hover": { color: "grey.700", borderColor: "grey.500" },
-              mt: 3,
-            }}
+            sx={{ width: "100%", mt: 3 }}
           >
             Added
           </Button>
