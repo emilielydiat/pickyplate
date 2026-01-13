@@ -4,7 +4,7 @@ A meal planning web app that helps couples and friends solve the everyday “wha
 
 **Try it live: https://app.pickyplate.app/**  
 
-*Status: MVP - actively evolving. Frontend & UX improvements underway.*
+*Status: MVP - actively evolving. Error & loading states improvements underway, UX enhancements coming up next.*
 
 <br>
 
@@ -30,6 +30,7 @@ Built to make meal decisions easier and more enjoyable, with an emphasis on:
 - **Thoughtful UX** - Friendly microcopy and illustrations for a more engaging experience
 - **Accessibility-first** - ARIA labels, keyboard navigation, decorative elements hidden from screen readers, validated with Lighthouse audits
 - **Responsive UI** - Mobile-first approach, tested across multiple screen sizes
+- **Client-side routing** - Set up with **React Router**
 
 <br>
 
@@ -37,7 +38,7 @@ Built to make meal decisions easier and more enjoyable, with an emphasis on:
 
 | **Area** | **Solution** |
 | --- | --- |
-| **Frontend** | React, TypeScript, MUI |
+| **Frontend** | React, TypeScript, React Router, MUI |
 | **Styling** | MUI theming, custom CSS |
 | **Backend / API** | Supabase (PostgreSQL, REST API via PostgREST, Auth, Edge Functions, Storage) |
 | **Code Quality** | ESLint, Prettier, Conventional Commits |
@@ -98,6 +99,15 @@ npm run dev
 - Balanced **UX goals with technical feasibility** and trade-offs
 - Kept a clean Git history with **Conventional Commits**
 - Set up CI/CD with **Vercel and GitHub Actions**
+
+<br>
+
+## ➡️ Future improvements
+
+- Add **test coverage** for core user flows
+- Refine **loading and error states**
+- Add **onboarding flow** for better UX
+- Improve **UX, accessibility** and keyboard navigation further
 
 <br>
 
