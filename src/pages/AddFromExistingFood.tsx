@@ -20,6 +20,8 @@ export function AddFromExistingFood() {
   const [foodEntries, setFoodEntries] = useState<FoodEntry[]>([]);
   const [sharedFoodEntries, setSharedFoodEntries] = useState<FoodEntry[]>([]);
 
+  const [addingIds, setAddingIds] = useState<Set<string>>(new Set());
+
   const fetchUserFoodList = async () => {
     const _foodList = await getFoodList(id!);
     setFoodEntries(_foodList);
@@ -31,22 +33,25 @@ export function AddFromExistingFood() {
   };
 
   const handleAdd = async (foodId: string) => {
-    // check if entry already in shared food list
+    if (addingIds.has(foodId)) return;
+
+    setAddingIds((prev) => {
+      const next = new Set(prev);
+      next.add(foodId);
+      return next;
+    });
 
     try {
       await addFoodEntryToSharedList(id, friendId!, foodId);
-    } catch (error) {
-      console.error(
-        "Failed to add or remove food entry from shared list",
-        error
-      );
-      return;
-    }
-
-    try {
       await fetchSharedFoodEntries();
     } catch (error) {
-      console.error("Failed to fetch shared food list", error);
+      console.error("Failed to update shared food list", error);
+    } finally {
+      setAddingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(foodId);
+        return next;
+      });
     }
   };
 
@@ -99,6 +104,7 @@ export function AddFromExistingFood() {
               sharedFoodEntries.findIndex((sfe) => sfe.id === e.id) >= 0
             }
             onAdd={() => handleAdd(e.id!)}
+            addingIds={addingIds}
           />
         ))}
       </Stack>

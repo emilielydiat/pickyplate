@@ -39,6 +39,7 @@ interface FoodCardProps {
   foodEntry: FoodEntry;
   variant?: Variant;
   isAlreadyAdded?: boolean;
+  addingIds?: Set<string>;
   ratingValue?: number;
   userRating?: number;
   friendRating?: number;
@@ -75,6 +76,7 @@ function renderVariantContent(
   foodEntry: FoodEntry,
   variant: Variant,
   isAlreadyAdded?: boolean,
+  addingIds?: Set<string>,
   ratingValue?: number,
   userRating?: number,
   friendRating?: number,
@@ -92,10 +94,11 @@ function renderVariantContent(
             aria-label={`Add ${foodEntry.name} to shared list`}
             startIcon={<Add />}
             variant="outlined"
+            disabled={addingIds?.has(foodEntry.id!)}
             onClick={() => onAdd?.(foodEntry)}
             sx={{ width: "100%", mt: 3 }}
           >
-            Add
+            {addingIds?.has(foodEntry.id!) ? "Adding..." : "Add"}
           </Button>
         );
       } else {
@@ -292,6 +295,7 @@ export function FoodCard({
   variant = "short",
   foodEntry,
   isAlreadyAdded,
+  addingIds,
   ratingValue,
   userRating,
   friendRating,
@@ -301,7 +305,7 @@ export function FoodCard({
   onEdit,
   onRatingChange,
 }: FoodCardProps) {
-  if (!foodEntry || !foodEntry.name) {
+  if (!foodEntry || !foodEntry.name || !foodEntry.id) {
     if (process.env.NODE_ENV !== "production") {
       console.warn("FoodCard received invalid foodEntry:", foodEntry);
     }
@@ -384,6 +388,7 @@ export function FoodCard({
             foodEntry,
             variant,
             isAlreadyAdded,
+            addingIds,
             ratingValue,
             userRating,
             friendRating,
