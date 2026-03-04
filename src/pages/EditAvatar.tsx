@@ -2,7 +2,7 @@ import { Avatar, Box, Button, Grid2, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useUserContext } from "../context/UserContext";
 import { usePageHeader } from "../hooks/usePageHeader";
-import { FileObject } from "@supabase/storage-js/dist/module/lib/types";
+import type { FileObject } from "@supabase/storage-js";
 import { getAvailableAvatars, updateUserProfile } from "../api/api";
 import { constructAvatarURL } from "../utils/supabase";
 import { useNavigate } from "react-router-dom";
