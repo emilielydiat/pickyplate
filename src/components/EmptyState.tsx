@@ -33,6 +33,7 @@ export function EmptyState({
           alt={altText || "Empty state illustration"}
           aria-hidden={true}
           style={{ width: "280px", display: "block" }}
+          data-testid="empty-state-img"
         />
       )}
       {heading && (
