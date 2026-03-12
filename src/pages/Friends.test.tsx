@@ -34,4 +34,21 @@ describe("Friends", () => {
 
     expect(screen.getByText("Add Friend Page")).toBeInTheDocument();
   });
+
+  test("renders empty state when no friends exist", () => {
+    render(
+      <MemoryRouter>
+        <Friends />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole("heading", { name: "Hungry for company?" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Click the button below to add someone you want to share a meal with!",
+      ),
+    ).toBeInTheDocument();
+  });
 });
