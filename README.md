@@ -1,6 +1,6 @@
 # 🥗 PickyPlate - Decide What to Eat, Together
 
-A meal planning web app that helps couples and friends solve the everyday “what should we eat?” dilemma.
+A meal planning web app that helps friends and partners solve the everyday “what should we eat?” dilemma.
 
 **Try it live: https://app.pickyplate.app/**  
 
@@ -10,7 +10,7 @@ A meal planning web app that helps couples and friends solve the everyday “wha
 
 ## 💡 Overview
 
-PickyPlate is inspired by a real-life problem: deciding what to eat with my partner. Friends shared the same pain - endless back-and-forth, options overload, forgotten favourites, and unsatisfying last-minute fallback decisions.
+PickyPlate was inspired by a real-life problem: deciding what to eat with my favourite people. Friends shared the same pain - endless back-and-forth, options overload, forgotten favourites, and unsatisfying last-minute fallback decisions.
 
 Built to make meal decisions easier and more enjoyable, with an emphasis on:
 
@@ -104,7 +104,7 @@ npm run dev
 
 ## ➡️ Future improvements
 
-- Add **test coverage** for core user flows
+- Add **test coverage** for core components and user flows
 - Refine **loading and error states**
 - Add **onboarding flow** for better UX
 - Improve **UX, accessibility** and keyboard navigation further
